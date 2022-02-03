@@ -32,13 +32,40 @@
 			}
 			// Append modules to system
 			$this->ucCompilator->pages += $this->ucModules->pages;
+			// Request handler
+			$this->handler();
 			// Check if user auth
 			if(!$this->ucSession->checkAuthorization()){
 				// If user is unknown, redirect to authorization
 				$this->ucCompilator->setPage("uCrewAuthorization/authorization");
+			}else{
+				// Check if isset requst on page
+				if(isset($_GET["page"])){
+					// Set page if isset
+					$this->ucCompilator->setPage($_GET["page"]);
+				}else{
+					// If page not isset, set mainpage
+					$this->ucCompilator->setPage("uCrew/main");
+				}
 			}
 			// Compile result page
 			$this->ucCompilator->compilePage();
+		}
+
+		// System request handler
+		public function handler(){
+			// If isset handler request
+			if(isset($_GET['handler'])){
+				switch ($_GET['handler']) {
+					case 'authorization':
+						$this->ucSession->authorizeUser($_POST['user'], $_POST['password']);
+						break;
+					
+					default:
+						print("handler is empty");
+						break;
+				}
+			}
 		}
 	}
 ?>

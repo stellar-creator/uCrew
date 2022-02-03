@@ -1,7 +1,8 @@
-# uCrew
-#### uCrew - is a CMS and MES under one shell and was created to organize processes within a company or organization.
+<img src="https://raw.githubusercontent.com/stellar-creator/uCrew/develop/uc_resources/images/system/logo.png" width="250">
 
-<img align="left" src="https://raw.githubusercontent.com/stellar-creator/uCrew/develop/uc_resources/images/logo.png" width="250" height="250">
+####
+#### Is a CMS and MES under one shell and was created to organize processes within a company or organization.
+
 
 ### Basic principles and philosophy of CMS:
 ##### 1. Modules and templates

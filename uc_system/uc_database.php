@@ -32,5 +32,12 @@
 			// Close connection
        		$this->connection->close();
    		}
+
+   		public function getUserByData($data){
+   			// Generate request string
+   			$request = 'SELECT * FROM `uc_users` WHERE `user_name` = "' . $data . '" OR `user_email` = "' . $data . '" OR `user_phone` = "' . $data . '"';
+   			// Select by name
+   			return $this->getData($request);
+   		}   		
 	}
 ?>

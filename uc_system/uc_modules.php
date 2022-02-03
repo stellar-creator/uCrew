@@ -12,10 +12,11 @@
 			// Check if module in configuration
 			if(isset($this->modules[$name])){
 				// Add pages to system
-				foreach ($pages as $page) {
+				foreach ($pages as $page => $title) {
 				    $this->pages[$name . "/" . $page] =  [
 				    	"content" => $this->directories["modules"] . $name . "/pages/" . $page . ".php",
-				    	"module" => $name
+				    	"module" => $name,
+				    	"title" => $title
 				    ];
 				}
 				// If module in configuration, do activation with value

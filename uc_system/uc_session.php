@@ -2,9 +2,11 @@
 	/**
 	 * uCrew session code.
 	 */
-	class uCrewSession {
+	class uCrewSession extends uCrewDatabase {
 
 		function __construct() {
+			// Construct uCrewDatabase (parent class)
+			parent::__construct();
 			// Run session
 			session_start();
 		}
@@ -20,6 +22,19 @@
 				}
 			}else{
 				return 0;
+			}
+		}
+
+		public function authorizeUser($name, $password){
+			// Try to found user in database
+			$user_data = $this->getUserByData($name);
+			// If user isset
+			if($user_data != 0){
+				// Check user password
+				if($user_data["user_password"] == $password){
+					// Set session information
+					$_SESSION = $user_data;
+				}
 			}
 		}
 

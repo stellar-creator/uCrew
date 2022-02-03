@@ -4,7 +4,7 @@
 		"Default uCrew authorization module.",	// Description
 		"System module",						// Category
 		"Stellar Creator",						// Author
-		["authorization"],						// Pages
+		["authorization" => "Авторизация"],		// Pages
 		["configuration" => [				
 				"menu" => 0, 
 				"content" => 0, 

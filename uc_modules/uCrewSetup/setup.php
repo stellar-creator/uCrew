@@ -4,7 +4,7 @@
 		"Default uCrew setup module.",			// Description
 		"System module",						// Category
 		"Stellar Creator",						// Author
-		["install"],							// Pages	
+		["install" => "Установка"],				// Pages	
 		["configuration" => [				
 				"menu" => 0, 
 				"content" => 0, 

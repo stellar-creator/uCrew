@@ -14,12 +14,14 @@
 		public $system = array(
 			"main_directory" => "*",
 			"template" => "uCrewBase",
+			"organization" => "uCrew",
 			"update_server" => "https://github.com/stellar-creator/uCrew"
 		);
 		// System configuration data
 		public $directories = array(
 			"modules" => "uc_modules/",
-			"resources" => "uc_resources/"
+			"resources" => "uc_resources/",
+			"templates" => "uc_templates/",
 		);
 		// System configuration data
 		public $modules = array(
