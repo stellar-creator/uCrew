@@ -10,6 +10,7 @@
 				"content" => 0, 
 				"privileges" => 0
 			]
-		]	
+		],
+		["section" => "Установка"]	
 	);
 ?>

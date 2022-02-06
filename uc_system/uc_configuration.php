@@ -26,7 +26,10 @@
 		// System configuration data
 		public $modules = array(
 			"uCrewSetup" => 1,
-			"uCrewAuthorization" => 1
+			"uCrewAuthorization" => 1,
+			"uCrewStorage" => 1
 		);
+		// System version
+		public $version = "0.0.1";
 	}
 ?>

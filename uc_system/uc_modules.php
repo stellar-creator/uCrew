@@ -6,7 +6,7 @@
 		public $pages = array();
 		public $modules_data = array();
 		// This function add module data to system
-		public function addModule($name, $description, $category, $author, $pages, $configuraion){ 
+		public function addModule($name, $description, $category, $author, $pages, $configuraion, $section){ 
 			// Activation check, if module not in configuration, activation is 0
 			$activation = 0;
 			// Check if module in configuration
@@ -16,7 +16,9 @@
 				    $this->pages[$name . "/" . $page] =  [
 				    	"content" => $this->directories["modules"] . $name . "/pages/" . $page . ".php",
 				    	"module" => $name,
-				    	"title" => $title
+				    	"title" => $title,
+				    	"configuration" => $configuraion["configuration"],
+				    	"section" => $section["section"]
 				    ];
 				}
 				// If module in configuration, do activation with value

@@ -37,8 +37,14 @@
 			// Check if user auth
 			if(!$this->ucSession->checkAuthorization()){
 				// If user is unknown, redirect to authorization
-				$this->ucCompilator->setPage("uCrewAuthorization/authorization");
-			}else{
+				if(isset($_GET['page'])){
+					if($_GET['page'] == 'uCrewAuthorization/registration'){
+						$this->ucCompilator->setPage("uCrewAuthorization/registration");
+					}
+				}else{
+					$this->ucCompilator->setPage("uCrewAuthorization/authorization");
+				}
+							}else{
 				// Check if isset requst on page
 				if(isset($_GET["page"])){
 					// Set page if isset
@@ -56,11 +62,23 @@
 		public function handler(){
 			// If isset handler request
 			if(isset($_GET['handler'])){
+				// Select handler
 				switch ($_GET['handler']) {
+					// Login authorization
 					case 'authorization':
-						$this->ucSession->authorizeUser($_POST['user'], $_POST['password']);
+						// Check if variables not empty
+						if(isset($_POST['user']) and isset($_POST['password'])){
+							$this->ucSession->authorizeUser($_POST['user'], $_POST['password']);
+						}
 						break;
-					
+					// Session logout handler
+					case 'logout':
+						$this->ucSession->unauthorizeUser();
+						break;
+					// Session logout handler
+					case 'search':
+						$_GET["page"] = 'uCrew/search';
+						break;					
 					default:
 						print("handler is empty");
 						break;

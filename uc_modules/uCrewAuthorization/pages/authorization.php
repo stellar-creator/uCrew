@@ -2,7 +2,7 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>Авторизация | uCrew</title>
+      <title>Авторизация / uCrew</title>
       <link rel="stylesheet" href="uc_resources/distribution/bootstrap/css/bootstrap.min.css">
       <link rel="stylesheet" href="uc_resources/distribution/fontawesome/css/fontawesome.min.css">
       <script src="uc_resources/distribution/jquery/jquery.min.js"></script>
@@ -29,10 +29,13 @@
          .form-control, .btn {
             min-height: 38px;
             border-radius: 2px;
+            margin-top: 10px;
          }
          .btn {        
             font-size: 15px;
             font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 10px;
          }
       </style>
    </head>
@@ -40,6 +43,17 @@
       <div class="login-form row h-100">
          <form action="/?handler=authorization" method="post" class="col-sm-12 my-auto">
             <h2 class="text-center">Авторизация</h2>
+<?php
+   // Show wrong message
+   if( isset($_SESSION['activation']) ){
+      if($_SESSION["activation"] == "wrongpass" or $_SESSION["activation"] == "nouser"){
+         echo '            <div class="clearfix" style="padding-top: 5px">
+                <p class="text-center" style="color:red">Неверный пользователь или пароль</p>
+            </div>' . "\n";
+      }
+   }
+
+?>
             <div class="form-group">
                <input type="text" class="form-control" name="user" placeholder="Пользователь / E-mail" required="required">
             </div>
@@ -50,13 +64,18 @@
                <button type="submit" class="btn btn-primary btn-block">Войти</button>
             </div>
             <div class="clearfix">
-               <label class="float-left form-check-label"><input type="checkbox" name="keep"> Запонить меня</label>
-               <a href="/?page=PasswordRecover" class="float-right">Забыли пароль?</a>
+               <label class="float-start form-check-label"><input type="checkbox" name="keep"> Запонить меня</label>
+               <a href="/?page=PasswordRecover" class="float-end">Забыли пароль?</a>
             </div>
             <div class="clearfix" style="padding-top: 10px">
-                <p class="text-right"><a href="/?page=CreateAccount">Создать аккаунт</a></p>
+                <p class="float-end"><a href="/?page=uCrewAuthorization/registration">Создать аккаунт</a></p>
             </div>
          </form>
       </div>
    </body>
 </html>
+
+<?php
+   // Clear activation
+   $_SESSION['activation'] = "no";
+?>
