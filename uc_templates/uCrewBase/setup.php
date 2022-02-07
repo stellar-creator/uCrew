@@ -1,11 +1,13 @@
 <?php
 	// Add JavaScripts
-    $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/fontawesome/js/all.min.js');
+
 	$this->uc_CompilatorData->addJavaScript('uc_resources/distribution/jquery/jquery.min.js', 'bottom');
+    $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/popper/popper.js', 'bottom');
 	$this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap/js/bootstrap.min.js', 'bottom');
-    // $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap/js/bootstrap.bundle.min.js', 'bottom');
-	$this->uc_CompilatorData->addJavaScript('uc_templates/uCrewBase/js/scripts.js', 'bottom');
+
+    $this->uc_CompilatorData->addJavaScript('uc_templates/uCrewBase/js/scripts.js', 'bottom');
 	// Add styles
+    $this->uc_CompilatorData->addCSS('uc_resources/distribution/fontawesome/css/all.css');
     $this->uc_CompilatorData->addCSS('uc_resources/distribution/bootstrap/css/bootstrap.min.css');
     $this->uc_CompilatorData->addCSS('uc_templates/uCrewBase/css/styles.css');
 	// Init header of template
@@ -17,9 +19,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 		<meta name="description" content="uCrew" />
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-        <meta http-equiv="Pragma" content="no-cache">
-        <meta http-equiv="Expires" content="0">
+        <meta http-equiv="Cache-Control" content="public, max-age=31536000">
 ';
 	// Set body start code
 	$this->uc_CompilatorData->template_body = "\t</head>\n\t<body class=\"sb-nav-fixed\">\n";

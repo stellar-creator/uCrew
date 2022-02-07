@@ -2,13 +2,13 @@
 	/**
 	 * uCrew configuration file.
 	 */
-	class uCrewConfiguration {
+	class uCrewConfiguration extends uCrewVersion {
 		// Database configuration data
 		public $database = array(
 			"server" => "*",
 			"user" => "*",
 			"password" => "*",
-			"database" => "*"
+			"database" => "ucrew_database"
 		);
 		// System configuration data
 		public $system = array(
@@ -29,7 +29,5 @@
 			"uCrewAuthorization" => 1,
 			"uCrewStorage" => 1
 		);
-		// System version
-		public $version = "0.0.1";
 	}
 ?>

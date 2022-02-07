@@ -8,6 +8,7 @@
 	ini_set('error_reporting', E_ALL);
 	ini_set('display_errors', '1');
 	// Require base of CMS
+	require_once("uc_system/uc_version.php");
 	require_once("uc_system/uc_configuration.php");
 	require_once("uc_system/uc_database.php");
 	require_once("uc_system/uc_system.php");
