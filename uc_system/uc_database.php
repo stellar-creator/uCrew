@@ -114,6 +114,13 @@
 			$query = 'SELECT * FROM `uc_locations` ORDER BY `uc_locations`.`location_id` ASC';
 			// Return values
 			return $this->getAllData($query);
+		}	
+		// Get users locations
+		public function query($query){
+			// Query
+			$this->connection->query($query);
+			// Return last id
+			return $this->connection->insert_id;
 		}		
 	}
 ?>

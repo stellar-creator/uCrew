@@ -40,6 +40,9 @@
 				if(isset($_GET['page'])){
 					if($_GET['page'] == 'uCrewAuthorization/registration'){
 						$this->ucCompilator->setPage("uCrewAuthorization/registration");
+					}else{
+						header("Location: /");
+						die();
 					}
 				}else{
 					$this->ucCompilator->setPage("uCrewAuthorization/authorization");

@@ -63,7 +63,7 @@
         <thead>
           <tr>
             <th scope="col">№ </th>
-            <th scope="col">Заголовок</th>
+            <th scope="col" width="250px">Заголовок</th>
             <th scope="col">Описание</th>
             <th scope="col">Дата</th>
           </tr>

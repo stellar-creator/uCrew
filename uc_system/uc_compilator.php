@@ -264,18 +264,22 @@
 			$this->template_folder =  $this->directories["templates"] . $this->system["template"] . '/';
 		}
 
+		private function clearVirtualLink($string){
+			return str_replace("&", "", $string);
+		}
+
 		// Set page function
 		public function setPage($page_name){
 			// Set page content file
 			$this->selected_content = $this->pages[$page_name]["content"];
 			// Set page title
-			$this->selected_title = $this->pages[$page_name]["title"] . " / uCrew";
+			$this->selected_title = $this->clearVirtualLink($this->pages[$page_name]["title"]) . " / uCrew";
 			// Set page configuration
 			$this->selected_configuration = $this->pages[$page_name]["configuration"];
 			// Set page name
-			$this->selected_page =  $this->pages[$page_name]["title"];
+			$this->selected_page =  $this->clearVirtualLink($this->pages[$page_name]["title"]);
 			// Set page name pipe
-			$this->selected_page_pipe =  $this->pages[$page_name]["section"] . ' / ' . $this->pages[$page_name]["title"];
+			$this->selected_page_pipe =  $this->pages[$page_name]["section"] . ' / ' . $this->clearVirtualLink($this->pages[$page_name]["title"]);
 		}
 		// Add page to system
 		public function addPage($page_name, $page_file){
@@ -306,7 +310,14 @@
 				echo $this->uc_CompilatorData->getPageHeader($this->selected_page, $this->selected_page_pipe);
 			}
 			// Append content
-			require_once($this->selected_content);
+			if(file_exists($this->selected_content)){
+				// If content exists, require it
+				require_once($this->selected_content);
+			}else{
+				// If content not found, show 404 page eroor
+				$this->ucDatabase->addEvent("Ошибка 404", "Пользователь " . $_SESSION["user_name"] . " попал на страницу <b>" . $_SERVER['REQUEST_URI'] . "</b>");
+				require_once('uc_pages/404.php');
+			}
 			// Check if isset configuration
 			if($this->selected_configuration["content"] != 0){
 				// Add page footer data

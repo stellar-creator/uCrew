@@ -8,7 +8,7 @@
 			"server" => "*",
 			"user" => "*",
 			"password" => "*",
-			"database" => "ucrew_database"
+			"database" => "*"
 		);
 		// System configuration data
 		public $system = array(
@@ -27,7 +27,9 @@
 		public $modules = array(
 			"uCrewSetup" => 1,
 			"uCrewAuthorization" => 1,
-			"uCrewStorage" => 1
+			"uCrewStorage" => 1,
+			"uCrewProduction" => 1,
+			"uCrewDocumentation" => 1
 		);
 	}
 ?>

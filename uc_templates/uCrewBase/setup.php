@@ -117,7 +117,7 @@
 
     // Set multiple items section header
     $this->uc_CompilatorData->sidebar["subitem"] = '
-                                <a class="nav-link" href="/?page=%page%">%subitem%</a>
+                                <a class="nav-link" href="/?page=%page%">· %subitem%</a>
 ';    
     // Set multiple items section header
     $this->uc_CompilatorData->sidebar["subitems_footer"] = '
