@@ -3,12 +3,15 @@
 
 	$this->uc_CompilatorData->addJavaScript('uc_resources/distribution/jquery/jquery.min.js', 'bottom');
     $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/popper/popper.js', 'bottom');
-	$this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap/js/bootstrap.min.js', 'bottom');
+    $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap/js/bootstrap.min.js', 'bottom');
+    $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap-select/dist/js/bootstrap-select.min.js', 'bottom');
+    $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap-select/dist/js/i18n/defaults-ru_RU.min.js', 'bottom');
 
     $this->uc_CompilatorData->addJavaScript('uc_templates/uCrewBase/js/scripts.js', 'bottom');
 	// Add styles
     $this->uc_CompilatorData->addCSS('uc_resources/distribution/fontawesome/css/all.css');
     $this->uc_CompilatorData->addCSS('uc_resources/distribution/bootstrap/css/bootstrap.min.css');
+    $this->uc_CompilatorData->addCSS('uc_resources/distribution/bootstrap-select/dist/css/bootstrap-select.min.css');
     $this->uc_CompilatorData->addCSS('uc_templates/uCrewBase/css/styles.css');
 	// Init header of template
 	$this->uc_CompilatorData->template_header = '

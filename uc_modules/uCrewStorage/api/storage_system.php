@@ -4,9 +4,11 @@
 	 */
 	class uCrewStorage {
 		private $ucs_Database ;
+		public $categories_options;
 
 		function __construct(){
 			$this->ucs_Database = new uCrewDatabase('ucrew_storage');
+			$this->categories_options = "";
 		}
 
 		public function addCategory($name, $description, $subcategory, $template, $image){
@@ -33,20 +35,22 @@
 			  $uploadOk = 0;
 			}
 
-			$message = '<div class="row mb-3"><div class="alert alert-danger" role="alert">
-			  <h4 class="alert-heading">Категория '. $name .' не добавлена</h4>
-			  <p>Данная категория не добавлена</p>
-			 
-			</div></div>';
+			$message = '<div class="row mb-3">
+				<div class="alert alert-danger" role="alert">
+			  		<h4 class="alert-heading">Категория не добавлена</h4>
+			  		<p>Ошибка, категория «'. $name .'» добавлена</p>
+				</div>
+			</div>';
 
 			if($uploadOk == 1){
 				if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_new)) {
 				  $uploadOk = 1;
-				  $message = '<div class="row mb-3"><div class="alert alert-success" role="alert">
-			  <h4 class="alert-heading">Категория '. $name .' добавлена</h4>
-			  <p>Категория успешно добавлена</p>
-			 
-			</div></div>';
+				  $message = '<div class="row mb-3">
+				 <div class="alert alert-success" role="alert">
+			  		<h4 class="alert-heading">Категория успешно добавлена</h4>
+			  		<p>Категория «'. $name .'» добавлена</p>
+					</div>
+				</div>';
 				} else {
 				  $uploadOk = 0;
 				}
@@ -63,6 +67,20 @@
 		       
 		        if (isset($t['subcategories'])) {
 		            $this->getCategoriesSelect($t['subcategories'], ++$r, $t['category_for']);
+		            --$r;
+		        }
+		    }
+		}
+
+		public function getCategoriesSelectText($tree, $r = 0, $p = null){
+		    foreach ($tree as $i => $t) {
+		    	$buffer = "";
+		        $dash = ($t['category_for'] == 0) ? '' : str_repeat('-', $r) .' ';
+		        
+		       $this->categories_options .= sprintf("\t<option value='%d'>%s%s</option>\n", $t['category_id'], $dash, $t['category_name']);
+
+		        if (isset($t['subcategories'])) {
+		            $this->getCategoriesSelectText($t['subcategories'], ++$r, $t['category_for']);
 		            --$r;
 		        }
 		    }
@@ -130,6 +148,113 @@
 				}
 			}
 			return $data;
+		}
+
+		// Get category templates
+		public function getCategoryTemplate($category_id){
+			$template = $this->ucs_Database->getData('SELECT * FROM `ucs_templates` WHERE `template_category` = ' . $category_id);
+			if($template != 0){
+				$template['template_data'] = json_decode($template['template_data'], true);
+			}
+			return $template;
+		}
+
+		public function templateEditorBuilder($data){
+			// Complete text buffer
+			$complete = "";
+			// Index counter
+			$index = 1;
+			//print_r($data);
+			// Check template data
+			foreach ($data['template_data'] as $name => $type) {
+				$list = "";
+				$category = "";
+				$text = "";
+				// Check type
+				if(isset($type['list'])){
+					$list = "selected";
+				}
+				if(isset($type['category'])){
+					$category = "selected";
+				}
+				if($type['type'] == "text"){
+					$text = "selected";
+				}
+				$complete .= '
+						<!-- START -->
+						<div class="input-group mb-3" id="group'.$index.'">	
+							<label for="field'.$index.'[name]" class="col-sm-2 col-form-label">Параметр '.$index.':</label>
+							<div class="col-sm-10" style="padding-bottom: 10px">
+								<div class="input-group" id="field'.$index.'-div">
+									<span class="input-group-text">Название / Тип</span>
+									<input type="text" aria-label="field'.$index.'[name]" name="field'.$index.'[name]" id="field'.$index.'[name]" class="form-control" placeholder="Введите название параметра..." value="'.$name.'">
+									<select class="form-control" name="field'.$index.'[type]" id="field'.$index.'[type]" >
+										<option value="unknown" selected>Выберите тип...</option>
+										<option value="text" '.$text.'>Текст</option>
+										<option value="select_list" '.$list.'>Произвольный список</option>
+										<option value="select_category" '.$category.'>Позиции из категории</option>
+									</select>
+								</div>
+							</div>' . "\n";
+
+				switch ($type['type']) {
+
+					case 'select':
+
+						if(isset($type['list'])){
+							$values = "";
+							foreach ($type['list'] as $key => $value) {
+								$values .= $value . ';';
+							}
+							$complete .= '
+								<label for="field'.$index.'[values]" id="field'.$index.'-value-lable"  class="col-sm-2 col-form-label">Значения:</label>
+								<div class="col-sm-10">
+								   	<input type="text" aria-label="field'.$index.'-value" name="field'.$index.'[values]" id="field'.$index.'[value]" class="form-control" placeholder="Введите значения" value="'.$values.'">
+								</div>
+								' . "\n";
+						}
+
+
+						if(isset($type['category'])){
+							$this->getCategoriesSelectText($this->collectCategories());
+							//..
+							$complete .= '
+								<label for="field'.$index.'[value]" id="field'.$index.'-value-lable"  class="col-sm-2 col-form-label">Категория:</label>
+								<div class="col-sm-10">
+									
+									<select class="form-control" name="field'.$index.'[value]" id="field'.$index.'[value]" >
+										<option value="0" selected>Выберите категорию...</option>
+										'.$this->categories_options.'
+									</select>	   	
+
+								</div>
+								' . "\n";
+						}
+
+						break;
+					default:
+							
+						break;
+				}
+
+				$complete .= '
+							<div class="col-sm-12 float-end" style="padding-top: 10px">
+								<div class="col float-end">
+									<button type="button" class="btn btn-danger" onClick="removeElement(\'group'.$index.'\')">Удалить</button>
+								</div>
+							</div>
+						</div>
+						<hr id="group'.$index.'hr">
+	     				<!-- END -->' . "\n";
+
+				$index = $index + 1;
+			}
+			$complete .= '
+						<script type="text/javascript">
+							lastField = '.$index.';
+						</script>
+			';
+			return $complete;
 		}
 	}
 ?>

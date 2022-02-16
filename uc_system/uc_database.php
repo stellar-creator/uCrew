@@ -121,6 +121,54 @@
 			$this->connection->query($query);
 			// Return last id
 			return $this->connection->insert_id;
+		}	
+		// Get users lists
+		public function getUsers(){
+			// Get users data
+			$query = "SELECT `user_id`, `user_name`, `user_email`, `user_status`, `user_image`, `user_phone`, `user_location`, `user_post`, `user_groups` FROM `uc_users` ORDER BY `uc_users`.`user_id` DESC";
+			// Return data
+			return $this->getAllData($query);
 		}		
+		// Get users lists
+		public function createChat($from, $to){
+			// Check if chat exists
+			$sql = "SELECT * FROM `uc_chats` WHERE `chat_from` = $from AND `chat_to` = $to";
+			if( $this->getAllData($sql) == 0){ 
+				// Get users data
+				$query = "INSERT INTO `uc_chats` (`chat_id`, `chat_from`, `chat_to`, `chat_primary`, `chat_activated`) VALUES (NULL, '$from', '$to', '$from', '1')";
+				// Return data
+				return $this->query($query);
+			}else{
+				return 0;
+			}
+		}		
+		// Get chat lists with data
+		public function getChatList($from, $to = 0){
+			// Query
+			$query = "SELECT * FROM `uc_chats` WHERE `chat_from` = $from OR `chat_to` = $from";
+			// Get chats
+			$chats = $this->getAllData($query);
+			// Get user data
+			$users = $this->getUsers();
+			
+			foreach ($chats as $index => &$data) {
+				if($data['chat_activated'] == 1){
+					foreach ($users as $user_index => $user_data) {
+
+						if($data['chat_from'] == $data['chat_primary'] && $data['chat_to'] == $user_data['user_id']){
+							$data['user_to'] = $user_data;
+						}
+						if($data['chat_from'] == $user_data['user_id']){
+							$data['chat_from'] = $user_data;
+						}
+						if($data['chat_to'] == $user_data['user_id']){
+							$data['chat_to'] = $user_data;
+						}
+
+					}
+				}
+			}
+			return $chats;
+		}	
 	}
 ?>

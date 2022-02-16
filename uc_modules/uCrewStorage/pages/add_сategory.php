@@ -5,7 +5,7 @@
 	$uc_Storage = new uCrewStorage();
 	$message = "";
  	if(isset($_POST['name']) && isset($_POST['description'])){
- 		$message = $uc_Storage->addCategory($_POST['name'], $_POST['description'], $_POST['subcategory'], $_POST['template'], $_FILES);
+ 		$message = $uc_Storage->addCategory($_POST['name'], $_POST['description'], $_POST['subcategory'], "", $_FILES);
  	}
 
  	$categories = $uc_Storage->collectCategories();
@@ -40,12 +40,13 @@
 								</select>
                             </div>
                           </div>
-                          <div class="row mb-3">
+<!--                          <div class="row mb-3">
                             <label for="template" class="col-sm-2 col-form-label">Шаблон</label>
                             <div class="col-sm-10">
                               <input type="text" class="form-control" id="template" name="template" readonly>
                             </div>
                           </div>
+-->
                           <div class="row mb-3">
                             <label for="image" class="col-sm-2 col-form-label">Изображение</label>
                             <div class="col-sm-10">
