@@ -1,17 +1,21 @@
 <?php
 	// Add JavaScripts
 
-	$this->uc_CompilatorData->addJavaScript('uc_resources/distribution/jquery/jquery.min.js', 'bottom');
+	$this->uc_CompilatorData->addJavaScript('uc_resources/distribution/jquery/jquery.min.js');
     $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/popper/popper.js', 'bottom');
     $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap/js/bootstrap.min.js', 'bottom');
     $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap-select/dist/js/bootstrap-select.min.js', 'bottom');
     $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/bootstrap-select/dist/js/i18n/defaults-ru_RU.min.js', 'bottom');
+    $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/highlight/highlight.min.js', 'bottom');
+    $this->uc_CompilatorData->addJavaScript('uc_resources/distribution/wysiwyg-editor-bootstrap/dist/js/wysiwyg.min.js', 'bottom');
 
     $this->uc_CompilatorData->addJavaScript('uc_templates/uCrewBase/js/scripts.js', 'bottom');
 	// Add styles
     $this->uc_CompilatorData->addCSS('uc_resources/distribution/fontawesome/css/all.css');
     $this->uc_CompilatorData->addCSS('uc_resources/distribution/bootstrap/css/bootstrap.min.css');
     $this->uc_CompilatorData->addCSS('uc_resources/distribution/bootstrap-select/dist/css/bootstrap-select.min.css');
+    $this->uc_CompilatorData->addCSS('uc_resources/distribution/highlight/styles/default.min.css');
+    $this->uc_CompilatorData->addCSS('uc_resources/distribution/wysiwyg-editor-bootstrap/dist/css/wysiwyg.min.css');
     $this->uc_CompilatorData->addCSS('uc_templates/uCrewBase/css/styles.css');
 	// Init header of template
 	$this->uc_CompilatorData->template_header = '
@@ -110,11 +114,11 @@
     // Set multiple items section header
     $this->uc_CompilatorData->sidebar["subitems_header"] = '
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#%subitems_title_tag%" aria-expanded="false" aria-controls="%subitems_title_tag%">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                <div class="sb-nav-link-icon"><i class="%subitems_icon%"></i></div>
                                 %subitems_title%
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse" id="%subitems_title_tag%" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse%show%" id="%subitems_title_tag%" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
 ';    
 

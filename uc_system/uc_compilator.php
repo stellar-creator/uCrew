@@ -64,7 +64,7 @@
 			return $this->template_topbar;
 		}
 		// Add sidebar to template
-		public function getSideBar($pages){
+		public function getSideBar($pages, $selected_page_section){
 			// Reverse array
 			$pages = array_reverse($pages);
 			// Buffer array
@@ -91,6 +91,14 @@
 			foreach($sections as $section => $information){
 				// Set section name
 				$_temp = str_replace("%subitems_title_tag%", $section, $this->sidebar["subitems_header"]);
+				// Set items icon
+				$_temp = str_replace("%subitems_icon%", $information[0]["icon"], $_temp);
+				// Check section
+				$show = "";
+				if($section == $selected_page_section){
+					$show = " show";
+				}
+				$_temp = str_replace("%show%", $show, $_temp);
 				$this->template_sidebar .= str_replace("%subitems_title%", $section, $_temp);
 				// Get all subitems (reversed)
 				$information = array_reverse($information);
@@ -172,7 +180,8 @@
 			    	"content" => 1,
 			    	"privileges" => "user"
 				),
-				"section" => "Системное"
+				"section" => "Системное",	
+				"icon" => "fas fa-tachometer-alt"
 			),
 			// User page
 			"uCrew/user" => array(
@@ -184,7 +193,8 @@
 			    	"content" => 1,
 			    	"privileges" => "user"
 				),
-				"section" => "Системное"
+				"section" => "Системное",	
+				"icon" => "fa-solid fa-sliders"
 			),
 			// Common settings page
 			"uCrew/events" => array(
@@ -196,7 +206,8 @@
 			    	"content" => 1,
 			    	"privileges" => "admin"
 				),
-				"section" => "Системное"
+				"section" => "Системное",	
+				"icon" => "fa-solid fa-sliders"
 			),
 			// Common settings page
 			"uCrew/settings" => array(
@@ -208,7 +219,8 @@
 			    	"content" => 1,
 			    	"privileges" => "admin"
 				),
-				"section" => "Системное"
+				"section" => "Системное",	
+				"icon" => "fa-solid fa-sliders"
 			),
 			// Common settings page
 			"uCrew/messages" => array(
@@ -220,7 +232,8 @@
 			    	"content" => 1,
 			    	"privileges" => "user"
 				),
-				"section" => "Системное"
+				"section" => "Системное",	
+				"icon" => "fa-solid fa-sliders"
 			),
 			// Common settings page
 			"uCrew/notofications" => array(
@@ -232,7 +245,8 @@
 			    	"content" => 1,
 			    	"privileges" => "user"
 				),
-				"section" => "Системное"
+				"section" => "Системное",	
+				"icon" => "fa-solid fa-sliders"
 			),
 			// Common settings page
 			"uCrew/search" => array(
@@ -244,7 +258,8 @@
 			    	"content" => 1,
 			    	"privileges" => "user"
 				),
-				"section" => "Системное"
+				"section" => "Системное",	
+				"icon" => "fa-solid fa-sliders"
 			)
 		);
 		// Included file as page
@@ -254,6 +269,7 @@
 		private $template_folder =  "";
 		private $selected_page =  "";
 		private $selected_page_pipe =  "";
+		private $selected_page_section = "";
 
 		function __construct() {
 			// Init classes
@@ -280,6 +296,8 @@
 			$this->selected_page =  $this->clearVirtualLink($this->pages[$page_name]["title"]);
 			// Set page name pipe
 			$this->selected_page_pipe =  $this->pages[$page_name]["section"] . ' / ' . $this->clearVirtualLink($this->pages[$page_name]["title"]);
+			// Set page section
+			$this->selected_page_section = $this->pages["$page_name"]["section"];
 		}
 		// Add page to system
 		public function addPage($page_name, $page_file){
@@ -305,7 +323,7 @@
 				// Add topbar
 				echo $this->uc_CompilatorData->getTopBar($this->topbar_data);
 				// Add sidebar
-				echo $this->uc_CompilatorData->getSideBar($this->pages);
+				echo $this->uc_CompilatorData->getSideBar($this->pages, $this->selected_page_section);
 				// Add page header data
 				echo $this->uc_CompilatorData->getPageHeader($this->selected_page, $this->selected_page_pipe);
 			}

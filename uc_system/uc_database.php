@@ -63,7 +63,21 @@
    			$request = 'SELECT * FROM `uc_groups` WHERE `group_name` = "'.$group.'"';
    			// Select by name
    			return explode(";", $this->getData($request)["group_privileges"]);
-   		}   
+   		}
+
+   		// Get main page text
+   		public function getMainPageContent(){
+   			$query = "SELECT * FROM `uc_settings` WHERE `setting_name` = 'page' AND `setting_value` = 'main'";
+   			return $this->getData($query)['setting_text'];
+   		}
+
+   		// Get main page text
+   		public function setMainPageContent($content){
+   			$content = str_replace('"', '\"', $content);
+   			$query = "UPDATE `uc_settings` SET `setting_text` = '$content' WHERE `setting_name` = 'page' AND `setting_value` = 'main'";
+   			return $this->query($query);
+   		}
+
    		// Add event to database
    		public function addEvent($event_name, $event_text){
    			// Check if isset user

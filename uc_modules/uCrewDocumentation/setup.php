@@ -13,6 +13,7 @@
 				"privileges" => 0
 			]
 		],
-		["section" => "Документация"]		
+		["section" => "Документация"],
+		["icon" => "fa fa-book"]	
 	);
 ?>

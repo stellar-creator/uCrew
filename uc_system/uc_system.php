@@ -14,6 +14,8 @@
 		function __construct() {
 			// Construct uCrewDatabase (parent class)
 			parent::__construct();
+			// Set error handler
+			set_error_handler(array($this, 'errorHandler'));
 			// Check session
 			$this->ucSession = new uCrewSession();
 			// Init page compilator
@@ -59,6 +61,12 @@
 			}
 			// Compile result page
 			$this->ucCompilator->compilePage();
+		}
+
+		public function errorHandler($errno, $errstr, $errfile, $errline) {
+		    $err = "<b>Ошибка:</b> [$errno] $errstr<br>\nОшибка на линии $errline в файле $errfile<br>\n";
+		    $this->addEvent("Ошибка системы", $err);
+		    echo $err;
 		}
 
 		// System request handler

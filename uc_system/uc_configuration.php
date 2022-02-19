@@ -29,6 +29,7 @@
 			"uCrewAuthorization" => 1,
 			"uCrewStorage" => 1,
 			"uCrewProduction" => 1,
+			"uCrewProjects" => 1,
 			"uCrewDocumentation" => 1
 		);
 	}

@@ -6,7 +6,7 @@
 		public $pages = array();
 		public $modules_data = array();
 		// This function add module data to system
-		public function addModule($name, $description, $category, $author, $pages, $configuraion, $section){ 
+		public function addModule($name, $description, $category, $author, $pages, $configuraion, $section, $icon = ["icon" => "fa fa-question-circle"]){ 
 			// Activation check, if module not in configuration, activation is 0
 			$activation = 0;
 			// Check if module in configuration
@@ -18,7 +18,8 @@
 				    	"module" => $name,
 				    	"title" => $title,
 				    	"configuration" => $configuraion["configuration"],
-				    	"section" => $section["section"]
+				    	"section" => $section["section"],
+				    	"icon" => $icon["icon"]
 				    ];
 				}
 				// If module in configuration, do activation with value

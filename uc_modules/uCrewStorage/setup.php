@@ -14,12 +14,13 @@
 			"item" => "&Просмотр позиции", 				// Virtual page
 			"templates" => "&Управление шаблоном"		// Virtual page
 		],												// Pages
-		["configuration" => [				
+		["configuration" => [							// Configuration
 				"menu" => 1, 
 				"content" => 1, 
 				"privileges" => 0
 			]
 		],
-		["section" => "Склад"]		
+		["section" => "Склад"],							// Menu section
+		["icon" => "fa fa-archive"]		// Menu icon
 	);
 ?>

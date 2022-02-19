@@ -115,6 +115,54 @@
 			return $this->ucs_Database->getAllData('SELECT * FROM `ucs_locations` ORDER BY `ucs_locations`.`location_id` DESC');
 		}
 
+		public function getItem($item_id){
+			// Build locations
+			$data = $this->ucs_Database->getAllData('SELECT * FROM `ucs_items` WHERE `item_id` = ' . $item_id)[0];
+			$data['item_data'] = json_decode($data['item_data'], true);
+			$data['item_location'] = $this->appendItemLocation($data['item_location']);
+			$data['item_suppliers'] = $this->appendItemSuppliers($data['item_suppliers']);
+			return $data;
+		}
+
+		public function releaseItem($item, $number, $current_count, $comment){
+			$query = "INSERT INTO `usc_releases` (`release_id`, `release_item`, `release_count`, `release_timestamp`, `release_user`, `release_comment`) VALUES (NULL, '$item', '$count', CURRENT_TIMESTAMP, '".$_SESSION['user_id']."', '$comment')";
+			$this->ucs_Database->query($query);
+			$count = $current_count - $number;
+			$query = "UPDATE `ucs_items` SET `item_count` = '$count' WHERE `ucs_items`.`item_id` = $item";
+			$this->ucs_Database->query($query);
+		}
+
+		public function appendItemLocation($location)
+		{
+			$data = "";
+			$locations = $this->getItemsLocation();
+			foreach ($locations as $locindex => $locinfo) {
+				if($locinfo['location_id'] == $location){
+					$data = $locinfo;
+				}
+			}
+			return $data;
+		}
+
+		public function appendItemSuppliers($suppliers_data)
+		{
+			$suppliers = $this->getItemsSuppliers();
+
+			$item_suppliers = explode(';', $suppliers_data);
+
+			$suppliers_data = array();
+
+			foreach ($item_suppliers as $supplier_id) {
+				foreach ($suppliers as $supindex => $supinfo) {
+					if($supplier_id == $supinfo['supplier_id']){
+						array_push($suppliers_data, $supinfo);
+					}
+				}
+			}
+
+			return $suppliers_data;
+		}
+
 		public function getCategoryItems($category, $page = 0, $max_show = 25){
 			// Get locations 
 			$locations = $this->getItemsLocation();
@@ -164,7 +212,8 @@
 			$complete = "";
 			// Index counter
 			$index = 1;
-			//print_r($data);
+			$this->getCategoriesSelectText($this->collectCategories());
+			$js = 'categories = "' . trim(preg_replace('/\s+/', ' ', $this->categories_options)). '";';
 			// Check template data
 			foreach ($data['template_data'] as $name => $type) {
 				$list = "";
@@ -208,7 +257,7 @@
 							}
 							$complete .= '
 								<label for="field'.$index.'[values]" id="field'.$index.'-value-lable"  class="col-sm-2 col-form-label">Значения:</label>
-								<div class="col-sm-10">
+								<div class="col-sm-10" id="field'.$index.'-values">
 								   	<input type="text" aria-label="field'.$index.'-value" name="field'.$index.'[values]" id="field'.$index.'[value]" class="form-control" placeholder="Введите значения" value="'.$values.'">
 								</div>
 								' . "\n";
@@ -216,11 +265,9 @@
 
 
 						if(isset($type['category'])){
-							$this->getCategoriesSelectText($this->collectCategories());
-							//..
 							$complete .= '
 								<label for="field'.$index.'[value]" id="field'.$index.'-value-lable"  class="col-sm-2 col-form-label">Категория:</label>
-								<div class="col-sm-10">
+								<div class="col-sm-10" id="field'.$index.'-values">
 									
 									<select class="form-control" name="field'.$index.'[value]" id="field'.$index.'[value]" >
 										<option value="0" selected>Выберите категорию...</option>
@@ -246,6 +293,32 @@
 						</div>
 						<hr id="group'.$index.'hr">
 	     				<!-- END -->' . "\n";
+	     		
+	     		$this->getCategoriesSelectText($this->collectCategories());
+
+	     		$js .= '
+			    $(\'select[name="field'.$index.'[type]"]\').on(\'change\', function() {
+			        value = $(\'select[name="field'.$index.'[type]"]\').val();
+			        if(value == \'text\'){
+			        	$(\'#field'.$index.'-value-lable\').fadeOut(100, function(){ $(\'#field'.$index.'-value-lable\').empty(); });
+			        	$(\'#field'.$index.'-values\').fadeOut(100, function(){ $(\'#field'.$index.'-values\').empty(); });
+			        }
+			        if(value == \'select_list\'){
+			        	$(\'#field'.$index.'-value-lable\').fadeOut(100, function(){ $(\'#field'.$index.'-value-lable\').empty(); });
+			        	$(\'#field'.$index.'-values\').fadeOut(100, function(){ $(\'#field'.$index.'-values\').empty(); });
+
+			        	$(\'#field'.$index.'-value-lable\').fadeIn(100, function(){ $(\'#field'.$index.'-value-lable\').append(\'Значения:\'); });
+			        	$(\'#field'.$index.'-values\').fadeIn(100, function(){ $(\'#field'.$index.'-values\').append(\'	<input type="text" aria-label="field'.$index.'-value" name="field'.$index.'[values]" id="field'.$index.'[value]" class="form-control" placeholder="Введите значения" value="'.$values.'">\'); });
+			        }
+			        if(value == \'select_category\'){
+			        	$(\'#field'.$index.'-value-lable\').fadeOut(100, function(){ $(\'#field'.$index.'-value-lable\').empty(); });
+			        	$(\'#field'.$index.'-values\').fadeOut(100, function(){ $(\'#field'.$index.'-values\').empty(); });
+
+			        	$(\'#field'.$index.'-value-lable\').fadeIn(100, function(){ $(\'#field'.$index.'-value-lable\').append(\'Категория:\'); });
+			        	$(\'#field'.$index.'-values\').fadeIn(100, function(){ $(\'#field'.$index.'-values\').append(\' <select class="form-control" name="field'.$index.'[value]" id="field'.$index.'[value]" ><option value="0" selected>Выберите категорию...</option>\' + categories + \'</select>	 \'); });
+			        }
+			    });
+	     		' . "\n";
 
 				$index = $index + 1;
 			}
@@ -254,7 +327,7 @@
 							lastField = '.$index.';
 						</script>
 			';
-			return $complete;
+			return ["complete" => $complete, "js" => $js];
 		}
 	}
 ?>

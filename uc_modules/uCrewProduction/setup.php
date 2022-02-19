@@ -16,6 +16,7 @@
 				"privileges" => "production"
 			]
 		],
-		["section" => "Производство"]		
+		["section" => "Производство"],
+		["icon" => "fa fa-industry"]	
 	);
 ?>
