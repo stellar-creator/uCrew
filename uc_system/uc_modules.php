@@ -4,6 +4,7 @@
 	 */
 	class uCrewModules extends uCrewConfiguration {
 		public $pages = array();
+		public $applets = array();
 		public $modules_data = array();
 		// This function add module data to system
 		public function addModule($name, $description, $category, $author, $pages, $configuraion, $section, $icon = ["icon" => "fa fa-question-circle"]){ 
@@ -34,6 +35,10 @@
 				$pages, 
 				$configuraion
 			];
+		}
+		// Add applet to system function
+		public function addApplet($file, $class, $functions){
+			array_push($this->applets, [$file, $class, $functions]);
 		}
 		// Read modules from directory
 		public function getModules(){

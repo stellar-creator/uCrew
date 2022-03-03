@@ -5,7 +5,11 @@
 		"Bussiness module",								// Category
 		"Stellar Creator",								// Author
 		[
-			"main" => "Все проекты"
+			"projects" => "Проекты",
+			"pcb" => "Печатные платы",
+			"mechanics" => "Механика",
+			"cables" => "Кабели",
+			"other" => "Различные изделия",
 		],												// Pages
 		["configuration" => [							// Configuration
 				"menu" => 1, 
@@ -13,7 +17,17 @@
 				"privileges" => "projects"
 			]
 		],
-		["section" => "Проекты"],						// Menu section
+		["section" => "Разработки"],						// Menu section
 		["icon" => "fa fa-tasks"]						// Menu icon
+	);
+
+	// TODO: add applets API
+	$this->ucModules->addApplet(
+		"info",											// File
+		"uCrewProjectsInfo",							// Class name	
+		[
+			"getTotalProjectsCount" => "getTotalProjectsCount",	// Virtual Link => Function in class
+			"getRemovedProjects" => "getRemovedProjects"
+		]
 	);
 ?>
