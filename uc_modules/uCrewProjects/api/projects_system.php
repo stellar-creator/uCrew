@@ -36,7 +36,7 @@
 
 			return '
 			<nav aria-label="Page navigation example">
-			  <ul class="pagination">
+			  <ul class="pagination justify-content-end">
 			    <li class="page-item">
 			      <a class="page-link" href="/?page=uCrewProjects/mechanics&p=1&c='.$count.'" aria-label="Начало">
 			        <span aria-hidden="true">&laquo;</span>
@@ -66,6 +66,22 @@
 			}
 
 			return $list;
+		}
+
+		public function getMechanicsLastCodeName(){
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'mechanics_codename'";
+			$data = $this->ucs_Database->getAllData($sql)[0]['data_value'];
+			$sufix = "TBM";
+			if($data < 1000){
+				$data = $sufix . '0' . $data;
+			}
+			if($data >= 1000 and $data < 10000){
+				$data = $sufix . '00' . $data;
+			}
+			if($data >= 10000 and $data < 100000){
+				$data = $sufix . '000' . $data;
+			}
+			return $data;
 		}
 
 	}

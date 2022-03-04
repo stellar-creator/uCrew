@@ -95,7 +95,8 @@
 				$_temp = str_replace("%subitems_icon%", $information[0]["icon"], $_temp);
 				// Check section
 				$show = "";
-				if($section == $selected_page_section){
+				// If section equal and isset page, show menu tree
+				if($section == $selected_page_section AND isset($_GET['page'])){
 					$show = " show";
 				}
 				$_temp = str_replace("%show%", $show, $_temp);

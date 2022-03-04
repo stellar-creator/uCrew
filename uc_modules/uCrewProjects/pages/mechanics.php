@@ -17,6 +17,13 @@
 	$list = $uc_Projects->getMechanicsList($page, $count);
 	$pager = $uc_Projects->getMechanicsPager($page, $count);
 ?>
+<div class="row">
+	<div class="d-grid gap-1 d-md-flex justify-content-md-end" style="padding-bottom: 10px">
+	 	<a href="/?page=uCrewProjects/mechanicsAdd" class="btn btn-primary me-md-1" >
+	 		<i class="fa fa-plus-square" style="padding-right: 5px"></i> Добавить изделие
+		</a>
+	</div>
+</div>
 
 <div class="row">
 	<table class="table table-hover">
@@ -69,7 +76,7 @@
 			<tr>
 				<td class="align-middle text-center">'.$count.'</td>
 				<td><img src="'.$image.'" class="img-thumbnail imagecat" alt="'.$image.'"></td>
-				<td class="align-middle text-center">'.$values['mechanic_codename'].'</td>
+				<td class="align-middle text-center"><a href="/?page=uCrewProjects/mechanicsItem&id='.$values['mechanic_id'].'" class="link-dark" style="text-decoration:none">'.$values['mechanic_codename'].'</a></td>
 				<td class="align-middle">
 					<p>'.$values['mechanic_name'].'</p>
 					<p>
