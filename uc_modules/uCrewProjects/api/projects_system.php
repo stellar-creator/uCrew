@@ -4,10 +4,28 @@
 	 */
 	class uCrewProjects	{
 
-		private $ucs_Database ;
+		private $ucs_Database;
 
 		function __construct(){
 			$this->ucs_Database = new uCrewDatabase('ucrew_projects');
+		}
+
+		// Common projects data
+
+		public function getProjectDirectoryData(){
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'work_directory'";
+			$work_directory = $this->ucs_Database->getAllData($sql)[0]['data_text'];
+
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'work_directory_mask'";
+			$work_directory_mask = $this->ucs_Database->getAllData($sql)[0]['data_text'];
+			
+			return [ "directory" => $work_directory, "mask" => $work_directory_mask];
+		}
+
+		// Mechanics data
+
+		public function addMechanic($data){
+
 		}
 
 		public function getMechanicsPager($page, $count){
