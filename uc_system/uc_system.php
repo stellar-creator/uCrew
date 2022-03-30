@@ -2,6 +2,14 @@
 	/**
 	 * uCrew system code.
 	 */
+
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\Exception;
+
+	require 'uc_resources/applications/PHPMailer/src/Exception.php';
+	require 'uc_resources/applications/PHPMailer/src/PHPMailer.php';
+	require 'uc_resources/applications/PHPMailer/src/SMTP.php';
+
 	class uCrewSystem extends uCrewDatabase {
 		
 		// Session data
@@ -96,5 +104,46 @@
 				}
 			}
 		}
+	}
+
+	/**
+	 * uCrew system pipe handler.
+	*/
+
+	class uCrewSystemPipe extends uCrewDatabase {
+		
+		public function sendEmail($to, $subject, $body){
+	   		$smtp = $this->getSettingsData('smtp');
+	  		$smtp['setting_text'] = json_decode($smtp['setting_text'], true);
+
+			$mail = new PHPMailer(true);                                
+
+			try {
+			    //Server settings
+			    $mail->SMTPDebug = 2;                                   
+			    $mail->isSMTP();                                        
+			    $mail->Host = $smtp['setting_text']['server'];          
+			    $mail->SMTPAuth = true;                                 
+			    $mail->Username = $smtp['setting_text']['user'];       
+			    $mail->Password = $smtp['setting_text']['password'];    
+			    $mail->SMTPSecure = 'ssl';                              
+			    $mail->Port = $smtp['setting_text']['port'];            
+			        
+			    //Recipients
+			    $mail->setFrom($smtp['setting_text']['user'], 'uCrew');
+			    $mail->addAddress($to);             
+			       
+			    //Content
+			    $mail->isHTML(true);                                    
+			    $mail->Subject = $subject;
+			    $mail->Body    = $body;
+			    $mail->send();
+			    echo 'Message has been sent';
+			} catch (Exception $e) {
+			    echo 'Message could not be sent.';
+			    echo 'Mailer Error: ' . $mail->ErrorInfo;
+			}
+		}
+
 	}
 ?>

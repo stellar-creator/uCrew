@@ -4,12 +4,32 @@
 	// Init class
 	$uc_Projects = new uCrewProjects();
 	// Get last codename
-	$codename = $uc_Projects->getMechanicsLastCodeName();
+	$codename = $uc_Projects->getLastCodeName('mechanics_codename', 'TBM');
 	// Get directory data
 	$directory_data = $uc_Projects->getProjectDirectoryData();
+	// Get materials
+	$materials = $uc_Projects->getMechanicMaterials();
+	// Generate list
+	$options = '';
+	foreach ($materials as $material) {
+		$options .= "<option value=\"$material\">$material</option>\n";
+	}
 
-	print_r($_POST);
-	print_r($_FILES);
+	// Message variable
+
+	$message = "";
+
+	// Check if isset data
+	if(isset($_POST['mechanic_name'])){
+		// Add data
+		$uc_Projects->addMechanic($_POST, $_FILES);
+		$message .= '
+			<div class="alert alert-success alert-dismissible fade show" role="alert">
+			  Изделие <strong>'.$_POST['mechanic_fullname'].'</strong> успешно добавлено.
+			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		';
+	}
 ?>
 
 <style type="text/css">
@@ -27,13 +47,18 @@
 	}
 </style>
 
+<?php
+	echo $message;
+?>
+
 <div class="row">
 	<form action="/?page=uCrewProjects/mechanicsAdd" method="post" id="addMechanicForm" enctype="multipart/form-data">
 		<h4>Общая информация</h4>
 		<hr>
+		<input type="hidden" name="mechanic_fullname" id="mechanic_fullname" value="">
 		<div class="mb-3">
-		  <label for="mechanics_name" class="form-label">Наиминование изделия <i>(*обратите внимание, что следующие символы запрещены: \/():*?"|+.%!@&lt;&gt;)</i></label>
-		  <input class="form-control" type="text" id="mechanics_name" name="mechanics_name" required>
+		  <label for="mechanic_name" class="form-label">Наиминование изделия <i>(*обратите внимание, что следующие символы запрещены: \/():*?"|+.%!@&lt;&gt;)</i></label>
+		  <input class="form-control" type="text" id="mechanic_name" name="mechanic_name" required>
 		  <p>
 		  	<figcaption class="blockquote-footer">
 		  		Директория на диске: 
@@ -46,8 +71,8 @@
 		  </p>
 		</div>
 		<div class="mb-3">
-		  <label for="mechanics_description" class="form-label">Краткое описание</label>
-		  <input class="form-control" type="text" id="mechanics_description" name="mechanics_description" required>
+		  <label for="mechanic_description" class="form-label">Краткое описание</label>
+		  <input class="form-control" type="text" id="mechanic_description" name="mechanic_description" required>
  			<p>
 		  	<figcaption class="blockquote-footer">
 		  		Осталось символов: 
@@ -56,27 +81,37 @@
 		  </p>
 		</div>
 		<div class="mb-3">
-		  <label for="mechanics_material" class="form-label">Материал изделия</label>
-		  <select class="selectpicker show-tick form-control" id="mechanics_material" name="mechanics_material" data-live-search="true" data-size="5" required>
+		  <label for="mechanic_material" class="form-label">Материал изделия</label>
+		  <select class="selectpicker show-tick form-control" id="mechanic_material" name="mechanic_material" data-live-search="true" data-size="5" required>
 		  	<option value="unknown" selected>Другое</option>
-		  	<option value="alum">Алюминий</option>
+		  	<?php
+		  		echo $options;
+		  	?>
 		  </select>
 		</div>
 		<div class="mb-3">
-		  <label for="mechanics_status" class="form-label">Статус</label>
-		  <select class="form-control" id="mechanics_status" name="mechanics_status" required>
-		  	<option value="1" selected>Разработка</option>
-		  	<option value="2">Производство</option>
-		  	<option value="3">Архивный</option>
+		  <label for="mechanic_status" class="form-label">Статус</label>
+		  <select class="form-control" id="mechanic_status" name="mechanic_status" required>
+<?php
+  	$statuses = $uc_Projects->getStatuses();
+
+  	foreach ($statuses as $id => $data) {
+  		$sel = "";
+  		if($id == 2){
+  			$sel = "selected";
+  		}
+  		echo '<option value="'.$id.'" class="'.$data[1].'" '.$sel.'>'.$data[0].'</option>';
+  	}
+?>
 		  </select>
 		</div>
 		<div class="mb-3">
-		  <label for="mechanics_codename" class="form-label">Шифр изделия <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
-		  <input class="form-control" type="text" id="mechanics_codename" name="mechanics_codename" readonly value="<?php echo $codename; ?>" required>
+		  <label for="mechanic_codename" class="form-label">Шифр изделия <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
+		  <input class="form-control" type="text" id="mechanic_codename" name="mechanic_codename" readonly value="<?php echo $codename; ?>" required>
 		</div>
 		<div class="mb-3">
-		  <label for="select_image" class="form-label">Изображение изделия - JPEG (*.jpeg, *.jpg)</label>
-		  <input class="form-control" type="file" id="select_image" name="select_image" accept="image/jpeg" onchange="changeImagePreview()" required>
+		  <label for="mechanic_image" class="form-label">Изображение изделия - JPEG (*.jpeg, *.jpg)</label>
+		  <input class="form-control" type="file" id="mechanic_image" name="mechanic_image" accept="image/jpeg" onchange="changeImagePreview()" required>
 			<p>
 		  		<figcaption class="blockquote-footer">
 		  			Данный файл <cite>является обязательным</cite>  
@@ -85,16 +120,16 @@
 		</div>
 
 		<div class="mb-3" id="imagePreview">
-		  <label for="select_image_preview" class="form-label"></label>
-		  <img id="select_image_preview" class="img-thumbnail imagecat" src="uc_resources/images/uCrewStorage/categories/unknown.png" class="img-fluid" />
+		  <label for="mechanic_image_preview" class="form-label"></label>
+		  <img id="mechanic_image_preview" class="img-thumbnail imagecat" src="uc_resources/images/uCrewStorage/categories/unknown.png" class="img-fluid" />
 		</div>
 
 		<h4>Файлы изделия</h4>
 		<hr>
 
 		<div class="mb-3">
-		  <label for="select_3d_source" class="form-label">Исходный файл 3D модели - Компас 3D (*.m3d, *.a3d)</label>
-		  <input class="form-control" type="file" id="select_3d_source" name="3d_source" accept=".m3d,.a3d" required>
+		  <label for="mechanic_3dsource" class="form-label">Исходный файл 3D модели - Компас 3D (*.m3d, *.a3d)</label>
+		  <input class="form-control" type="file" id="mechanic_3dsource" name="mechanic_3dsource" accept=".m3d,.a3d" required>
 			<p>
 		  		<figcaption class="blockquote-footer">
 		  			Данный файл <cite>является обязательным</cite>  
@@ -102,8 +137,8 @@
 		  	</p>
 		</div>
 		<div class="mb-3">
-		  <label for="select_step" class="form-label">Готовый файл 3D модели - STEP AP203, AP214, AP242 (*.step, *.stp)</label>
-		  <input class="form-control" type="file" id="select_step" name="select_step" accept=".step,.stp" required>
+		  <label for="mechanic_3dstep" class="form-label">Готовый файл 3D модели - STEP AP203, AP214, AP242 (*.step, *.stp)</label>
+		  <input class="form-control" type="file" id="mechanic_3dstep" name="mechanic_3dstep" accept=".step,.stp" required>
 			<p>
 		  		<figcaption class="blockquote-footer">
 		  			Данный файл <cite>является обязательным</cite>  
@@ -113,46 +148,51 @@
 
 
 		<div class="mb-3">
-		  <label for="do_stl" class="form-label">Дополнительно</label>
-
-			<div class="form-check" id="do_stl">
+		  <label for="checkboxes" class="form-label">Дополнительно</label>
+			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addDraw">
 			  <label class="form-check-label" for="flexCheckDefault">
 			    Прикрепить файлы чертежа изделия
 			  </label>
 			</div>
 
-
-			<div class="form-check" id="do_stl">
-			  <input class="form-check-input" type="checkbox" id="addOther">
+			<div class="form-check" id="checkboxes">
+			  <input class="form-check-input" type="checkbox" id="addLaser" name="addLaser">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить дополнительные файлы <i>(аннотации, примечания, прочее)</i>
+			    Прикрепить файл для лазера
 			  </label>
 			</div>
-
-			<div class="form-check" id="do_stl">
-			  <input class="form-check-input" type="checkbox" id="generate_stl" name="generate_stl">
+			<div class="form-check" id="checkboxes">
+			  <input class="form-check-input" type="checkbox" id="addOther">
+			  <label class="form-check-label" for="flexCheckDefault">
+			    Прикрепить дополнительные файлы
+			  </label>
+			</div>
+			<div class="form-check" id="checkboxes">
+			  <input class="form-check-input" type="checkbox" id="generateStl" name="generateStl">
 			  <label class="form-check-label" for="flexCheckDefault">
 			    Преобразовать готовую 3D модель (*.step, *.stp) в STL (*.stl) файл для 3D печати
 			  </label>
 			</div>
-
 		</div>
+
 
 		<div class="mb-3" id="drawSourceSelect">
-		  <label for="select_draw" class="form-label">Исходный файл чертежа - Компас 3D (*.cdw)</label>
-		  <input class="form-control" type="file" id="select_draw" name="draw_source" accept=".cdw">
+		  <label for="mechanic_drawsource" class="form-label">Исходный файл чертежа - Компас 3D (*.cdw)</label>
+		  <input class="form-control" type="file" id="mechanic_drawsource" name="mechanic_drawsource" accept=".cdw">
 		</div>
 		<div class="mb-3" id="drawFileSelect">
-		  <label for="select_pdf" class="form-label">Готовый файл чертежа - Portable Document Format (*.pdf)</label>
-		  <input class="form-control" type="file" id="select_pdf" name="select_pdf" accept=".pdf">
+		  <label for="mechanic_drawpdf" class="form-label">Готовый файл чертежа - Portable Document Format (*.pdf)</label>
+		  <input class="form-control" type="file" id="mechanic_drawpdf" name="mechanic_drawpdf" accept=".pdf">
 		</div>
-
+		<div class="mb-3" id="drawLaserSelect">
+		  <label for="mechanic_drawlaser" class="form-label">Файл для лазера - векторный (*.dxf)</label>
+		  <input class="form-control" type="file" id="mechanic_drawlaser" name="mechanic_drawlaser" accept=".dxf">
+		</div>
 		<div class="mb-3" id="otherSelect">
-		  <label for="select_annotation" class="form-label">Дополнительные файлы - Любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="select_annotation" name="select_annotation" multiple>
+		  <label for="mechanic_otherfiles" class="form-label">Дополнительные файлы - Любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="mechanic_otherfiles" name="mechanic_otherfiles" multiple>
 		</div>
-
 
 		<div class="d-grid gap-1 d-md-flex justify-content-md-end" style="padding-bottom: 10px">
 			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMechanicModal" onclick="changeModalPresubmit()">
@@ -184,45 +224,56 @@
 					  			<li>
 					  				Механика
 					  				<ul>
-					  					<li>
-					  						Документация
-					  						<ul>
-					  							<li id="lfdescription"> 
-					  								<i class="fa fa-file" aria-hidden="true"></i> Спецефикации и аннотации
-					  							</li>
-					  						</ul>
-					  					</li>
-					  					<li id="lfdrawdir">Чертёж
-											<ul>
-					  							<li id="lfdrawpdf"> 
-					  								<i class="fa fa-file" aria-hidden="true"></i> Чертёж pdf
-					  							</li>
-					  						</ul>
-					  					</li>
-					  					<li>3D модель
-					  						<ul>
-					  							<li id="lf3dstep"> 
-					  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель
-					  							</li>
-					  						</ul>
-					  					</li>
-					  					<li>Изображение
-											<ul>
-					  							<li id="lfimage"> 
-					  								<i class="fa fa-file" aria-hidden="true"></i> Изображение
-					  							</li>
-					  						</ul>
-					  					</li>
-					  					<li>Исходные файлы
-											<ul>
-					  							<li id="lf3dsource"> 
-					  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель исходние
-					  							</li>
-					  							<li id="lfdrawsource"> 
-					  								<i class="fa fa-file" aria-hidden="true"></i> Чертёж исходник
-					  							</li>
-					  						</ul>
-					  					</li>
+							  			<li> <div id="lmechanic_fullname">Название</div>
+							  				<ul>
+							  					<li>
+							  						Документация
+							  						<ul>
+							  							<li id="lfdescription"> 
+							  								<i class="fa fa-file" aria-hidden="true"></i> Спецефикации и аннотации
+							  							</li>
+							  						</ul>
+							  					</li>
+							  					<li id="lfdrawdir">Чертёж
+													<ul>
+							  							<li id="lfdrawpdf"> 
+							  								<i class="fa fa-file" aria-hidden="true"></i> Чертёж pdf
+							  							</li>
+							  						</ul>
+							  					</li>
+							  					<li>3D модель
+							  						<ul>
+							  							<li id="lf3dstep"> 
+							  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель
+							  							</li>
+							  						</ul>
+							  					</li>
+							  					<li id="lfdrawvectordir">Векторные файлы
+							  						<ul>
+							  							<li id="lfdrawvector"> 
+							  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель
+							  							</li>
+							  						</ul>
+							  					</li>
+							  					<li>Изображение
+													<ul>
+							  							<li id="lfimage"> 
+							  								<i class="fa fa-file" aria-hidden="true"></i> Изображение
+							  							</li>
+							  						</ul>
+							  					</li>
+							  					<li>Исходные файлы
+													<ul>
+							  							<li id="lf3dsource"> 
+							  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель исходние
+							  							</li>
+							  							<li id="lfdrawsource"> 
+							  								<i class="fa fa-file" aria-hidden="true"></i> Чертёж исходник
+							  							</li>
+							  						</ul>
+							  					</li>
+							  				</ul>
+							  			</li>
 					  				</ul>
 					  			</li>
 					  		</ul>
@@ -253,6 +304,9 @@
 	var imageFile = '';
 	var source3dFile = '';
 	var step3dFile = '';
+	var sourcedrawFile = '';
+	var pdfdrawFile = '';
+	var vectordrawFile = '';
 
 	function changeCodeNameState(){
 		if(readonly == true){
@@ -263,19 +317,19 @@
 			$("#codeNameState").html("автоматически");
 		}
 
-		$("#mechanics_codename").attr("readonly", readonly);  
+		$("#mechanic_codename").attr("readonly", readonly);  
 	}
 
 	function changeImagePreview() {
 		$("#imagePreview").show("fast");
 
-  		var file = $("#select_image").get(0).files[0];
+  		var file = $("#mechanic_image").get(0).files[0];
 
         if(file){
             var reader = new FileReader();
 
             reader.onload = function(){
-                $("#select_image_preview").attr("src", reader.result);
+                $("#mechanic_image_preview").attr("src", reader.result);
             }
 
             reader.readAsDataURL(file);
@@ -287,15 +341,15 @@
 		var warning = 'fa fa-exclamation-circle';
 		var error = 'fa fa-times-circle';
 
-		var filename = $('#mechanics_codename').val();
+		var filename = $('#mechanic_codename').val();
 
-		if($('#mechanics_name').val().length > 0){
-			filename =  filename + ' - ' + $('#mechanics_name').val();
+		if($('#mechanic_name').val().length > 0){
+			filename =  filename + ' - ' + $('#mechanic_name').val();
 		}
 
 		// Check mechanics name
 		var mechanics_state = error;
-		var mechanics_value = $('#mechanics_name').val();
+		var mechanics_value = $('#mechanic_name').val();
 		if( mechanics_value.length > 0 ){
 			mechanics_state = success;
 		}
@@ -304,7 +358,7 @@
 
 		// Check mechanics codename
 		var mechanics_state = error;
-		var mechanics_value = $('#mechanics_codename').val();
+		var mechanics_value = $('#mechanic_codename').val();
 		if( mechanics_value.length > 0 ){
 			mechanics_state = success;
 		}
@@ -314,7 +368,7 @@
 
 		// Check mechanics description
 		var mechanics_state = error;
-		var mechanics_value = $('#mechanics_description').val();
+		var mechanics_value = $('#mechanic_description').val();
 		if( mechanics_value.length > 0 ){
 			mechanics_state = success;
 		}
@@ -338,7 +392,7 @@
 
 		// Check mechanics material
 		var mechanics_state = error;
-		var mechanics_value = $('#mechanics_material option:selected').text();
+		var mechanics_value = $('#mechanic_material option:selected').text();
 		if( mechanics_value.length > 0 ){
 			mechanics_state = success;
 		}
@@ -350,7 +404,7 @@
 
 		// Check mechanics status
 		var mechanics_state = error;
-		var mechanics_value = $('#mechanics_status option:selected').text();
+		var mechanics_value = $('#mechanic_status option:selected').text();
 		if( mechanics_value.length > 0 ){
 			mechanics_state = success;
 		}
@@ -377,6 +431,33 @@
 
 		$('#lf3dstep').html(html);
 
+		if( sourcedrawFile.length > 0 ){
+			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.cdw';
+		}else{
+			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
+		}
+
+		$('#lfdrawsource').html(html);
+
+		if( pdfdrawFile.length > 0 ){
+			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.pdf';
+		}else{
+			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
+		}
+
+		$('#lfdrawpdf').html(html);	
+
+		if( vectordrawFile.length > 0 ){
+			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.dxf';
+		}else{
+			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
+		}
+
+		$('#lfdrawvector').html(html);	
+
+
+		$('#lmechanic_fullname').html(filename);
+		$('#mechanic_fullname').val(filename);	
 	}
 
 	$( document ).ready(function() {
@@ -384,53 +465,74 @@
 		$("#imagePreview").hide();
 		$("#drawSourceSelect").hide();
 		$("#drawFileSelect").hide();
+		$("#drawLaserSelect").hide();
 		$("#otherSelect").hide();
 		$("#lfdrawsource").hide();
 		$("#lfdrawdir").hide();
-		$("#lfdrawdir").hide();
+		$("#lfdrawpdf").hide();
+		$("#lfdrawvectordir").hide();
+
 
 		// Description change
-	    $('#mechanics_description').on('input', function(){ 
-	    	var count = 250 - $('#mechanics_description').val().length;
+	    $('#mechanic_description').on('input', function(){ 
+	    	var count = 250 - $('#mechanic_description').val().length;
 	    	$('#symbols').html(count);
 	    });
 	    
 	    // Replace bad symbols in name
-	    $('body').on('input', '#mechanics_name', function(){
+	    $('body').on('input', '#mechanic_name', function(){
 			this.value = this.value.replace(/[^0-9A-Za-zА-Яа-я\.\, ]/g, '');
 		});
 
 	    // Set mechanic name
-	    $('#mechanics_name').on('input', function(){ 
-	    	var text = $('#mechanics_name').val().replace(/[^0-9A-Za-zА-Яа-я\.\, ]/g, '');
+	    $('#mechanic_name').on('input', function(){ 
+	    	var text = $('#mechanic_name').val().replace(/[^0-9A-Za-zА-Яа-я\.\, ]/g, '');
 	    	
 	    	$('#lmechanic_name').html(
 	    		'<i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: <i>' + text + '</i>'
 	    	);
 
-	    	if($('#mechanics_name').val().length > 0){
+	    	if($('#mechanic_name').val().length > 0){
 	    		text = ' - ' + text;
 	    	}
 
-	    	$('#directory').html('"<?php echo $directory_data['mask'] ?>Оборудование\\Механические изделия\\' + $('#mechanics_codename').val() + text  + '"');
+	    	$('#directory').html('"<?php echo $directory_data['mask'] ?>Оборудование\\Механические изделия\\' + $('#mechanic_codename').val() + text  + '"');
 	    });
 
 	    // On image change
-	     $('#select_image').change(function(e){
+	     $('#mechanic_image').change(function(e){
             var fileName = e.target.files[0].name;
             imageFile = fileName;
         });
 
 	    // On source 3d change
-	     $('#select_3d_source').change(function(e){
+	     $('#mechanic_3dsource').change(function(e){
             var fileName = e.target.files[0].name;
             source3dFile = fileName;
         });
 
 	    // On source 3d change
-	     $('#select_step').change(function(e){
+	     $('#mechanic_3dstep').change(function(e){
             var fileName = e.target.files[0].name;
             step3dFile = fileName;
+        });
+
+		// On source draw change
+	     $('#mechanic_drawsource').change(function(e){
+            var fileName = e.target.files[0].name;
+            sourcedrawFile = fileName;
+        });
+
+        // On source pdf change
+	     $('#mechanic_drawpdf').change(function(e){
+            var fileName = e.target.files[0].name;
+            pdfdrawFile = fileName;
+        });
+
+        // On source vector change
+	     $('#mechanic_drawlaser').change(function(e){
+            var fileName = e.target.files[0].name;
+            vectordrawFile = fileName;
         });
 
 	    // On add draw changed
@@ -438,9 +540,17 @@
 			if ($(this).is(':checked')) {
 				$("#drawSourceSelect").show("fast");
 				$("#drawFileSelect").show("fast");
+
+				$("#lfdrawsource").show("fast");
+				$("#lfdrawdir").show("fast");
+				$("#lfdrawpdf").show("fast");
   			}else{
 				$("#drawSourceSelect").hide("fast");
 				$("#drawFileSelect").hide("fast");
+
+				$("#lfdrawsource").hide("fast");
+				$("#lfdrawdir").hide("fast");
+				$("#lfdrawpdf").hide("fast");
   			}
         });
 
@@ -450,6 +560,17 @@
 				$("#otherSelect").show("fast");
   			}else{
 				$("#otherSelect").hide("fast");
+  			}
+        });
+
+       	// On laser change
+	    $('#addLaser').change(function(e){
+			if ($(this).is(':checked')) {
+				$("#drawLaserSelect").show("fast");
+				$("#lfdrawvectordir").show("fast");
+  			}else{
+				$("#drawLaserSelect").hide("fast");
+				$("#lfdrawvectordir").hide("fast");
   			}
         });
 

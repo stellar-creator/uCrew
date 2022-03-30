@@ -5,6 +5,8 @@
 
     $main_page_content = $this->ucDatabase->getMainPageContent();
 
+    $smtp = $this->ucDatabase->getSettingsData('smtp');
+    $smtp['setting_text'] = json_decode($smtp['setting_text'], true);
 ?>
                         <div class="row">
                             <div class="col-xl-12 col-md-6">
@@ -30,15 +32,19 @@
                             <div class="tab-content" id="pills-tabContent">
 
                               <div class="tab-pane fade show active" id="main-page" role="tabpanel" aria-labelledby="main-page-tab">
-                                <div class="form-group">
+                                <div class="form-group col-xl-8">
                                     <form action="/?page=uCrew/settings" method="post">
                                         <label class="control-label" for="main_page_content">Редактирование главной страницы:</label>
+                                        <hr>
                                         <textarea id="main_page_content" class="form-control d-none" rows="10" name="main_page_content">
     <?php
                                         echo $main_page_content;
     ?>
                                         </textarea>
+
+                                      <div class="float-end">
                                         <input type="submit" value="Сохранить" class="btn btn-success">
+                                      </div>
                                     </form>
                                 </div>
                               </div>
@@ -52,8 +58,43 @@
                               </div>
 
                               <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                                
 
+                                <form class="col-xl-8 form-group" action="/" method="get">
+                                    <input hidden="" name="page" value="uCrew/user">
+                                    <input hidden="" name="handler" value="change_notification_email">
+                                    <label class="control-label">Настройки оповещений на E-mail:</label>
+                                      <hr>
+                                      <div class="row mb-3">
+                                        <label for="name" class="col-sm-2 col-form-label">Сервер SMTP</label>
+                                        <div class="col-sm-10">
+                                          <input type="text" class="form-control" name="server" id="server" value="<?php echo $smtp['setting_text']['server']; ?>">
+                                        </div>
+                                      </div>
+                                      <div class="row mb-3">
+                                        <label for="password" class="col-sm-2 col-form-label">Порт (SSL)</label>
+                                        <div class="col-sm-10">
+                                          <input type="text" class="form-control" name="port" id="port" value="<?php echo $smtp['setting_text']['port']; ?>">
+                                        </div>
+                                      </div>
+                                      <div class="row mb-3">
+                                        <label for="email" class="col-sm-2 col-form-label">Пользователь</label>
+                                        <div class="col-sm-10">
+                                          <input type="email" class="form-control" id="email" value="<?php echo $smtp['setting_text']['user']; ?>">
+                                        </div>
+                                      </div>
+                                      <div class="row mb-3">
+                                        <label for="text" class="col-sm-2 col-form-label">Пароль</label>
+                                        <div class="col-sm-10">
+                                          <input type="password" class="form-control" id="password" name="password" value="<?php echo $smtp['setting_text']['password']; ?>">
+                                        </div>
+                                      </div>
 
+                                      <div class="float-end">
+                                        <button type="submit" class="btn btn-success">Изменить данные</button>
+                                      </div>
+                                    </form>
+      
                               </div>
 
                               <div class="tab-pane fade" id="updates" role="tabpanel" aria-labelledby="updates-tab">

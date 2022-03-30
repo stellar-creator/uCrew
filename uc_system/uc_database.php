@@ -78,6 +78,12 @@
    			return $this->query($query);
    		}
 
+   		// Get settings data
+   		public function getSettingsData($name){
+   			$query = "SELECT * FROM `uc_settings` WHERE `setting_name` = '$name'";
+   			return $this->getData($query);
+   		}
+
    		// Add event to database
    		public function addEvent($event_name, $event_text){
    			// Check if isset user
@@ -94,8 +100,8 @@
    		// Add event to database
    		public function getEvents($page, $total, $key = ''){
    			// Calcutate data
-   			$end = $page * $total;
-   			$start = $end - $total;
+   			$start = ($page * $total) - $total;
+			$end = $total;
    			$sufix = '';
    			// Check keys
    			if($key != ''){
@@ -142,7 +148,31 @@
 			$query = "SELECT `user_id`, `user_name`, `user_email`, `user_status`, `user_image`, `user_phone`, `user_location`, `user_post`, `user_groups` FROM `uc_users` ORDER BY `uc_users`.`user_id` DESC";
 			// Return data
 			return $this->getAllData($query);
-		}		
+		}
+		// Get user by id
+		public function getUser($user_id){
+			// Get users data
+			$query = "SELECT `user_id`, `user_name`, `user_email`, `user_status`, `user_image`, `user_phone`, `user_location`, `user_post`, `user_groups` FROM `uc_users` WHERE `user_id` = $user_id";
+			// Return data
+			return $this->getData($query);
+		}	
+
+		// Get user by id
+		public function getRecordsCount($table){
+			// Get count of records
+			$sql = "SELECT COUNT(*) FROM `".$table."`";
+			// Return count
+			return $this->getAllData($sql)[0]['COUNT(*)'];
+		}	
+
+		// Get user by id
+		public function getRecordsCountSpecific($table, $sql_add){
+			// Get count of records
+			$sql = "SELECT COUNT(*) FROM `".$table."` " . $sql_add;
+			// Return count
+			return $this->getAllData($sql)[0]['COUNT(*)'];
+		}	
+
 		// Get users lists
 		public function createChat($from, $to){
 			// Check if chat exists

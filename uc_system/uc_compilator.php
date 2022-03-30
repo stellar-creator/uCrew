@@ -155,6 +155,134 @@
 			$_temp = str_replace("%page%", $page, $this->page["header"]);
 			return str_replace("%page_pipe%", $page_pipe, $_temp);
 		}
+
+		public function checkImage($image){
+			if($image == ""){
+				$image = 'uc_resources/images/uCrewStorage/categories/unknown.png';
+			}
+			return $image;
+		}
+
+		public function generatePager($page, $count, $total, $url){
+			$number = $total / $count;
+
+			$total_pages = floor($number);     
+			$fraction = $number - $total_pages;
+
+			if($total_pages == 0 AND $fraction == 0){
+				return "";
+			}
+
+			if($fraction > 0){
+				$total_pages++;
+			}
+
+			$pages = '';
+
+			$start_pos = 1;
+			$end_pos = $total_pages;
+
+			// Check min and max pages at page
+			
+				if($page > 5){
+					$start_pos = $page - 4;
+				}else{
+					$start_pos = 1;
+				}
+				if($page + 4 > $total_pages){
+					$end_pos = $total_pages;
+				}else{
+					$end_pos = $page + 4;
+				}
+			
+
+
+			for ($i = $start_pos; $i < $end_pos + 1; $i++) { 
+				$class = '';
+
+				if($page == $i){
+					$class = 'active';
+				}
+
+				$pages .= '<li class="page-item '.$class.'"><a class="page-link" href="'.$url.'&p='.$i.'&c='.$count.'">'.$i.'</a></li>';
+			}
+
+			return '
+			<nav aria-label="Page navigation">
+			  <ul class="pagination justify-content-end">
+			    <li class="page-item">
+			      <a class="page-link" href="'.$url.'&p=1&c='.$count.'" aria-label="Начало">
+			        <span aria-hidden="true">&laquo;</span>
+			      </a>
+			    </li>
+			   	'.$pages.'
+			    <li class="page-item">
+			      <a class="page-link" href="'.$url.'&p='.$total_pages.'&c='.$count.'" aria-label="Конец">
+			        <span aria-hidden="true">&raquo;</span>
+			      </a>
+			    </li>
+			  </ul>
+			</nav>
+			';
+		}
+		public function generateTable($columns, $rows){
+			$data = '
+			<div class="table-responsive">
+			<table class="table table-hover">
+			<thead>
+			  <tr>
+			';
+
+			foreach ($columns as $key => $value) {
+				$title = $key;
+				$parametrs = "";
+
+				if($key == '0'){
+					$title = $value;
+				}else{
+					foreach ($value as $parametr => $text) {
+						$parametrs .= $parametr . '="' . $text . '" ';
+					}
+				}
+
+				$data .= '<th scope="col" '.$parametrs.'>'.$title.'</th>' ."\n";
+			}
+
+			$data .= '
+				</tr>
+			</thead>
+			<tbody>
+			';
+
+			foreach ($rows as $key => $value) {
+				$data .= '<tr>' ."\n";
+				foreach ($value as $text => $tagdata) {
+
+					$title = "";
+					$parametrs = "";
+
+					if(is_array($tagdata)){
+						$title = ($text);
+						foreach ($tagdata as $parametr => $tagvalue) {
+							$parametrs .= $parametr . '="' . $tagvalue . '" ';
+						}
+					}else{
+						$title = ($tagdata);
+					}
+
+					$data .= '<td '.$parametrs.'>'.$title.'</td>' ."\n";
+				}
+
+				$data .= '</tr>' ."\n";
+			}
+
+			$data .= '
+					</tbody>
+				</table>
+			</div>';
+
+			return $data;
+		}
 	}
 
 	class uCrewCompilator extends uCrewConfiguration {
@@ -277,6 +405,8 @@
 			$this->uc_CompilatorData = new uCrewCompilatorData(); 
 			// Init database class
 			$this->ucDatabase = new uCrewDatabase();
+			// Init database class
+			$this->ucSystemPipe = new uCrewSystemPipe();
 			// Init variables
 			$this->template_folder =  $this->directories["templates"] . $this->system["template"] . '/';
 		}
