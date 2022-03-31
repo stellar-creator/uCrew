@@ -155,12 +155,8 @@
 		}
 
 		public function updateSystem(){
-			/*$cmd = 'cd .. && git clone ' . $this->system['update_server'] . ' && ls';
-			print($cmd);
-			$output = shell_exec('bash -c "exec nohup setsid '.$cmd.' > /dev/null 2>&1 &"');
-			echo "<pre>$output</pre>";*/
-			$cmd = shell_exec("cd .. && git clone " . $this->system['update_server'] . " uCrewUpdate 2>&1");
-			echo $cmd;
+			$cmd = shell_exec("cd .. && git clone " . $this->system['update_server'] . " uCrewUpdate && rm uCrewUpdate/uc_system/uc_configuration.php && cp uCrew/uc_system/uc_configuration.php uCrewUpdate/uc_system/uc_configuration.php 2>&1");
+			echo $cmd;	
 		}
 	}
 ?>
