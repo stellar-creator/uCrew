@@ -145,5 +145,22 @@
 			}
 		}
 
+		public function checkUpdates(){
+			$server_file = $this->getSettingsData('version_remote')['setting_text'];
+			$remote_version_content = file_get_contents($server_file . 'uc_system/uc_version.php');
+			$version_data = array();
+			preg_match('/"([A-Z0-9.]+)"/', $remote_version_content, $version_data);
+			$remote_version = $version_data[1];
+			return $this->version != $remote_version ? array('state' => true, 'version' => $remote_version) : array('state' => false, 'version' => $remote_version); 
+		}
+
+		public function updateSystem(){
+			/*$cmd = 'cd .. && git clone ' . $this->system['update_server'] . ' && ls';
+			print($cmd);
+			$output = shell_exec('bash -c "exec nohup setsid '.$cmd.' > /dev/null 2>&1 &"');
+			echo "<pre>$output</pre>";*/
+			$cmd = shell_exec("cd .. && git clone " . $this->system['update_server'] . " uCrewUpdate 2>&1");
+			echo $cmd;
+		}
 	}
 ?>

@@ -145,7 +145,7 @@
 		// Get users lists
 		public function getUsers(){
 			// Get users data
-			$query = "SELECT `user_id`, `user_name`, `user_email`, `user_status`, `user_image`, `user_phone`, `user_location`, `user_post`, `user_groups` FROM `uc_users` ORDER BY `uc_users`.`user_id` DESC";
+			$query = "SELECT `user_id`, `user_name`, `user_email`, `user_status`, `user_image`, `user_phone`, `user_location`, `user_post`, `user_groups` FROM `uc_users` ORDER BY `uc_users`.`user_id` ASC";
 			// Return data
 			return $this->getAllData($query);
 		}

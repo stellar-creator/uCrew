@@ -234,10 +234,11 @@
 			';
 
 			foreach ($columns as $key => $value) {
+				
 				$title = $key;
 				$parametrs = "";
 
-				if($key == '0'){
+				if(is_numeric($key)){
 					$title = $value;
 				}else{
 					foreach ($value as $parametr => $text) {
@@ -382,6 +383,19 @@
 				"content" => "uc_pages/search.php",
 				"module" => "uCrewSystem",
 				"title" => "Поиск",
+				"configuration" => array(
+			    	"menu" => 0,
+			    	"content" => 1,
+			    	"privileges" => "user"
+				),
+				"section" => "Системное",	
+				"icon" => "fa-solid fa-sliders"
+			),
+			// Common settings page
+			"uCrew/update" => array(
+				"content" => "uc_pages/update.php",
+				"module" => "uCrewSystem",
+				"title" => "Обновление системы",
 				"configuration" => array(
 			    	"menu" => 0,
 			    	"content" => 1,
