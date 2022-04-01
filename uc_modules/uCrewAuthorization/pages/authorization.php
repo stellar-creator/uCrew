@@ -66,6 +66,12 @@
                 <p class="text-center" style="color:green">Подтверждение успешно!<br>Ждите одобрения администратора</p>
             </div>' . "\n";
       }
+      if($_SESSION["activation"] == "unactive"){
+         echo '            <div class="clearfix" style="padding-top: 5px">
+                <p class="text-center" style="color:red">Учётная запись не подтверждена</p>
+            </div>' . "\n";
+      }
+      
    }
 
 ?>

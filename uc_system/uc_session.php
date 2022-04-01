@@ -34,13 +34,19 @@
 			if($user_data != 0){
 				// Check user password
 				if($user_data["user_password"] == $password){
-					// Set session information
-					$_SESSION = $user_data;
-					// Get privileges
-					$_SESSION["privileges"] = $this->getUserPrivilegesByGroup($user_data["user_groups"]);
-					// Set result value to 1
-					$_SESSION['activation'] = "ok";
-					$this->addEvent("Пользователь авторизовался", "Пользователь " . $_SESSION["user_name"] . " авторизовался");
+					// Check user status
+					if($user_data["user_status"] == 1){
+						// Set session information
+						$_SESSION = $user_data;
+						// Get privileges
+						$_SESSION["privileges"] = $this->getUserPrivilegesByGroup($user_data["user_groups"]);
+						// Set result value to 1
+						$_SESSION['activation'] = "ok";
+						$this->addEvent("Пользователь авторизовался", "Пользователь " . $_SESSION["user_name"] . " авторизовался");
+					}else{
+						$_SESSION['activation'] = "unactive";
+						$this->addEvent("Попытка авторизации (неверный пароль)", "Пользователь " . $name . " неактивен");
+					}
 
 				}else{
 					$_SESSION['activation'] = "wrongpass";

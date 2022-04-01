@@ -166,7 +166,50 @@
                               </div>
 
                               <div class="tab-pane fade" id="system" role="tabpanel" aria-labelledby="system-tab">
+                               
+                               <div class="row">
+                                <form class="col-xl-8 form-group" action="/" method="get">
+                                    <input hidden="" name="page" value="uCrew/settings">
+                                    <input hidden="" name="handler" value="change_notification_email">
+                                    <label class="control-label">Общие настройки:</label>
+                                      <hr>
+                                      <div class="row mb-3">
+                                        <label for="name" class="col-sm-2 col-form-label">Наиминование системы</label>
+                                        <div class="col-sm-10">
+                                          <input type="text" class="form-control" name="system_name" id="system_name" value="<?php echo $this->system['organization']; ?>">
+                                        </div>
+                                      </div>
 
+                                      <div class="row mb-3">
+                                        <label for="password" class="col-sm-2 col-form-label">Расположение</label>
+                                        <div class="col-sm-10">
+                                          <input type="text" class="form-control" name="directory" id="directory" value="<?php echo $this->system['main_directory']; ?>">
+                                        </div>
+                                      </div>
+                                      
+                                        <div class="float-end">
+                                          <button type="submit" class="btn btn-success">Изменить данные</button>
+                                        </div>
+                                     
+                                    </form>
+                                </div>
+                                <div class="row">
+                                <form class="col-xl-8 form-group" action="/" method="get">
+                                    <input hidden="" name="page" value="uCrew/settings">
+                                    <input hidden="" name="handler" value="change_notification_email">
+                                    <label class="control-label">Настройки сервера:</label>
+                                      <hr>
+                                      <div class="row mb-3">
+                                        <label for="name" class="col-sm-2 col-form-label">Доменное имя</label>
+                                        <div class="col-sm-10">
+                                          <input type="text" class="form-control" name="domain" id="domain" value="<?php echo $this->system['main_domain']; ?>">
+                                        </div>
+                                      </div>
+                                      <div class="float-end">
+                                        <button type="submit" class="btn btn-success">Изменить данные</button>
+                                      </div>
+                                    </form>
+                                </div>
                               </div>
 
                               <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
@@ -185,7 +228,7 @@
                                 
 
                                 <form class="col-xl-8 form-group" action="/" method="get">
-                                    <input hidden="" name="page" value="uCrew/user">
+                                    <input hidden="" name="page" value="uCrew/settings">
                                     <input hidden="" name="handler" value="change_notification_email">
                                     <label class="control-label">Настройки оповещений на E-mail:</label>
                                       <hr>
@@ -247,7 +290,7 @@
                                     </div>
                                   </div>
 
-                                    <input hidden="" name="page" value="uCrew/user">
+                                    <input hidden="" name="page" value="uCrew/settings">
                                     <input hidden="" name="handler" value="change_update_server">
                                     <label class="control-label">Настройки сервера обновлений:</label>
                                       <hr>
