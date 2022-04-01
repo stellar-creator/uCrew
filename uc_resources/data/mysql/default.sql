@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost:3306
--- Время создания: Мар 04 2022 г., 00:21
+-- Время создания: Апр 02 2022 г., 01:02
 -- Версия сервера: 5.7.37-0ubuntu0.18.04.1
--- Версия PHP: 7.2.24-0ubuntu0.18.04.10
+-- Версия PHP: 7.2.24-0ubuntu0.18.04.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -32,12 +32,13 @@ USE `ucrew_database`;
 --
 
 DROP TABLE IF EXISTS `uc_chats`;
-CREATE TABLE `uc_chats` (
-  `chat_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `uc_chats` (
+  `chat_id` int(11) NOT NULL AUTO_INCREMENT,
   `chat_from` int(11) NOT NULL,
   `chat_to` int(11) NOT NULL,
   `chat_primary` int(11) NOT NULL,
-  `chat_activated` int(1) NOT NULL DEFAULT '1'
+  `chat_activated` int(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`chat_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -50,17 +51,18 @@ CREATE TABLE `uc_chats` (
 -- Структура таблицы `uc_events`
 --
 -- Создание: Фев 06 2022 г., 12:57
--- Последнее обновление: Мар 03 2022 г., 18:37
+-- Последнее обновление: Апр 01 2022 г., 19:49
 --
 
 DROP TABLE IF EXISTS `uc_events`;
-CREATE TABLE `uc_events` (
-  `event_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `uc_events` (
+  `event_id` int(11) NOT NULL AUTO_INCREMENT,
   `event_user_id` int(11) NOT NULL,
   `event_name` varchar(1024) NOT NULL,
   `event_text` varchar(2048) NOT NULL,
   `event_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `event_wasviewed` int(11) NOT NULL DEFAULT '0'
+  `event_wasviewed` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -76,10 +78,11 @@ CREATE TABLE `uc_events` (
 --
 
 DROP TABLE IF EXISTS `uc_groups`;
-CREATE TABLE `uc_groups` (
-  `group_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `uc_groups` (
+  `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(128) NOT NULL,
-  `group_privileges` varchar(1024) NOT NULL
+  `group_privileges` varchar(1024) NOT NULL,
+  PRIMARY KEY (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -95,9 +98,10 @@ CREATE TABLE `uc_groups` (
 --
 
 DROP TABLE IF EXISTS `uc_locations`;
-CREATE TABLE `uc_locations` (
-  `location_id` int(11) NOT NULL,
-  `location_name` varchar(2048) NOT NULL
+CREATE TABLE IF NOT EXISTS `uc_locations` (
+  `location_id` int(11) NOT NULL AUTO_INCREMENT,
+  `location_name` varchar(2048) NOT NULL,
+  PRIMARY KEY (`location_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -113,14 +117,15 @@ CREATE TABLE `uc_locations` (
 --
 
 DROP TABLE IF EXISTS `uc_messages`;
-CREATE TABLE `uc_messages` (
-  `message_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `uc_messages` (
+  `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `message_chat` int(11) NOT NULL,
   `message_from` int(11) NOT NULL,
   `message_to` int(11) NOT NULL,
   `message_title` varchar(1024) NOT NULL,
   `message_text` text NOT NULL,
-  `message_read` int(1) NOT NULL DEFAULT '0'
+  `message_read` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`message_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -136,9 +141,10 @@ CREATE TABLE `uc_messages` (
 --
 
 DROP TABLE IF EXISTS `uc_posts`;
-CREATE TABLE `uc_posts` (
-  `post_id` int(11) NOT NULL,
-  `post_name` varchar(512) NOT NULL
+CREATE TABLE IF NOT EXISTS `uc_posts` (
+  `post_id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_name` varchar(512) NOT NULL,
+  PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -154,11 +160,12 @@ CREATE TABLE `uc_posts` (
 --
 
 DROP TABLE IF EXISTS `uc_settings`;
-CREATE TABLE `uc_settings` (
-  `setting_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `uc_settings` (
+  `setting_id` int(11) NOT NULL AUTO_INCREMENT,
   `setting_name` varchar(128) NOT NULL,
   `setting_value` varchar(32) NOT NULL,
-  `setting_text` text NOT NULL
+  `setting_text` text NOT NULL,
+  PRIMARY KEY (`setting_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -170,12 +177,13 @@ CREATE TABLE `uc_settings` (
 --
 -- Структура таблицы `uc_users`
 --
--- Создание: Фев 06 2022 г., 16:52
+-- Создание: Апр 01 2022 г., 16:51
+-- Последнее обновление: Апр 01 2022 г., 19:27
 --
 
 DROP TABLE IF EXISTS `uc_users`;
-CREATE TABLE `uc_users` (
-  `user_id` int(11) NOT NULL COMMENT 'Inuque user id',
+CREATE TABLE IF NOT EXISTS `uc_users` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Inuque user id',
   `user_name` varchar(128) NOT NULL COMMENT 'User name',
   `user_email` varchar(128) NOT NULL COMMENT 'User E-mail',
   `user_password` varchar(128) NOT NULL,
@@ -185,109 +193,14 @@ CREATE TABLE `uc_users` (
   `user_phone` varchar(32) NOT NULL COMMENT 'User phone number',
   `user_location` int(11) NOT NULL,
   `user_post` int(11) NOT NULL,
-  `user_groups` varchar(256) NOT NULL DEFAULT '0;' COMMENT 'User groups privileges list'
+  `user_groups` varchar(256) NOT NULL DEFAULT '0;' COMMENT 'User groups privileges list',
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='uCrew users table';
 
 --
 -- СВЯЗИ ТАБЛИЦЫ `uc_users`:
 --
 
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `uc_chats`
---
-ALTER TABLE `uc_chats`
-  ADD PRIMARY KEY (`chat_id`);
-
---
--- Индексы таблицы `uc_events`
---
-ALTER TABLE `uc_events`
-  ADD PRIMARY KEY (`event_id`);
-
---
--- Индексы таблицы `uc_groups`
---
-ALTER TABLE `uc_groups`
-  ADD PRIMARY KEY (`group_id`);
-
---
--- Индексы таблицы `uc_locations`
---
-ALTER TABLE `uc_locations`
-  ADD PRIMARY KEY (`location_id`);
-
---
--- Индексы таблицы `uc_messages`
---
-ALTER TABLE `uc_messages`
-  ADD PRIMARY KEY (`message_id`);
-
---
--- Индексы таблицы `uc_posts`
---
-ALTER TABLE `uc_posts`
-  ADD PRIMARY KEY (`post_id`);
-
---
--- Индексы таблицы `uc_settings`
---
-ALTER TABLE `uc_settings`
-  ADD PRIMARY KEY (`setting_id`);
-
---
--- Индексы таблицы `uc_users`
---
-ALTER TABLE `uc_users`
-  ADD PRIMARY KEY (`user_id`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `uc_chats`
---
-ALTER TABLE `uc_chats`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `uc_events`
---
-ALTER TABLE `uc_events`
-  MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `uc_groups`
---
-ALTER TABLE `uc_groups`
-  MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `uc_locations`
---
-ALTER TABLE `uc_locations`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `uc_messages`
---
-ALTER TABLE `uc_messages`
-  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `uc_posts`
---
-ALTER TABLE `uc_posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `uc_settings`
---
-ALTER TABLE `uc_settings`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `uc_users`
---
-ALTER TABLE `uc_users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Inuque user id';
 
 --
 -- Метаданные
@@ -367,17 +280,45 @@ USE `ucrew_projects`;
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `ucp_cables`
+--
+-- Создание: Мар 27 2022 г., 15:21
+--
+
+DROP TABLE IF EXISTS `ucp_cables`;
+CREATE TABLE IF NOT EXISTS `ucp_cables` (
+  `cable_id` int(11) NOT NULL AUTO_INCREMENT,
+  `cable_name` varchar(256) NOT NULL,
+  `cable_description` varchar(2048) NOT NULL,
+  `cable_codename` varchar(256) NOT NULL,
+  `cable_author_id` int(1) NOT NULL,
+  `cable_create_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cable_status` int(2) NOT NULL,
+  `cable_image` varchar(1024) NOT NULL,
+  `cable_data` text NOT NULL,
+  `cable_activation` int(2) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`cable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- СВЯЗИ ТАБЛИЦЫ `ucp_cables`:
+--
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `ucp_data`
 --
--- Создание: Мар 02 2022 г., 17:51
+-- Создание: Мар 27 2022 г., 06:38
 --
 
 DROP TABLE IF EXISTS `ucp_data`;
-CREATE TABLE `ucp_data` (
-  `data_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ucp_data` (
+  `data_id` int(11) NOT NULL AUTO_INCREMENT,
   `data_name` varchar(256) NOT NULL,
-  `data_value` int(11) NOT NULL,
-  `data_text` text NOT NULL
+  `data_value` int(11) NOT NULL DEFAULT '0',
+  `data_text` text NOT NULL,
+  PRIMARY KEY (`data_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -389,13 +330,12 @@ CREATE TABLE `ucp_data` (
 --
 -- Структура таблицы `ucp_mechanics`
 --
--- Создание: Мар 02 2022 г., 18:49
--- Последнее обновление: Мар 02 2022 г., 18:54
+-- Создание: Мар 13 2022 г., 10:02
 --
 
 DROP TABLE IF EXISTS `ucp_mechanics`;
-CREATE TABLE `ucp_mechanics` (
-  `mechanic_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ucp_mechanics` (
+  `mechanic_id` int(11) NOT NULL AUTO_INCREMENT,
   `mechanic_name` varchar(256) NOT NULL,
   `mechanic_description` varchar(2048) NOT NULL,
   `mechanic_codename` varchar(256) NOT NULL,
@@ -404,7 +344,8 @@ CREATE TABLE `ucp_mechanics` (
   `mechanic_status` int(2) NOT NULL,
   `mechanic_image` varchar(1024) NOT NULL,
   `mechanic_data` text NOT NULL,
-  `mechanic_activation` int(2) NOT NULL DEFAULT '1'
+  `mechanic_activation` int(2) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`mechanic_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -414,27 +355,28 @@ CREATE TABLE `ucp_mechanics` (
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `ucp_pcb`
+-- Структура таблицы `ucp_pcbs`
 --
--- Создание: Мар 02 2022 г., 17:53
+-- Создание: Мар 27 2022 г., 06:29
 --
 
-DROP TABLE IF EXISTS `ucp_pcb`;
-CREATE TABLE `ucp_pcb` (
-  `pcb_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `ucp_pcbs`;
+CREATE TABLE IF NOT EXISTS `ucp_pcbs` (
+  `pcb_id` int(11) NOT NULL AUTO_INCREMENT,
   `pcb_name` varchar(256) NOT NULL,
-  `pcb_description` varchar(1024) NOT NULL,
-  `pcb_codename` varchar(32) NOT NULL,
-  `pcb_author_id` int(11) NOT NULL,
+  `pcb_description` varchar(2048) NOT NULL,
+  `pcb_codename` varchar(256) NOT NULL,
+  `pcb_author_id` int(1) NOT NULL,
   `pcb_create_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `pcb_status` int(2) NOT NULL,
   `pcb_image` varchar(1024) NOT NULL,
   `pcb_data` text NOT NULL,
-  `pcb_activation` int(2) NOT NULL DEFAULT '1'
+  `pcb_activation` int(2) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`pcb_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- СВЯЗИ ТАБЛИЦЫ `ucp_pcb`:
+-- СВЯЗИ ТАБЛИЦЫ `ucp_pcbs`:
 --
 
 -- --------------------------------------------------------
@@ -446,8 +388,8 @@ CREATE TABLE `ucp_pcb` (
 --
 
 DROP TABLE IF EXISTS `ucp_projects`;
-CREATE TABLE `ucp_projects` (
-  `project_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ucp_projects` (
+  `project_id` int(11) NOT NULL AUTO_INCREMENT,
   `project_name` varchar(256) NOT NULL,
   `project_description` varchar(2048) NOT NULL,
   `project_codename` varchar(256) NOT NULL,
@@ -456,70 +398,23 @@ CREATE TABLE `ucp_projects` (
   `project_status` int(2) NOT NULL,
   `project_image` varchar(1024) NOT NULL,
   `project_data` text NOT NULL,
-  `project_activation` int(2) NOT NULL DEFAULT '1'
+  `project_activation` int(2) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- СВЯЗИ ТАБЛИЦЫ `ucp_projects`:
 --
 
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `ucp_data`
---
-ALTER TABLE `ucp_data`
-  ADD PRIMARY KEY (`data_id`);
-
---
--- Индексы таблицы `ucp_mechanics`
---
-ALTER TABLE `ucp_mechanics`
-  ADD PRIMARY KEY (`mechanic_id`);
-
---
--- Индексы таблицы `ucp_pcb`
---
-ALTER TABLE `ucp_pcb`
-  ADD PRIMARY KEY (`pcb_id`);
-
---
--- Индексы таблицы `ucp_projects`
---
-ALTER TABLE `ucp_projects`
-  ADD PRIMARY KEY (`project_id`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `ucp_data`
---
-ALTER TABLE `ucp_data`
-  MODIFY `data_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `ucp_mechanics`
---
-ALTER TABLE `ucp_mechanics`
-  MODIFY `mechanic_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `ucp_pcb`
---
-ALTER TABLE `ucp_pcb`
-  MODIFY `pcb_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `ucp_projects`
---
-ALTER TABLE `ucp_projects`
-  MODIFY `project_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Метаданные
 --
 USE `phpmyadmin`;
+
+--
+-- Метаданные для таблицы ucp_cables
+--
 
 --
 -- Метаданные для таблицы ucp_data
@@ -534,10 +429,10 @@ USE `phpmyadmin`;
 --
 
 INSERT INTO `pma__table_uiprefs` (`username`, `db_name`, `table_name`, `prefs`, `last_update`) VALUES
-('root', 'ucrew_projects', 'ucp_mechanics', '{\"sorted_col\":\"`ucp_mechanics`.`mechanic_codename`  DESC\"}', '2022-03-02 18:56:09');
+('root', 'ucrew_projects', 'ucp_mechanics', '{\"sorted_col\":\"`mechanic_id`  DESC\"}', '2022-03-27 15:23:34');
 
 --
--- Метаданные для таблицы ucp_pcb
+-- Метаданные для таблицы ucp_pcbs
 --
 
 --
@@ -563,13 +458,14 @@ USE `ucrew_storage`;
 --
 
 DROP TABLE IF EXISTS `ucs_categories`;
-CREATE TABLE `ucs_categories` (
-  `category_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ucs_categories` (
+  `category_id` int(11) NOT NULL AUTO_INCREMENT,
   `category_name` varchar(256) NOT NULL,
   `category_description` varchar(2048) NOT NULL,
   `category_for` int(11) NOT NULL DEFAULT '0',
   `category_image` varchar(2048) NOT NULL,
-  `category_status` int(2) NOT NULL DEFAULT '1'
+  `category_status` int(2) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -585,8 +481,8 @@ CREATE TABLE `ucs_categories` (
 --
 
 DROP TABLE IF EXISTS `ucs_items`;
-CREATE TABLE `ucs_items` (
-  `item_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ucs_items` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT,
   `item_category` int(11) NOT NULL,
   `item_name` varchar(1024) NOT NULL,
   `item_data` text NOT NULL,
@@ -596,7 +492,8 @@ CREATE TABLE `ucs_items` (
   `item_components` text NOT NULL,
   `item_ manufacturer` int(11) NOT NULL,
   `item_suppliers` varchar(128) NOT NULL,
-  `item_location` int(11) NOT NULL
+  `item_location` int(11) NOT NULL,
+  PRIMARY KEY (`item_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -612,9 +509,10 @@ CREATE TABLE `ucs_items` (
 --
 
 DROP TABLE IF EXISTS `ucs_locations`;
-CREATE TABLE `ucs_locations` (
-  `location_id` int(11) NOT NULL,
-  `location_name` varchar(512) NOT NULL
+CREATE TABLE IF NOT EXISTS `ucs_locations` (
+  `location_id` int(11) NOT NULL AUTO_INCREMENT,
+  `location_name` varchar(512) NOT NULL,
+  PRIMARY KEY (`location_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -630,14 +528,15 @@ CREATE TABLE `ucs_locations` (
 --
 
 DROP TABLE IF EXISTS `ucs_suppliers`;
-CREATE TABLE `ucs_suppliers` (
-  `supplier_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ucs_suppliers` (
+  `supplier_id` int(11) NOT NULL AUTO_INCREMENT,
   `supplier_name` varchar(512) NOT NULL,
   `supplier_description` text NOT NULL,
   `supplier_address` varchar(1024) NOT NULL,
   `supplier_site` varchar(1024) NOT NULL,
   `supplier_phone` varchar(32) NOT NULL,
-  `supplier_email` varchar(256) NOT NULL
+  `supplier_email` varchar(256) NOT NULL,
+  PRIMARY KEY (`supplier_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -653,11 +552,12 @@ CREATE TABLE `ucs_suppliers` (
 --
 
 DROP TABLE IF EXISTS `ucs_templates`;
-CREATE TABLE `ucs_templates` (
-  `template_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `ucs_templates` (
+  `template_id` int(11) NOT NULL AUTO_INCREMENT,
   `template_category` int(11) NOT NULL,
   `template_data` text NOT NULL,
-  `template_activated` int(1) NOT NULL DEFAULT '1'
+  `template_activated` int(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`template_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -673,93 +573,20 @@ CREATE TABLE `ucs_templates` (
 --
 
 DROP TABLE IF EXISTS `usc_releases`;
-CREATE TABLE `usc_releases` (
-  `release_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `usc_releases` (
+  `release_id` int(11) NOT NULL AUTO_INCREMENT,
   `release_item` int(11) NOT NULL,
   `release_count` int(11) NOT NULL,
   `release_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `release_user` int(11) NOT NULL,
-  `release_comment` varchar(1024) NOT NULL
+  `release_comment` varchar(1024) NOT NULL,
+  PRIMARY KEY (`release_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- СВЯЗИ ТАБЛИЦЫ `usc_releases`:
 --
 
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `ucs_categories`
---
-ALTER TABLE `ucs_categories`
-  ADD PRIMARY KEY (`category_id`);
-
---
--- Индексы таблицы `ucs_items`
---
-ALTER TABLE `ucs_items`
-  ADD PRIMARY KEY (`item_id`);
-
---
--- Индексы таблицы `ucs_locations`
---
-ALTER TABLE `ucs_locations`
-  ADD PRIMARY KEY (`location_id`);
-
---
--- Индексы таблицы `ucs_suppliers`
---
-ALTER TABLE `ucs_suppliers`
-  ADD PRIMARY KEY (`supplier_id`);
-
---
--- Индексы таблицы `ucs_templates`
---
-ALTER TABLE `ucs_templates`
-  ADD PRIMARY KEY (`template_id`);
-
---
--- Индексы таблицы `usc_releases`
---
-ALTER TABLE `usc_releases`
-  ADD PRIMARY KEY (`release_id`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `ucs_categories`
---
-ALTER TABLE `ucs_categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `ucs_items`
---
-ALTER TABLE `ucs_items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `ucs_locations`
---
-ALTER TABLE `ucs_locations`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `ucs_suppliers`
---
-ALTER TABLE `ucs_suppliers`
-  MODIFY `supplier_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `ucs_templates`
---
-ALTER TABLE `ucs_templates`
-  MODIFY `template_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `usc_releases`
---
-ALTER TABLE `usc_releases`
-  MODIFY `release_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Метаданные
