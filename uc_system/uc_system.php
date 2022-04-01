@@ -3,13 +3,6 @@
 	 * uCrew system code.
 	 */
 
-	use PHPMailer\PHPMailer\PHPMailer;
-	use PHPMailer\PHPMailer\Exception;
-
-	require 'uc_resources/applications/PHPMailer/src/Exception.php';
-	require 'uc_resources/applications/PHPMailer/src/PHPMailer.php';
-	require 'uc_resources/applications/PHPMailer/src/SMTP.php';
-
 	class uCrewSystem extends uCrewDatabase {
 		
 		// Session data
@@ -95,8 +88,16 @@
 						$this->ucSession->unauthorizeUser();
 						break;
 					// Session logout handler
+					case 'registration':
+						$this->ucSession->registerUser($_POST);
+						break;
+					// Session logout handler
 					case 'search':
 						$_GET["page"] = 'uCrew/search';
+						break;	
+					// Session logout handler
+					case 'activation':
+						$this->ucSession->appendUserEmail($_GET["user"]);
 						break;					
 					default:
 						print("handler is empty");
@@ -109,9 +110,16 @@
 	/**
 	 * uCrew system pipe handler.
 	*/
+	
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\Exception;
+
+	require 'uc_resources/applications/PHPMailer/src/Exception.php';
+	require 'uc_resources/applications/PHPMailer/src/PHPMailer.php';
+	require 'uc_resources/applications/PHPMailer/src/SMTP.php';
 
 	class uCrewSystemPipe extends uCrewDatabase {
-		
+
 		public function sendEmail($to, $subject, $body){
 	   		$smtp = $this->getSettingsData('smtp');
 	  		$smtp['setting_text'] = json_decode($smtp['setting_text'], true);
@@ -120,7 +128,8 @@
 
 			try {
 			    //Server settings
-			    $mail->SMTPDebug = 2;                                   
+			    $mail->CharSet = 'UTF-8';
+			    $mail->SMTPDebug = 0;                                   
 			    $mail->isSMTP();                                        
 			    $mail->Host = $smtp['setting_text']['server'];          
 			    $mail->SMTPAuth = true;                                 
@@ -138,7 +147,6 @@
 			    $mail->Subject = $subject;
 			    $mail->Body    = $body;
 			    $mail->send();
-			    echo 'Message has been sent';
 			} catch (Exception $e) {
 			    echo 'Message could not be sent.';
 			    echo 'Mailer Error: ' . $mail->ErrorInfo;
@@ -154,9 +162,48 @@
 			return $this->version != $remote_version ? array('state' => true, 'version' => $remote_version) : array('state' => false, 'version' => $remote_version); 
 		}
 
+		public function sh($commands){
+			$result = "";
+			if(is_array($commands)){
+				foreach ($commands as $index => $command) {
+					if($index != count($commands) - 1){
+						$result .= $command . " && ";
+					}else{
+						$result .= $command . " ";
+					}
+				}
+			}else{
+				$result = $commands;
+			}
+			$result .= " 2>&1";
+			//return shell_exec($commands . " 2>&1");
+			print_r($result);
+		}
+
 		public function updateSystem(){
-			$cmd = shell_exec("cd .. && git clone " . $this->system['update_server'] . " uCrewUpdate && rm uCrewUpdate/uc_system/uc_configuration.php && cp uCrew/uc_system/uc_configuration.php uCrewUpdate/uc_system/uc_configuration.php 2>&1");
-			echo $cmd;	
+			//$cmd = shell_exec("cd .. && git clone " . $this->system['update_server'] . " uCrewUpdate && rm uCrewUpdate/uc_system/uc_configuration.php && cp uCrew/uc_system/uc_configuration.php uCrewUpdate/uc_system/uc_configuration.php 2>&1");
+			// Execute update command (linux only now)
+			$result = $this->sh(
+				array(
+					// Change directory
+					'cd ..',
+					// Get fresh version
+					'git clone ' . $this->system['update_server'] . ' uCrewUpdate',
+					// Remove default configuration from
+					'rm uCrewUpdate/uc_system/uc_configuration.php',
+					// Copy old configuration
+					'cp uCrew/uc_system/uc_configuration.php uCrewUpdate/uc_system/uc_configuration.php',
+					// Dont touch resources
+					'rm -rf uCrewUpdate/uc_resources',
+					// Dont touch modules
+					'rm -rf uCrewUpdate/uc_modules',
+					// Dont touch templates
+					'rm -rf uCrewUpdate/uc_templates',
+					// Copy all files
+					'cp -a uCrew/. tmp/'
+				)
+			);
+			echo $result;	
 		}
 	}
 ?>

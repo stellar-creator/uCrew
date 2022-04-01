@@ -234,10 +234,8 @@
 			';
 
 			foreach ($columns as $key => $value) {
-				
 				$title = $key;
 				$parametrs = "";
-
 				if(is_numeric($key)){
 					$title = $value;
 				}else{
@@ -245,7 +243,6 @@
 						$parametrs .= $parametr . '="' . $text . '" ';
 					}
 				}
-
 				$data .= '<th scope="col" '.$parametrs.'>'.$title.'</th>' ."\n";
 			}
 
@@ -258,10 +255,8 @@
 			foreach ($rows as $key => $value) {
 				$data .= '<tr>' ."\n";
 				foreach ($value as $text => $tagdata) {
-
 					$title = "";
 					$parametrs = "";
-
 					if(is_array($tagdata)){
 						$title = ($text);
 						foreach ($tagdata as $parametr => $tagvalue) {
@@ -270,13 +265,10 @@
 					}else{
 						$title = ($tagdata);
 					}
-
 					$data .= '<td '.$parametrs.'>'.$title.'</td>' ."\n";
 				}
-
 				$data .= '</tr>' ."\n";
 			}
-
 			$data .= '
 					</tbody>
 				</table>

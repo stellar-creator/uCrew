@@ -58,6 +58,12 @@
    			return $this->getData($request);
    		} 
 
+   		public function addUser($data){
+   			// Generate request string
+   			$sql = "INSERT INTO `uc_users` (`user_id`, `user_name`, `user_email`, `user_password`, `user_status`, `user_regdate`, `user_image`, `user_phone`, `user_location`, `user_post`, `user_groups`) VALUES (NULL, '".$data['user_name']."', '".$data['user_email']."', '".$data['user_password']."', '3', CURRENT_TIMESTAMP, '', '".$data['user_phone']."', '".$data['user_location']."', '".$data['user_post']."', 'users')";
+   			return $this->query($sql);
+   		} 
+
    		public function getUserPrivilegesByGroup($group){
    			// Generate request string
    			$request = 'SELECT * FROM `uc_groups` WHERE `group_name` = "'.$group.'"';

@@ -60,5 +60,28 @@
 		    session_write_close();
 		    setcookie(session_name(),'',0,'/');
 		}
+
+		public function appendUserEmail($user_id){
+			$sql = "UPDATE `uc_users` SET `user_status` = '2' WHERE `user_id` = $user_id";
+			$this->query($sql);
+			$_SESSION['activation'] = "acceptEmail";
+		}
+
+		public function registerUser($data){
+			// Check if user isset
+			$user_data = $this->getUserByData($data['user_email']);
+			// If not isset, do register
+			if($user_data == 0){
+				$ucSystemPipe = new uCrewSystemPipe();
+				$_SESSION['activation'] = "register";
+				$user_id = $this->addUser($data);
+				$message = "<p>Уважаемый <b>" .$data['user_name'] . "</b>, регистрация прошла успешно, ожидайте ответа администратора на одобрение заявки.</p><br><p><a href=\"http://".$this->system['main_domain']."/?handler=activation&user=$user_id\">Подтвердите адрес электроной почты</a></p>";
+				$ucSystemPipe->sendEmail($data['user_email'], 'Регистрация в системе', $message);
+				$this->addEvent("Регистрация успешна", "Пользователь " . $data['user_name'] . " ("  . $data['user_email'] . ') зарегистрирован, требуется активация');
+			}else{
+				$_SESSION['activation'] = "unregister";
+				$this->addEvent("Регистрация неуспешна", "Пользователь " . $data['user_name'] . " ("  . $data['user_email'] . ') не зарегистрирован, такой пользователь уже есть');
+			}
+		}
 	}
 ?>

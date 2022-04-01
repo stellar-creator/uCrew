@@ -51,6 +51,21 @@
                 <p class="text-center" style="color:red">Неверный пользователь или пароль</p>
             </div>' . "\n";
       }
+      if($_SESSION["activation"] == "register"){
+         echo '            <div class="clearfix" style="padding-top: 5px">
+                <p class="text-center" style="color:green">Регистрация успешна!<br>Ждите одобрения администратора</p>
+            </div>' . "\n";
+      }
+      if($_SESSION["activation"] == "unregister"){
+         echo '            <div class="clearfix" style="padding-top: 5px">
+                <p class="text-center" style="color:red">Невозможно зарегистрировать пользователя</p>
+            </div>' . "\n";
+      }
+      if($_SESSION["activation"] == "acceptEmail"){
+         echo '            <div class="clearfix" style="padding-top: 5px">
+                <p class="text-center" style="color:green">Подтверждение успешно!<br>Ждите одобрения администратора</p>
+            </div>' . "\n";
+      }
    }
 
 ?>

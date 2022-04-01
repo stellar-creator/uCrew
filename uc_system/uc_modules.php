@@ -52,5 +52,26 @@
 			return $modules;
 		}
 
+		// Read modules from directory
+		public function getAllModules(){
+			// Scan module directory
+			$modules = array_values(
+				array_diff(
+					scandir($this->directories["modules"]), array('..', '.')
+				)
+			);
+
+
+			foreach ($modules as $index => &$module) {
+				foreach ($this->modules as $config_module=> $config_module_state) {
+					if($module == $config_module){
+						$module = array($module, 1);
+					}
+				}
+			}
+
+			// Return all modules
+			return $modules;
+		}
 	}
 ?>

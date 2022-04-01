@@ -12,7 +12,8 @@
 		);
 		// System configuration data
 		public $system = array(
-			"main_directory" => "/home/pavel/Works/Software/Cross Platform/Web/uCrew/",
+			"main_directory" => "*",
+			"main_domain" => "*",
 			"template" => "uCrewBase",
 			"organization" => "uCrew",
 			"update_server" => "https://github.com/stellar-creator/uCrew"

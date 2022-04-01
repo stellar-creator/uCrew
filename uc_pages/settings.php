@@ -1,4 +1,8 @@
 <?php
+    $ucModules = new uCrewModules();
+
+    $modules = $ucModules->getAllModules();
+
     if(isset($_POST["main_page_content"])){
         $this->ucDatabase->setMainPageContent($_POST["main_page_content"]);
     }
@@ -29,7 +33,15 @@
       'Группы' => array('class' => 'text-center'),
     );
 
+    $colsModules = array(
+      '№' => array('class' => 'text-center', 'width' => '5%'),
+      'Наиминование' => array('class' => 'text-center'),
+      'Состояние' => array('class' => 'text-center'),
+      'Управление' => array('class' => 'text-center', 'width' => '150px')
+    );
+
     $rows = array();
+    $rowsModules = array();
 
     foreach ($users as $user_index => $user_data) {
       $post = "";
@@ -49,22 +61,62 @@
         }
       }
 
+      $status = $user_data['user_status'];
+
+      switch($status){
+        case 0:
+          $status = "Заблокирован";
+          break;
+        case 1:
+          $status = "Активен";
+          break;
+        case 2:
+          $status = "Требует активации";
+          break;
+        case 3:
+          $status = "Почта не подтверждена";
+          break;
+      }
+
       array_push($rows, 
         array(
           $user_index + 1 => array('class' => 'align-middle text-center'),
           '<img src="'.$image.'" class="img-thumbnail imagecat" alt="'.$image.'">' => array('class' => 'align-middle text-center'),
-           $user_data['user_name'] => array('class' => 'align-middle text-center'),
-           $user_data['user_email'] => array('class' => 'align-middle text-center'),
-           $user_data['user_phone'] => array('class' => 'align-middle text-center'),
-           $location => array('class' => 'align-middle text-center'),
-           $post => array('class' => 'align-middle text-center'),
-           ($user_data['user_status'] ? "Активен" : "Заблокирован") => array('class' => 'align-middle text-center'),
-           $user_data['user_groups'] => array('class' => 'align-middle text-center')
+          $user_data['user_name'] => array('class' => 'align-middle text-center'),
+          $user_data['user_email'] => array('class' => 'align-middle text-center'),
+          $user_data['user_phone'] => array('class' => 'align-middle text-center'),
+          $location => array('class' => 'align-middle text-center'),
+          $post => array('class' => 'align-middle text-center'),
+          $status => array('class' => 'align-middle text-center'),
+          $user_data['user_groups'] => array('class' => 'align-middle text-center')
         )
       );
     }
     
+    foreach ($modules as $key => $value) {
+      if(is_array($value)){
+        array_push($rowsModules, 
+          array(
+            $key + 1 => array('class' => 'text-center', 'width' => '5%'),
+            $value[0] => array('class' => 'text-center'),
+            "Активен" => array('class' => 'text-center'),
+            "-" => array('class' => 'text-center', 'width' => '150px')
+          )
+        );
+      }else{
+         array_push($rowsModules, 
+            array(
+            $key + 1 => array('class' => 'text-center', 'width' => '5%'),
+            $value => array('class' => 'text-center'),
+            "Неактивен" => array('class' => 'text-center'),
+            "-" => array('class' => 'text-center', 'width' => '150px')
+          )
+        );
+      }
+    }
+
     $usersTable = $this->uc_CompilatorData->generateTable($cols, $rows);
+    $modulesTable = $this->uc_CompilatorData->generateTable($colsModules, $rowsModules);
   
 ?>
                         <div class="row">
@@ -124,7 +176,9 @@
                               </div>
 
                               <div class="tab-pane fade" id="modules" role="tabpanel" aria-labelledby="modules-tab">
-
+<?php
+                                    echo $modulesTable;
+?>
                               </div>
 
                               <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
@@ -181,7 +235,7 @@
                                       echo "<p>Доступно обновление (новая версия <b>".$remote_version['version']."</b>)</p>\n";
                                       echo '
                                       <div class="float-end">
-                                      <button type="submit" class="btn btn-primary">Обновить систему</button>
+                                      <a href="/?page=uCrew/update" class="btn btn-primary">Обновить систему</a>
                                       </div>
                                       ';
 

@@ -59,22 +59,22 @@
     }
 ?>
             <div class="form-group">
-               <input type="text" class="form-control" name="user_name" placeholder="Как вас завут? (Имя Фамилия)" required="required">
+               <input type="text" class="form-control" name="user_name" placeholder="Ф.И.О." required="required">
             </div>
             <div class="form-group">
-               <input type="password" class="form-control" name="password" placeholder="Пароль" required="required">
+               <input type="password" class="form-control" name="user_password" placeholder="Пароль" required="required">
             </div>
             <div class="form-group">
-               <input type="password" class="form-control" name="password_second" placeholder="Повторите пароль" required="required">
+               <input type="password" class="form-control" name="user_password_second" placeholder="Повторите пароль" required="required">
             </div>
             <div class="form-group">
-               <input type="email" class="form-control" name="email" placeholder="E-mail" required="required">
+               <input type="email" class="form-control" name="user_email" placeholder="E-mail" required="required">
             </div>
             <div class="form-group">
-               <input type="text" class="form-control" name="phone" placeholder="Телефон" required="required">
+               <input type="text" class="form-control" name="user_phone" placeholder="Телефон" required="required">
             </div>
 			<div class="form-group">
-				<select class="form-select form-control" name="post">
+				<select class="form-select form-control" name="user_post">
 	            		<option value="0" selected>Выберите должность...</option>
 <?php
 	echo $post;
@@ -82,7 +82,7 @@
 	          	</select>
           	</div>
 			<div class="form-group">
-				<select  class="form-select form-control" name="location">
+				<select  class="form-select form-control" name="user_location">
 	            		<option value="0" selected>Ваше расположение...</option>
 <?php
 	echo $location;
