@@ -199,7 +199,13 @@
 					// Copy all files
 					'cp -a uCrewUpdate/. uCrew/',
 					// Remove temp folder
-					'rm -rf uCrewUpdate/'
+					'rm -rf uCrewUpdate/',
+					// Change mode
+					'chown -R www-data:www-data uCrew/',
+					// Change privileges
+					'chmod 777 -R uCrew/',
+					// Show result
+					'll'
 				)
 			);
 			return $result;	
