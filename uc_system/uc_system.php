@@ -176,13 +176,10 @@
 				$result = $commands;
 			}
 			$result .= " 2>&1";
-			//return shell_exec($commands . " 2>&1");
-			print_r($result);
+			return shell_exec($result);
 		}
 
 		public function updateSystem(){
-			//$cmd = shell_exec("cd .. && git clone " . $this->system['update_server'] . " uCrewUpdate && rm uCrewUpdate/uc_system/uc_configuration.php && cp uCrew/uc_system/uc_configuration.php uCrewUpdate/uc_system/uc_configuration.php 2>&1");
-			// Execute update command (linux only now)
 			$result = $this->sh(
 				array(
 					// Change directory
@@ -200,10 +197,12 @@
 					// Dont touch templates
 					'rm -rf uCrewUpdate/uc_templates',
 					// Copy all files
-					'cp -a uCrew/. tmp/'
+					'cp -a uCrewUpdate/. uCrew/',
+					// Remove temp folder
+					'rm -rf uCrewUpdate/'
 				)
 			);
-			echo $result;	
+			return $result;	
 		}
 	}
 ?>
