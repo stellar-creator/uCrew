@@ -71,7 +71,18 @@
                 <p class="text-center" style="color:red">Учётная запись не подтверждена</p>
             </div>' . "\n";
       }
-      
+
+      if($_SESSION["activation"] == "recovery"){
+         echo '            <div class="clearfix" style="padding-top: 5px">
+                <p class="text-center" style="color:green">Ожидайте письмо на E-mail</p>
+            </div>' . "\n";
+      }  
+
+      if($_SESSION["activation"] == "unrecovery"){
+         echo '            <div class="clearfix" style="padding-top: 5px">
+                <p class="text-center" style="color:red">Востановление пароля невозможно</p>
+            </div>' . "\n";
+      }    
    }
 
 ?>
@@ -86,7 +97,7 @@
             </div>
             <div class="clearfix">
                <label class="float-start form-check-label"><input type="checkbox" name="keep"> Запонить меня</label>
-               <a href="/?page=PasswordRecover" class="float-end">Забыли пароль?</a>
+               <a href="/?page=uCrewAuthorization/recovery" class="float-end">Забыли пароль?</a>
             </div>
             <div class="clearfix" style="padding-top: 10px">
                 <p class="float-end"><a href="/?page=uCrewAuthorization/registration">Создать аккаунт</a></p>

@@ -43,6 +43,10 @@
 				if(isset($_GET['page'])){
 					if($_GET['page'] == 'uCrewAuthorization/registration'){
 						$this->ucCompilator->setPage("uCrewAuthorization/registration");
+					}else if($_GET['page'] == 'uCrewAuthorization/recovery'){
+						$this->ucCompilator->setPage("uCrewAuthorization/recovery");
+					}else if($_GET['page'] == 'uCrewAuthorization/newpassword'){
+						$this->ucCompilator->setPage("uCrewAuthorization/newpassword");
 					}else{
 						header("Location: /");
 						die();
@@ -98,7 +102,15 @@
 					// Session logout handler
 					case 'activation':
 						$this->ucSession->appendUserEmail($_GET["user"]);
-						break;					
+						break;
+					// Session logout handler
+					case 'recovery':
+						$this->ucSession->recoveryUser($_POST["user"]);
+						break;
+					case 'newpassword':
+						$this->ucSession->newUserPassword($_POST["user"], $_POST["password"]);
+						$this->ucSession->changeUserStatus($_POST["user"], 1);
+						break;			
 					default:
 						print("handler is empty");
 						break;

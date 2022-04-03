@@ -6,7 +6,9 @@
 		"Stellar Creator",						// Author
 		[
 			"authorization" => "Авторизация",
-			"registration" => "Регистрация"
+			"registration" => "Регистрация",
+			"recovery" => "Восстановление пароля",
+			"newpassword" => "Новый пароль"
 		],										// Pages
 		["configuration" => [				
 				"menu" => 0, 

@@ -73,6 +73,34 @@
 			$_SESSION['activation'] = "acceptEmail";
 		}
 
+		public function changeUserStatus($user_id, $status){
+			$sql = "UPDATE `uc_users` SET `user_status` = '".$status."' WHERE `user_id` = $user_id";
+			$this->query($sql);
+		}
+
+		public function newUserPassword($user_id, $password){
+			$sql = "UPDATE `uc_users` SET `user_password` = '".$password."' WHERE `user_id` = $user_id";
+			$this->query($sql);
+		}
+
+		public function recoveryUser($data){
+			$user_data = $this->getUserByData($data);
+			if($user_data != 0){
+				$ucSystemPipe = new uCrewSystemPipe();
+
+				$_SESSION['activation'] = "recovery";
+				$this->addEvent("Восстановление пароля", "Пользователю " . $user_data['user_name'] . " ("  . $user_data['user_email'] . ') отправлены данные для восстановления пароля');
+
+				$message = "<p>Уважаемый <b>" .$user_data['user_name'] . "</b>, вы запросили восстановление пароля</p><br><p><a href=\"http://".$this->system['main_domain']."/?page=uCrewAuthorization/newpassword&user=".$user_data['user_id']."\">Перейдите по ссылке для изменения пароля</a></p>";
+
+				$ucSystemPipe->sendEmail($user_data['user_email'], 'Восстановление доступа к системе', $message);
+				$this->changeUserStatus($user_data['user_id'], 4);
+			}else{
+				$_SESSION['activation'] = "unrecovery";
+				$this->addEvent("Восстановление пароля", "Попытка сброса пароля с данными " . $data);
+			}
+		}
+
 		public function registerUser($data){
 			// Check if user isset
 			$user_data = $this->getUserByData($data['user_email']);
