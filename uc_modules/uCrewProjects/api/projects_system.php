@@ -7,11 +7,108 @@
 		public $ucs_Database;
 		public $ucp_mount;
 		public $ucs_CommonDatabase;
+		public $ucs_Directories;
+		public $ucs_DirectoriesNames;
+		public $ucs_DirectoriesTemplates;
 
 		function __construct(){
 			$this->ucs_Database = new uCrewDatabase('ucrew_projects');
 			$this->ucs_CommonDatabase = new uCrewDatabase();
 			$this->ucp_mount = 'uc_resources/projects/mount/';
+
+			// Init default directories
+			$typicalTemplate_imgae = array(
+				'Фотографии',
+				'Наклейки'
+			);
+
+			$this->ucs_DirectoriesNames = array(
+				'develop_documentation' => 'Конструкторская документация',
+				'mechanics' => 'Механические изделия'
+			);
+
+			$this->ucs_Directories = array(
+				$this->ucs_DirectoriesNames['develop_documentation'] => array(
+					'Проекты',
+					'Устройства и модули',
+					'Механические изделия',
+					'Провода и кабели',
+					'Печатные платы'
+				), 
+				'Программное обеспечение' => array(
+					'Внешнее ПО',
+					'Внутренее ПО',
+				), 
+				'Библиотеки' => array(
+					'3D модели',
+					'Для KiCad' => array(
+						'Посадочные места',
+						'Символы',
+						'Готовые схемотехнические решения'
+					),
+					'Листы данных'
+				)
+			);
+
+			$this->ucs_DirectoriesTemplates = array(
+				// Проект -> Категория -> Подкатегория -> Ревизиия
+				'projects' => array(
+					'Механические изделия',
+					'Печатные платы',
+					'Провода и кабели',
+					'Программное обеспечение',
+					'Спецификации',
+					'Изображения' => $typicalTemplate_imgae,
+					'Устройства и модули',
+					'Для производства' =>array(
+						'Сборочная документация',
+						'Аннотации'
+					),
+				),
+
+				'modules' => array(
+					'Механические изделия',
+					'Печатные платы',
+					'Провода и кабели',
+					'Программное обеспечение',
+					'Спецификации',
+					'Изображения' => $typicalTemplate_imgae,
+					'Устройства и модули',
+					'Для производства' =>array(
+						'Сборочная документация',
+						'Аннотации'
+					),
+				),
+
+				'mechanics' => array(
+					'3D модели',
+					'Чертежи',
+					'Векторные файлы',
+					'Изображения' => $typicalTemplate_imgae
+				),
+
+				'cables' => array(
+					'Спецификация',
+					'Чертёж',
+					'Маркировка',
+					'Изображения' => $typicalTemplate_imgae,
+				),
+
+				'pcbs' => array(
+					'3D модель',
+					'Исходники',
+					'Спецификация',
+					'Изображения' => $typicalTemplate_imgae,
+					'Файлы для производства' => array(
+						'Gerber',
+						'Файлы позиций',
+						'Сборочный чертёж'
+					)
+				)
+			);
+
+
+			$this->checkDirectories($this->ucs_Directories);
 		}
 
 		// Common projects data
@@ -317,7 +414,6 @@
 			$sql = "SELECT * FROM `ucp_mechanics` WHERE `mechanic_id` = $item_id";
 			$data = $this->ucs_Database->getData($sql);
 			$data['mechanic_data'] = json_decode($data['mechanic_data'], true);
-			//print_r($data);
 			return $data;
 		}
 
@@ -346,6 +442,33 @@
 		public function getStatuses(){
 			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'mechanics_statuses'";
 			return json_decode($this->ucs_Database->getData($sql)['data_text'], true);
+		}
+
+		public function createDirectorySpecial($directory){
+			if(!file_exists($directory)){
+				mkdir($directory, 0777, true);
+				return true;
+			}
+			return false;
+		}
+
+		public function checkDirectories($dirdata){
+			// Directories watchdog
+			$work_directory = $this->getProjectDirectoryData()['directory'];
+			// Get all base directories
+			foreach ($dirdata as $subdirectory => $directories) {
+				$base_dir = $work_directory . $subdirectory . '/';
+				foreach ($directories as $directory => $subdirs) {
+					if(is_array($subdirs)){
+						$this->createDirectorySpecial($base_dir . $directory);
+						foreach ($subdirs as $sd => $sdv) {
+							$this->createDirectorySpecial($base_dir . $directory . '/' . $sdv);
+						}
+					}else{
+						$this->createDirectorySpecial( $base_dir . $subdirs);
+					}
+				}
+			}
 		}
 
 	}

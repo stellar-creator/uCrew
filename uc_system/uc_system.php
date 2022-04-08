@@ -205,9 +205,9 @@
 					// Dont touch resources
 					'rm -rf uCrewUpdate/uc_resources',
 					// Dont touch modules
-					'rm -rf uCrewUpdate/uc_modules',
+					//'rm -rf uCrewUpdate/uc_modules',
 					// Dont touch templates
-					'rm -rf uCrewUpdate/uc_templates',
+					//'rm -rf uCrewUpdate/uc_templates',
 					// Copy all files
 					'cp -a uCrewUpdate/. uCrew/',
 					// Remove temp folder

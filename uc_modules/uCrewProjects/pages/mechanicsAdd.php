@@ -30,24 +30,7 @@
 			</div>
 		';
 	}
-?>
 
-<style type="text/css">
-	.fa-check-circle {
-		color: #198754;
-	}
-	
-	.fa-exclamation-circle {
-		color: #ffc107;
-	}
-	
-	.fa-times-circle {
-
-		color: #dc3545;
-	}
-</style>
-
-<?php
 	echo $message;
 ?>
 
@@ -64,7 +47,7 @@
 		  		Директория на диске: 
 		  		<cite id="directory">
 		  			<?php 
-		  				echo '"' . $directory_data['mask'] . "Оборудование\\Механические изделия\\" . $codename . '"'; 
+		  				echo '"' . $directory_data['mask'] . $uc_Projects->ucs_DirectoriesNames['develop_documentation'] . "\\" . $uc_Projects->ucs_DirectoriesNames['mechanics'] . "\\" . $codename . '"'; 
 		  			?>
 		  		</cite>  
 		  	</figcaption>
@@ -163,6 +146,18 @@
 			  </label>
 			</div>
 			<div class="form-check" id="checkboxes">
+			  <input class="form-check-input" type="checkbox" id="addPhotos">
+			  <label class="form-check-label" for="flexCheckDefault">
+			    Прикрепить фотографии
+			  </label>
+			</div>
+			<div class="form-check" id="checkboxes">
+			  <input class="form-check-input" type="checkbox" id="addMark">
+			  <label class="form-check-label" for="flexCheckDefault">
+			    Прикрепить шильдик, маркеровку
+			  </label>
+			</div>
+			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addOther">
 			  <label class="form-check-label" for="flexCheckDefault">
 			    Прикрепить дополнительные файлы
@@ -219,10 +214,10 @@
 				  <li id="lmechanic_directory"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Расположение файлов:
 					  <ul>
 					  	<li>
-					  		Оборудование
+					  		<?php echo $uc_Projects->ucs_DirectoriesNames['develop_documentation']; ?>
 					  		<ul>
 					  			<li>
-					  				Механика
+					  				<?php echo $uc_Projects->ucs_DirectoriesNames['mechanics']; ?>
 					  				<ul>
 							  			<li> <div id="lmechanic_fullname">Название</div>
 							  				<ul>

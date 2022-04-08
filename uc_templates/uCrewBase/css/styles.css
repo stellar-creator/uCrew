@@ -11898,3 +11898,15 @@ body {
   flex: 1;
   height: 1px;
 }
+
+.fa-check-circle {
+  color: #198754;
+}
+  
+.fa-exclamation-circle {
+  color: #ffc107;
+}
+  
+.fa-times-circle {
+  color: #dc3545;
+}

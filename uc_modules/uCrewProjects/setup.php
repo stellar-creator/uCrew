@@ -5,19 +5,19 @@
 		"Bussiness module",								// Category
 		"Stellar Creator",								// Author
 		[
-			"projects" => "Проекты",
-			"device" => "Изделия",
-			"deviceItem" => "&Просмотр изделия",
-			"deviceAdd" => "&Добавить изделие",
-			"pcb" => "Печатные платы",
-			"pcbItem" => "&Просмотр печатной платы",
-			"pcbAdd" => "&Добавить печатную плату",
+			//"projects" => "Проекты",
+			//"device" => "Устройства",
+			//"deviceItem" => "&Просмотр устройства",
+			//"deviceAdd" => "&Добавить устройство",
+			//"pcb" => "Печатные платы",
+			//"pcbItem" => "&Просмотр печатной платы",
+			//"pcbAdd" => "&Добавить печатную плату",
 			"mechanics" => "Механика",
 			"mechanicsItem" => "&Просмотр изделия",
 			"mechanicsAdd" => "&Добавить изделие",
-			"cables" => "Кабели",
-			"cablesItem" => "&Просмотр кабеля",
-			"cablesAdd" => "&Добавить кабель"
+			//"cables" => "Кабели",
+			//"cablesItem" => "&Просмотр кабеля",
+			//"cablesAdd" => "&Добавить кабель"
 			//"other" => "Различные изделия",
 		],												// Pages
 		["configuration" => [							// Configuration
