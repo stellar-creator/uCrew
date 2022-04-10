@@ -66,7 +66,6 @@
 		<div class="mb-3">
 		  <label for="mechanic_material" class="form-label">Материал изделия</label>
 		  <select class="selectpicker show-tick form-control" id="mechanic_material" name="mechanic_material" data-live-search="true" data-size="5" required>
-		  	<option value="unknown" selected>Другое</option>
 		  	<?php
 		  		echo $options;
 		  	?>
@@ -129,49 +128,57 @@
 		  	</p>
 		</div>
 
-
 		<div class="mb-3">
-		  <label for="checkboxes" class="form-label">Дополнительно</label>
+
+		  	<label for="checkboxes" class="form-label">Дополнительно</label>
+
+			<div class="form-check" id="checkboxes">
+			  <input class="form-check-input" type="checkbox" id="addStl">
+			  <label class="form-check-label" for="flexCheckDefault">
+			    Прикрепить 3D модель для печати (*.stl)
+			  </label>
+			</div>
+
+
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addDraw">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить файлы чертежа изделия
+			    Прикрепить файлы чертежа изделия (*.pdf, *.cdw)
 			  </label>
 			</div>
 
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addLaser" name="addLaser">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить файл для лазера
+			    Прикрепить векторный файл для лазера (*.dxf)
 			  </label>
 			</div>
+
+
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addPhotos">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить фотографии
+			    Прикрепить фотографии (*.jpeg, *.png)
 			  </label>
 			</div>
 			<div class="form-check" id="checkboxes">
-			  <input class="form-check-input" type="checkbox" id="addMark">
+			  <input class="form-check-input" type="checkbox" id="addMarks">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить шильдик, маркеровку
+			    Прикрепить шильдик, маркеровку (*.*)
 			  </label>
 			</div>
 			<div class="form-check" id="checkboxes">
-			  <input class="form-check-input" type="checkbox" id="addOther">
+			  <input class="form-check-input" type="checkbox" id="addAnnotations">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить дополнительные файлы
-			  </label>
-			</div>
-			<div class="form-check" id="checkboxes">
-			  <input class="form-check-input" type="checkbox" id="generateStl" name="generateStl">
-			  <label class="form-check-label" for="flexCheckDefault">
-			    Преобразовать готовую 3D модель (*.step, *.stp) в STL (*.stl) файл для 3D печати
+			    Прикрепить аннотации (*.txt, *.docx)
 			  </label>
 			</div>
 		</div>
 
-
+		<div class="mb-3" id="3dStlSourceSelect">
+		  <label for="mechanic_drawsource" class="form-label">Готовый файл 3D модели - STL (*.stl)</label>
+		  <input class="form-control" type="file" id="mechanic_3dstl" name="mechanic_drawsource" accept=".stl">
+		</div>
 		<div class="mb-3" id="drawSourceSelect">
 		  <label for="mechanic_drawsource" class="form-label">Исходный файл чертежа - Компас 3D (*.cdw)</label>
 		  <input class="form-control" type="file" id="mechanic_drawsource" name="mechanic_drawsource" accept=".cdw">
@@ -184,9 +191,18 @@
 		  <label for="mechanic_drawlaser" class="form-label">Файл для лазера - векторный (*.dxf)</label>
 		  <input class="form-control" type="file" id="mechanic_drawlaser" name="mechanic_drawlaser" accept=".dxf">
 		</div>
-		<div class="mb-3" id="otherSelect">
-		  <label for="mechanic_otherfiles" class="form-label">Дополнительные файлы - Любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="mechanic_otherfiles" name="mechanic_otherfiles" multiple>
+		<div class="mb-3" id="photoSelect">
+		  <label for="mechanic_photos" class="form-label">Фотографии <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="mechanic_photos" name="mechanic_photos[]"  accept=".jpeg,.jpg" multiple="multiple">
+		</div>
+		<div class="mb-3" id="marksSelect">
+		  <label for="mechanic_marks" class="form-label">Маркировка, наклейки - любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="mechanic_marks" name="mechanic_marks[]" multiple="multiple">
+		</div>
+
+		<div class="mb-3" id="annotationsSelect">
+		  <label for="mechanic_annotations" class="form-label">Аннотации - Text (*.txt), Microsoft Word (*.docx) <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="mechanic_annotations" name="mechanic_annotations[]" multiple="multiple">
 		</div>
 
 		<div class="d-grid gap-1 d-md-flex justify-content-md-end" style="padding-bottom: 10px">
@@ -205,76 +221,93 @@
 		      <div class="modal-body">
 
 				<ul class="list-unstyled">
-				  <li id="lmechanic_codename"><i class="fa fa-check-circle" aria-hidden="true"></i> Шифр изделия:</li>
-				  <li id="lmechanic_name"><i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия:</li>
-				  <li id="lmechanic_description"><i class="fa fa-check-circle" aria-hidden="true"></i> Краткое описание:</li>
-				  <li id="lmechanic_material"><i class="fa fa-check-circle" aria-hidden="true"></i> Материал: Алюминий</li>
-				  <li id="lmechanic_status"><i class="fa fa-check-circle" aria-hidden="true"></i> Статус: Разработка</li>
-				  <li id="lmechanic_image"><i class="fa fa-check-circle" aria-hidden="true"></i> Изображение: присутсвует</li>
-				  <li id="lmechanic_directory"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Расположение файлов:
-					  <ul>
-					  	<li>
-					  		<?php echo $uc_Projects->ucs_DirectoriesNames['develop_documentation']; ?>
-					  		<ul>
-					  			<li>
-					  				<?php echo $uc_Projects->ucs_DirectoriesNames['mechanics']; ?>
-					  				<ul>
-							  			<li> <div id="lmechanic_fullname">Название</div>
-							  				<ul>
-							  					<li>
-							  						Документация
-							  						<ul>
-							  							<li id="lfdescription"> 
-							  								<i class="fa fa-file" aria-hidden="true"></i> Спецефикации и аннотации
-							  							</li>
-							  						</ul>
-							  					</li>
-							  					<li id="lfdrawdir">Чертёж
-													<ul>
-							  							<li id="lfdrawpdf"> 
-							  								<i class="fa fa-file" aria-hidden="true"></i> Чертёж pdf
-							  							</li>
-							  						</ul>
-							  					</li>
-							  					<li>3D модель
-							  						<ul>
-							  							<li id="lf3dstep"> 
-							  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель
-							  							</li>
-							  						</ul>
-							  					</li>
-							  					<li id="lfdrawvectordir">Векторные файлы
-							  						<ul>
-							  							<li id="lfdrawvector"> 
-							  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель
-							  							</li>
-							  						</ul>
-							  					</li>
-							  					<li>Изображение
-													<ul>
-							  							<li id="lfimage"> 
-							  								<i class="fa fa-file" aria-hidden="true"></i> Изображение
-							  							</li>
-							  						</ul>
-							  					</li>
-							  					<li>Исходные файлы
-													<ul>
-							  							<li id="lf3dsource"> 
-							  								<i class="fa fa-file" aria-hidden="true"></i> 3D модель исходние
-							  							</li>
-							  							<li id="lfdrawsource"> 
-							  								<i class="fa fa-file" aria-hidden="true"></i> Чертёж исходник
-							  							</li>
-							  						</ul>
-							  					</li>
-							  				</ul>
-							  			</li>
-					  				</ul>
-					  			</li>
-					  		</ul>
-					  	</li>
-					  </ul>
-				  </li>
+				  <li id="lmechanic_codename"><i class="fa fa-check-circle" aria-hidden="true"></i> Шифр изделия: *</li>
+				  <li id="lmechanic_name"><i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: *</li>
+				  <li id="lmechanic_description"><i class="fa fa-check-circle" aria-hidden="true"></i> Краткое описание: *</li>
+				  <li id="lmechanic_material"><i class="fa fa-check-circle" aria-hidden="true"></i> Материал: *</li>
+				  <li id="lmechanic_status"><i class="fa fa-check-circle" aria-hidden="true"></i> Статус: *</li>
+				  <li id="lmechanic_image"><i class="fa fa-check-circle" aria-hidden="true"></i> Изображение: *</li>
+				  <li id="lmechanic_directory">
+				  	<i class="fa fa-exclamation-circle" aria-hidden="true"></i> Расположение файлов:
+<?php
+					/*$fullpath = array(
+						$uc_Projects->ucs_DirectoriesNames['develop_documentation'] => array(
+							$uc_Projects->ucs_DirectoriesNames['mechanics'] => array( 'Шифр' =>
+								$uc_Projects->ucs_DirectoriesTemplates['mechanics']
+							)
+						)
+					);
+
+					print_r($this->uc_CompilatorData->arrayToList($fullpath));*/
+?>
+				<ul>
+					<li>
+					   Конструкторская документация
+					   <ul>
+					      <li id="mechanics_dir">
+					         Механические изделия
+					         <ul>
+					            <li id="codename">
+					               <div id="f_mechanic_fullname">Шифр</div>
+					               <ul>
+					                  <li id="f3D_modeli">
+					                  3D модели
+						                  <ul>
+						                  	<li id="f_3dsource">
+						                  		<i class="fa fa-file" aria-hidden="true"></i> Исходный файл
+						                  	</li>
+						                  	<li id="f_3dstep">
+						                  		<i class="fa fa-file" aria-hidden="true"></i> 3D модель step
+						                  	</li>
+						                  	<li id="f_3dstl">
+						                  		<i class="fa fa-file" aria-hidden="true"></i> 3D модель stl
+						                  	</li>
+						                  </ul>
+					              	  </li>
+					                  <li id="f_drawings">
+					                  Чертежи
+ 										<ul>
+						                  	<li id="f_drawsource">
+						                  		<i class="fa fa-file" aria-hidden="true"></i> Исходный файл
+						                  	</li>
+						                  	<li id="f_drawpdf">
+						                  		<i class="fa fa-file" aria-hidden="true"></i> PDF
+						                  	</li>
+						                  </ul>
+					              	  </li>
+					                  <li id="f_vectors">
+					                  Векторные файлы
+ 										<ul>
+						                  	<li id="f_vector">
+						                  		<i class="fa fa-file" aria-hidden="true"></i> DXF
+						                  	</li>
+						                </ul>
+					              	  </li>
+					                  <li id="f_images">
+					                     Изображения
+					                     <ul>
+					                        <li id="f_photos">Фотографии</li>
+					                        <li id="f_marks">Маркировка и наклейки</li>
+					                        <li id="f_image">
+						                  		<i class="fa fa-file" aria-hidden="true"></i>
+						                  	</li>
+
+					                     </ul>
+					                  </li>
+					                  <li id="f_annotations">
+					                  	Аннотации
+					                  </li>
+					                  <li id="f_description">
+					                  	<i class="fa fa-file" aria-hidden="true"></i> Описание 
+					                  </li>
+					               </ul>
+					            </li>
+					         </ul>
+					      </li>
+					   </ul>
+					</li>
+				</ul>
+			</li>
 				  <li id="warn"  class="text-center">
 				  	<br>
 				  	<i>* Обратите внимание! У вас недостаточно информации!</i>
@@ -296,13 +329,20 @@
 <script type="text/javascript">
 
 	var readonly = true;
+
 	var imageFile = '';
 	var source3dFile = '';
 	var step3dFile = '';
+	var stl3dFile = '';
 	var sourcedrawFile = '';
 	var pdfdrawFile = '';
 	var vectordrawFile = '';
+	var photos = [];
+	var annotations = [];
+	var marks = [];
 
+
+	// Change codename state
 	function changeCodeNameState(){
 		if(readonly == true){
 			readonly = false;
@@ -315,6 +355,7 @@
 		$("#mechanic_codename").attr("readonly", readonly);  
 	}
 
+	// Set image preview
 	function changeImagePreview() {
 		$("#imagePreview").show("fast");
 
@@ -331,142 +372,23 @@
         }		
 	}
 
-	function changeModalPresubmit() {
-		var success = 'fa fa-check-circle';
-		var warning = 'fa fa-exclamation-circle';
-		var error = 'fa fa-times-circle';
-
-		var filename = $('#mechanic_codename').val();
-
-		if($('#mechanic_name').val().length > 0){
-			filename =  filename + ' - ' + $('#mechanic_name').val();
-		}
-
-		// Check mechanics name
-		var mechanics_state = error;
-		var mechanics_value = $('#mechanic_name').val();
-		if( mechanics_value.length > 0 ){
-			mechanics_state = success;
-		}
-		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Наиминование изделия: ' + mechanics_value + '</li>';
-		$('#lmechanic_name').html(html)
-
-		// Check mechanics codename
-		var mechanics_state = error;
-		var mechanics_value = $('#mechanic_codename').val();
-		if( mechanics_value.length > 0 ){
-			mechanics_state = success;
-		}
-		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Шифр изделия: ' + mechanics_value + '</li>';
-		$('#lmechanic_codename').html(html)
-
-
-		// Check mechanics description
-		var mechanics_state = error;
-		var mechanics_value = $('#mechanic_description').val();
-		if( mechanics_value.length > 0 ){
-			mechanics_state = success;
-		}
-		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Краткое описание: ' + mechanics_value + '</li>';
-		$('#lmechanic_description').html(html)
-
-		// Check mechanics image
-		var mechanics_state = error;
-		var mechanics_value = imageFile;
-		var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
-
-		if( mechanics_value.length > 0 ){
-			mechanics_state = success;
-			var html = '<i class="fa fa-file" aria-hidden="true"></i> Изображение ' + filename + '.jpeg';
-		}
-
-		$('#lfimage').html(html);
-
-		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Изображение: ' + mechanics_value + '</li>';
-		$('#lmechanic_image').html(html);
-
-		// Check mechanics material
-		var mechanics_state = error;
-		var mechanics_value = $('#mechanic_material option:selected').text();
-		if( mechanics_value.length > 0 ){
-			mechanics_state = success;
-		}
-		if( mechanics_value == 'Другое'){
-			mechanics_state = warning;
-		}
-		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Материал: ' + mechanics_value + '</li>';
-		$('#lmechanic_material').html(html);
-
-		// Check mechanics status
-		var mechanics_state = error;
-		var mechanics_value = $('#mechanic_status option:selected').text();
-		if( mechanics_value.length > 0 ){
-			mechanics_state = success;
-		}
-		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Статус: ' + mechanics_value + '</li>';
-		$('#lmechanic_status').html(html);
-
-		var html = '<i class="fa fa-file" aria-hidden="true"></i> Описание ' + filename + '.txt';
-		$('#lfdescription').html(html);
-
-
-		if( source3dFile.length > 0 ){
-			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.m3d';
-		}else{
-			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
-		}
-
-		$('#lf3dsource').html(html);
-
-		if( step3dFile.length > 0 ){
-			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.step';
-		}else{
-			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
-		}
-
-		$('#lf3dstep').html(html);
-
-		if( sourcedrawFile.length > 0 ){
-			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.cdw';
-		}else{
-			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
-		}
-
-		$('#lfdrawsource').html(html);
-
-		if( pdfdrawFile.length > 0 ){
-			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.pdf';
-		}else{
-			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
-		}
-
-		$('#lfdrawpdf').html(html);	
-
-		if( vectordrawFile.length > 0 ){
-			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + filename + '.dxf';
-		}else{
-			var html = '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Файл не выбран.';
-		}
-
-		$('#lfdrawvector').html(html);	
-
-
-		$('#lmechanic_fullname').html(filename);
-		$('#mechanic_fullname').val(filename);	
-	}
-
 	$( document ).ready(function() {
 		// On load functions
 		$("#imagePreview").hide();
 		$("#drawSourceSelect").hide();
 		$("#drawFileSelect").hide();
 		$("#drawLaserSelect").hide();
-		$("#otherSelect").hide();
-		$("#lfdrawsource").hide();
-		$("#lfdrawdir").hide();
-		$("#lfdrawpdf").hide();
-		$("#lfdrawvectordir").hide();
+		$("#annotationsSelect").hide();
+		$("#photoSelect").hide();
+		$("#marksSelect").hide();
+		$("#3dStlSourceSelect").hide();
 
+		$("#f_drawings").hide();
+		$("#f_vectors").hide();
+		$("#f_photos").hide();
+		$("#f_marks").hide();
+		$("#f_annotations").hide();		
+		$("#f_3dstl").hide();
 
 		// Description change
 	    $('#mechanic_description').on('input', function(){ 
@@ -512,6 +434,12 @@
             step3dFile = fileName;
         });
 
+	    // On source 3d change
+	     $('#mechanic_3dstl').change(function(e){
+            var fileName = e.target.files[0].name;
+            stl3dFile = fileName;
+        });
+
 		// On source draw change
 	     $('#mechanic_drawsource').change(function(e){
             var fileName = e.target.files[0].name;
@@ -525,9 +453,33 @@
         });
 
         // On source vector change
-	     $('#mechanic_drawlaser').change(function(e){
+	    $('#mechanic_drawlaser').change(function(e){
             var fileName = e.target.files[0].name;
             vectordrawFile = fileName;
+        });
+
+		// On source photos
+	    $('#mechanic_photos').change(function(e){
+	    	photos = [];
+            for (var i = 0; i < e.target.files.length; i++){
+				photos.push(e.target.files[i].name);
+			}
+        });
+
+        // On source photos
+	    $('#mechanic_annotations').change(function(e){
+	    	annotations = [];
+            for (var i = 0; i < e.target.files.length; i++){
+				annotations.push(e.target.files[i].name);
+			}
+        });
+
+        // On source photos
+	    $('#mechanic_marks').change(function(e){
+	    	marks = [];
+            for (var i = 0; i < e.target.files.length; i++){
+				marks.push(e.target.files[i].name);
+			}
         });
 
 	    // On add draw changed
@@ -535,26 +487,22 @@
 			if ($(this).is(':checked')) {
 				$("#drawSourceSelect").show("fast");
 				$("#drawFileSelect").show("fast");
-
-				$("#lfdrawsource").show("fast");
-				$("#lfdrawdir").show("fast");
-				$("#lfdrawpdf").show("fast");
+				$("#f_drawings").show("fast");
   			}else{
 				$("#drawSourceSelect").hide("fast");
 				$("#drawFileSelect").hide("fast");
-
-				$("#lfdrawsource").hide("fast");
-				$("#lfdrawdir").hide("fast");
-				$("#lfdrawpdf").hide("fast");
+				$("#f_drawings").hide("fast");
   			}
         });
 
 	    // On other change
-	    $('#addOther').change(function(e){
+	    $('#addAnnotations').change(function(e){
 			if ($(this).is(':checked')) {
-				$("#otherSelect").show("fast");
+				$("#annotationsSelect").show("fast");
+				$("#f_annotations").show("fast");
   			}else{
-				$("#otherSelect").hide("fast");
+				$("#annotationsSelect").hide("fast");
+				$("#f_annotations").hide("fast");
   			}
         });
 
@@ -562,12 +510,170 @@
 	    $('#addLaser').change(function(e){
 			if ($(this).is(':checked')) {
 				$("#drawLaserSelect").show("fast");
-				$("#lfdrawvectordir").show("fast");
+				$("#f_vectors").show("fast");
   			}else{
 				$("#drawLaserSelect").hide("fast");
-				$("#lfdrawvectordir").hide("fast");
+				$("#f_vectors").hide("fast");
   			}
         });
 
+	    // On add draw changed
+	    $('#addPhotos').change(function(e){
+			if ($(this).is(':checked')) {
+				$("#photoSelect").show("fast");
+				$("#f_photos").show("fast");
+  			}else{
+				$("#photoSelect").hide("fast");
+				$("#f_photos").hide("fast");
+  			}
+        });
+
+	    // On add draw changed
+	    $('#addMarks').change(function(e){
+			if ($(this).is(':checked')) {
+				$("#marksSelect").show("fast");
+				$("#f_marks").show("fast");
+  			}else{
+				$("#marksSelect").hide("fast");
+				$("#f_marks").hide("fast");
+  			}
+        });
+
+
+	    // On add draw changed
+	    $('#addStl').change(function(e){
+			if ($(this).is(':checked')) {
+				$("#3dStlSourceSelect").show("fast");
+				$("#f_3dstl").show("fast");
+  			}else{
+				$("#3dStlSourceSelect").hide("fast");
+				$("#f_3dstl").hide("fast");
+  			}
+        });
+        
+
 	});
+
+	var noFile = '<i class="fa fa-times-circle" aria-hidden="true"></i> Файл не выбран';
+
+	function changeTreeFile(id, fileVarialbe, filename, type = '') {
+		if( fileVarialbe.length > 0 ){
+			var html = '<i class="fa fa-file" aria-hidden="true"></i> ' + type + filename;
+		}else{
+			var html = noFile + ' (' + filename + ')';
+		}
+
+		$(id).html(html);
+	}
+
+	function changeTreeFiles(id, arr, title) {
+		if( arr.length > 0 ){
+			var result = title + '<ul>';
+			for (var i = 0; i < arr.length; i++){
+				result += '<li><i class="fa fa-file" aria-hidden="true"></i> ' + arr[i] + '</li>';
+			}
+			result += '</ul>';
+			var html = result;
+		}else{
+			var html = noFile;
+		}
+		$(id).html(html);
+	}
+
+
+
+	function changeModalPresubmit() {
+
+		var success = 'fa fa-check-circle';
+		var warning = 'fa fa-exclamation-circle';
+		var error = 'fa fa-times-circle';
+
+		var filename = $('#mechanic_codename').val();
+
+		if($('#mechanic_name').val().length > 0){
+			filename =  filename + ' - ' + $('#mechanic_name').val();
+		}
+
+		// Check mechanics name
+		var mechanics_state = error;
+		var mechanics_value = $('#mechanic_name').val();
+		if( mechanics_value.length > 0 ){
+			mechanics_state = success;
+		}
+		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Наиминование изделия: ' + mechanics_value + '</li>';
+		$('#lmechanic_name').html(html)
+
+		// Check mechanics codename
+		var mechanics_state = error;
+		var mechanics_value = $('#mechanic_codename').val();
+		if( mechanics_value.length > 0 ){
+			mechanics_state = success;
+		}
+		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Шифр изделия: ' + mechanics_value + '</li>';
+		$('#lmechanic_codename').html(html)
+
+
+		// Check mechanics description
+		var mechanics_state = error;
+		var mechanics_value = $('#mechanic_description').val();
+		if( mechanics_value.length > 0 ){
+			mechanics_state = success;
+		}
+		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Краткое описание: ' + mechanics_value + '</li>';
+
+		$('#lmechanic_description').html(html)
+
+		// Check mechanics image
+		var mechanics_state = error;
+		var mechanics_value = imageFile;
+		var html = noFile + ' (Изображение)';
+
+		if( mechanics_value.length > 0 ){
+			mechanics_state = success;
+			var html = '<i class="fa fa-file" aria-hidden="true"></i> Изображение ' + filename + '.jpeg';
+		}
+
+		$('#f_image').html(html);
+
+		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Изображение: ' + mechanics_value + '</li>';
+		$('#lmechanic_image').html(html);
+
+		// Check mechanics material
+		var mechanics_state = error;
+		var mechanics_value = $('#mechanic_material option:selected').text();
+		if( mechanics_value.length > 0 ){
+			mechanics_state = success;
+		}
+		if( mechanics_value == 'Другое'){
+			mechanics_state = warning;
+		}
+		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Материал: ' + mechanics_value + '</li>';
+		$('#lmechanic_material').html(html);
+
+		// Check mechanics status
+		var mechanics_state = error;
+		var mechanics_value = $('#mechanic_status option:selected').text();
+		if( mechanics_value.length > 0 ){
+			mechanics_state = success;
+		}
+		var html = '<i class="' + mechanics_state + '" aria-hidden="true"></i> Статус: ' + mechanics_value + '</li>';
+		$('#lmechanic_status').html(html);
+
+		var html = '<i class="fa fa-file" aria-hidden="true"></i> Описание ' + filename + '.txt';
+		$('#f_description').html(html);
+
+		changeTreeFile('#f_3dsource', source3dFile, filename + '.m3d', 'Исходник ');
+		changeTreeFile('#f_3dstep', step3dFile, filename + '.step', '3D модель ');
+		changeTreeFile('#f_3dstl', stl3dFile, filename + '.stl', '3D модель для печати ');
+		changeTreeFile('#f_drawsource', sourcedrawFile, filename + '.cdw', 'Исходник ');
+		changeTreeFile('#f_drawpdf', pdfdrawFile, filename + '.pdf', 'Чертёж ');
+		changeTreeFile('#f_vector', vectordrawFile, filename + '.dxf', 'Векторный файл ');
+
+		changeTreeFiles('#f_photos', photos, 'Фотографии');
+		changeTreeFiles('#f_annotations', annotations, 'Аннотации');
+		changeTreeFiles('#f_marks', marks, 'Маркировка и наклейки');
+
+		$('#f_mechanic_fullname').html(filename);
+		$('#mechanic_fullname').val(filename);	
+	}
 </script>

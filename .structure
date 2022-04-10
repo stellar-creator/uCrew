@@ -86,3 +86,181 @@
     -- Символы
     -- Готовые схемотехнические решения
   - Листы данных (даташиты)
+
+
+
+Array
+(
+    [mechanic_fullname] => TBM0132 - Уголок древесный
+    [mechanic_name] => Уголок древесный
+    [mechanic_description] => Уголок левый
+    [mechanic_material] => Пластмасса PET-G
+    [mechanic_status] => 3
+    [mechanic_codename] => TBM0132
+    [addLaser] => on
+    [addMechanic] => Добавить изделие
+)
+Array
+(
+    [mechanic_image] => Array
+        (
+            [name] => mountain_peak_sky_133843_1600x900.jpg
+            [type] => image/jpeg
+            [tmp_name] => /tmp/php0ATKUZ
+            [error] => 0
+            [size] => 673875
+        )
+
+    [mechanic_3dsource] => Array
+        (
+            [name] => Hay Metro 230.m3d
+            [type] => application/octet-stream
+            [tmp_name] => /tmp/phpDL1HlO
+            [error] => 0
+            [size] => 45581
+        )
+
+    [mechanic_3dstep] => Array
+        (
+            [name] => PCHSN-8.STEP
+            [type] => application/octet-stream
+            [tmp_name] => /tmp/phpIcS6TC
+            [error] => 0
+            [size] => 644180
+        )
+
+    [mechanic_drawsource] => Array
+        (
+            [name] => Hay Metro 230.cdw
+            [type] => application/octet-stream
+            [tmp_name] => /tmp/phpcuo2vi
+            [error] => 0
+            [size] => 41551
+        )
+
+    [mechanic_drawpdf] => Array
+        (
+            [name] => Hay Metro 230 - Для фрезеровки (Итоговый эскиз).pdf
+            [type] => application/pdf
+            [tmp_name] => /tmp/phprz69x8
+            [error] => 0
+            [size] => 63485
+        )
+
+    [mechanic_drawlaser] => Array
+        (
+            [name] => Чертёж TBM0131 - Уголок древесный.dxf
+            [type] => application/octet-stream
+            [tmp_name] => /tmp/phpItyHGY
+            [error] => 0
+            [size] => 686762
+        )
+
+    [mechanic_photos] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 1.jpg
+                    [1] => 2.jpg
+                    [2] => 3.jpg
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                    [1] => image/jpeg
+                    [2] => image/jpeg
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => /tmp/php1v0gGP
+                    [1] => /tmp/phpeKQ9ZG
+                    [2] => /tmp/phppvgRpy
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                    [1] => 0
+                    [2] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 235453
+                    [1] => 83291
+                    [2] => 600299
+                )
+
+        )
+
+    [mechanic_marks] => Array
+        (
+            [name] => Array
+                (
+                    [0] => localhost (1).sql
+                    [1] => localhost (2).sql
+                    [2] => localhost.sql
+                )
+
+            [type] => Array
+                (
+                    [0] => application/octet-stream
+                    [1] => application/octet-stream
+                    [2] => application/octet-stream
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => /tmp/phpsBTXFq
+                    [1] => /tmp/php7Rr1gj
+                    [2] => /tmp/phpKSuUmc
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                    [1] => 0
+                    [2] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 276766
+                    [1] => 305588
+                    [2] => 17422
+                )
+
+        )
+
+    [mechanic_annotations] => Array
+        (
+            [name] => Array
+                (
+                    [0] => Задания для практического занятия группа ИСбу-2020ит.doc
+                )
+
+            [type] => Array
+                (
+                    [0] => application/msword
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => /tmp/phpDMMgt5
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 173056
+                )
+
+        )
+
+)
