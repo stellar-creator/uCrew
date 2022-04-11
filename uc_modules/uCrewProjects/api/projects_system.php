@@ -17,11 +17,22 @@
 			$this->ucp_mount = 'uc_resources/projects/mount/';
 
 			// Init default directories
-			$typicalTemplate_imgae = array('Фотографии', 'Маркировка и наклейки');
-
+	
 			$this->ucs_DirectoriesNames = array(
 				'develop_documentation' => 'Конструкторская документация',
-				'mechanics' => 'Механические изделия'
+				'mechanics' => 'Механические изделия',
+				'images' => 'Изображения',
+				'3dmodels' => '3D модели',
+				'drawings' => 'Чертежи',
+				'vectors' => 'Векторные файлы',
+				'photos' => 'Фотографии',
+				'marks' => 'Маркировка и наклейки',
+				'annotations' => 'Аннотации'
+			);
+
+			$typicalTemplate_imgae = array(
+				$this->ucs_DirectoriesNames['photos'], 
+				$this->ucs_DirectoriesNames['marks']
 			);
 
 			$this->ucs_Directories = array(
@@ -37,7 +48,7 @@
 					'Внутренее ПО',
 				), 
 				'Библиотеки' => array(
-					'3D модели',
+					$this->ucs_DirectoriesNames['3dmodels'],
 					'Для KiCad' => array(
 						'Посадочные места',
 						'Символы',
@@ -55,7 +66,7 @@
 					'Провода и кабели',
 					'Программное обеспечение',
 					'Спецификации',
-					'Изображения' => $typicalTemplate_imgae,
+					$this->ucs_DirectoriesNames['images'] => $typicalTemplate_imgae,
 					'Устройства и модули',
 					'Для производства' =>array(
 						'Сборочная документация',
@@ -69,7 +80,7 @@
 					'Провода и кабели',
 					'Программное обеспечение',
 					'Спецификации',
-					'Изображения' => $typicalTemplate_imgae,
+					$this->ucs_DirectoriesNames['images'] => $typicalTemplate_imgae,
 					'Устройства и модули',
 					'Для производства' =>array(
 						'Сборочная документация',
@@ -78,24 +89,24 @@
 				),
 
 				'mechanics' => array(
-					'3D модели',
-					'Чертежи',
-					'Векторные файлы',
-					'Изображения' => $typicalTemplate_imgae
+					$this->ucs_DirectoriesNames['3dmodels'],
+					$this->ucs_DirectoriesNames['drawings'],
+					$this->ucs_DirectoriesNames['vectors'],
+					$this->ucs_DirectoriesNames['images'] => $typicalTemplate_imgae
 				),
 
 				'cables' => array(
 					'Спецификация',
 					'Чертёж',
 					'Маркировка',
-					'Изображения' => $typicalTemplate_imgae,
+					$this->ucs_DirectoriesNames['images'] => $typicalTemplate_imgae,
 				),
 
 				'pcbs' => array(
-					'3D модель',
+					$this->ucs_DirectoriesNames['3dmodels'],
 					'Исходники',
 					'Спецификация',
-					'Изображения' => $typicalTemplate_imgae,
+					$this->ucs_DirectoriesNames['images'] => $typicalTemplate_imgae,
 					'Файлы для производства' => array(
 						'Gerber',
 						'Файлы позиций',
@@ -152,78 +163,149 @@
 
 		// Mechanics data
 		public function addMechanic($data, $files){
+			// Init json
+			$mechanic_data = array(
+				"fullname" => "",
+				"material" => "",
+				"projects" => array(),
+				"changes" => array()
+			);
+			// Get upload directory
 			$upload_directory = 
 			$this->getProjectDirectoryData()['directory'] . 
 			$this->ucs_DirectoriesNames['develop_documentation'] . '/' .
-			$this->ucs_DirectoriesNames['mechanics'] . '/' . $data['mechanic_fullname'];
-
-			$this->createDirectorySpecial($upload_directory);
-		}
-
-		// Cables data
-		public function addCable($data, $files){
-			// Init data array
-			$cable_data = array(
-				"fullname" => "",
-				"connectors" => array(),
-				"wires" => array(),
-				"files" => array(
-					"other" => array()
-				 ),
-				"projects" => array()
-			);
-			$cable_dir_name = 'Кабели и провода';
-			$image_dir = '/Изображениe/';
-			$draw_dir = '/Чертёж/';
-			$documenation_dir = '/Документация/';
-			$source_dir = '/Исходные файлы/';
-			// Init state
-			$state = true;
-			// Set upload directory
-			$upload_directory = $this->getProjectDirectoryData()['directory'] . $cable_dir_name . '/' . $data['cable_fullname'];
-			$cable_data['fullname'] = $data['cable_fullname'];
-			// Check if directory exists
+			$this->ucs_DirectoriesNames['mechanics'] . '/' . $data['mechanic_fullname'] . '/';
+			
+			// If directory exists, remove
 			if(file_exists($upload_directory)){
 				$this->deleteDirectory($upload_directory);
 			}else{
 				$state = false;
 			}
-			// Create main directory
-			mkdir($upload_directory, 0777, true);
-			// Add image directory
-			mkdir($upload_directory . $image_dir, 0777, true);
-			// Copy image file
-			$image_name = $image_dir . 'Изображение ' . $data['cable_fullname'] . '.jpeg';
 
-			$image_mount = $this->ucp_mount . $cable_dir_name . '/' . $data['cable_fullname'] . $image_dir . 'Изображение ' . $data['cable_fullname'] . '.jpeg';
+			// Create new directory
+			$this->createDirectorySpecial($upload_directory);
 
-			move_uploaded_file($files["cable_image"]["tmp_name"], $upload_directory . $image_name);
-			// Add documentation dir
-			mkdir($upload_directory . $documenation_dir, 0777, true);
-			$description_file = fopen($upload_directory . $documenation_dir . 'Описание ' . $data['cable_fullname'] . '.txt', "w");
-			fwrite($description_file, $data['cable_description']);
+			// Write description
+			$description_file = fopen($upload_directory . 'Описание ' . $data['mechanic_fullname'] . '.txt', "w");
+			fwrite($description_file, $data['mechanic_description']);
 			fclose($description_file);
-			// Create 3d dir
-			mkdir($upload_directory . $draw_dir, 0777, true);
-			// Copy 3d file
-			$model_name = $draw_dir . 'Чертёж ' . $data['cable_fullname'] . '.cdw';
-			move_uploaded_file($files["cable_drawpdf"]["tmp_name"], $upload_directory . $model_name);
-			// Create source dir
-			mkdir($upload_directory . $source_dir, 0777, true);
-			// Copy source file
-			$source_name = $source_dir . 'Чертёж '. $data['cable_fullname'] . '.cdw';
-			move_uploaded_file($files["cable_drawsource"]["tmp_name"], $upload_directory . $source_name);
 
-			$sql = "INSERT INTO `ucp_cables` (`cable_id`, `cable_name`, `cable_description`, `cable_codename`, `cable_author_id`, `cable_create_timestamp`, `cable_status`, `cable_image`, `cable_data`, `cable_activation`) VALUES (NULL, '".$data['cable_name']."', '".$data['cable_description']."', '".$data['cable_codename']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['cable_status']."', '".$image_mount."', '".json_encode($cable_data, JSON_UNESCAPED_UNICODE)."', '1')";
+			// Move image
+			$f_name = 'Изображение ' . $data['mechanic_fullname'] . '.jpeg';
+			$f_dir = $upload_directory . $this->ucs_DirectoriesNames['images'] . '/';
+			$f_mount =  $f_dir . $f_name;
+			$this->createDirectorySpecial($f_dir);
+			move_uploaded_file($files["mechanic_image"]["tmp_name"], $f_mount);
 
+			// Move 3D model source (*.a3d)
+			$f_name = 'Исходник ' . $data['mechanic_fullname'] . '.m3d';
+			$f_dir = $upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/';
+			$f_mount =  $f_dir . $f_name;
+			$this->createDirectorySpecial($f_dir);
+			move_uploaded_file($files["mechanic_3dsource"]["tmp_name"], $f_mount);
+
+			// Move 3D model (*.step)
+			$f_name = '3D модель ' . $data['mechanic_fullname'] . '.step';
+			$f_dir = $upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/';
+			$f_mount =  $f_dir . $f_name;
+			$this->createDirectorySpecial($f_dir);
+			move_uploaded_file($files["mechanic_3dstep"]["tmp_name"], $f_mount);
+			
+			// Move 3D model (*.stl)
+			if( $files["mechanic_3dstl"]["tmp_name"] != '' ){
+				$f_name = 'Для печати ' . $data['mechanic_fullname'] . '.stl';
+				$f_dir = $upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/';
+				$f_mount =  $f_dir . $f_name;
+				$this->createDirectorySpecial($f_dir);
+				move_uploaded_file($files["mechanic_3dstl"]["tmp_name"], $f_mount);
+			}
+
+			// Move drawings source if isset (*.cdw)
+			if( $files["mechanic_drawsource"]["tmp_name"] != '' ){
+				$f_name = 'Исходник ' . $data['mechanic_fullname'] . '.cdw';
+				$f_dir = $upload_directory . $this->ucs_DirectoriesNames['drawings'] . '/';
+				$f_mount =  $f_dir . $f_name;
+				$this->createDirectorySpecial($f_dir);
+				move_uploaded_file($files["mechanic_drawsource"]["tmp_name"], $f_mount);
+			}
+
+			// Move drawings if isset (*.pdf)
+			if( $files["mechanic_drawpdf"]["tmp_name"] != '' ){
+				$f_name = 'Чертёж ' . $data['mechanic_fullname'] . '.pdf';
+				$f_dir = $upload_directory . $this->ucs_DirectoriesNames['drawings'] . '/';
+				$f_mount =  $f_dir . $f_name;
+				$this->createDirectorySpecial($f_dir);
+				move_uploaded_file($files["mechanic_drawpdf"]["tmp_name"], $f_mount);
+			}
+
+			// Move vector if isset (*.dxf)
+			if( $files["mechanic_drawlaser"]["tmp_name"] != '' ){
+				$f_name = 'Векторный файл ' . $data['mechanic_fullname'] . '.dxf';
+				$f_dir = $upload_directory . $this->ucs_DirectoriesNames['vectors'] . '/';
+				$f_mount =  $f_dir . $f_name;
+				$this->createDirectorySpecial($f_dir);
+				move_uploaded_file($files["mechanic_drawlaser"]["tmp_name"], $f_mount);
+			}
+
+			// Move images
+			if( $files["mechanic_photos"]["tmp_name"][0] != '' ){
+				for($i = 0; $i < count($files["mechanic_photos"]["tmp_name"]); $i++) { 
+					$f_name = $files["mechanic_photos"]["name"][$i];
+					$f_dir = $upload_directory . $this->ucs_DirectoriesNames['images'] . '/' . $this->ucs_DirectoriesNames['photos'] . '/';
+					$f_mount =  $f_dir . $f_name;
+					$this->createDirectorySpecial($f_dir);
+					move_uploaded_file($files["mechanic_photos"]["tmp_name"][$i], $f_mount);
+				}
+			}
+
+			// Move marks
+			if( $files["mechanic_marks"]["tmp_name"][0] != '' ){
+				for($i = 0; $i < count($files["mechanic_marks"]["tmp_name"]); $i++) { 
+					$f_name = $files["mechanic_marks"]["name"][$i];
+					$f_dir = $upload_directory . $this->ucs_DirectoriesNames['images'] . '/' . $this->ucs_DirectoriesNames['marks'] . '/';
+					$f_mount =  $f_dir . $f_name;
+					$this->createDirectorySpecial($f_dir);
+					move_uploaded_file($files["mechanic_marks"]["tmp_name"][$i], $f_mount);
+				}
+			}
+
+			// Move annotations
+			if( $files["mechanic_annotations"]["tmp_name"][0] != '' ){
+				for($i = 0; $i < count($files["mechanic_annotations"]["tmp_name"]); $i++) { 
+					$f_name = $files["mechanic_annotations"]["name"][$i];
+					$f_dir = $upload_directory . $this->ucs_DirectoriesNames['annotations'] . '/';
+					$f_mount =  $f_dir . $f_name;
+					$this->createDirectorySpecial($f_dir);
+					move_uploaded_file($files["mechanic_annotations"]["tmp_name"][$i], $f_mount);
+				}
+			}
+
+			// Set data
+			$mechanic_data['material'] = $data['mechanic_material'];
+
+			// Create query
+			$sql = "INSERT INTO `ucp_mechanics` (`mechanic_id`, `mechanic_name`, `mechanic_description`, `mechanic_codename`, `mechanic_author_id`, `mechanic_create_timestamp`, `mechanic_status`, `mechanic_image`, `mechanic_data`, `mechanic_activation`) VALUES (NULL, '".$data['mechanic_name']."', '".$data['mechanic_description']."', '".$data['mechanic_codename']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['mechanic_status']."', '', '".json_encode($mechanic_data, JSON_UNESCAPED_UNICODE)."', '1')";
+			
 			// Add data
 			$this->ucs_Database->query($sql);
-			// Get codename
-			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'cables_codename'";
-			$data = $this->ucs_Database->getAllData($sql)[0]['data_value'];
-			$data = $data + 1;
-			$sql = "UPDATE `ucp_data` SET `data_value` = '".$data."' WHERE `data_name` = 'cables_codename'";
-			$this->ucs_Database->query($sql);
+			
+			// Change codename if auto
+			if($data['mechanic_codename_state'] == 'auto'){
+				// Get codename
+				$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'mechanics_codename'";
+				$data = $this->ucs_Database->getAllData($sql)[0]['data_value'];
+				// Update codename
+				$data = $data + 1;
+				$sql = "UPDATE `ucp_data` SET `data_value` = '".$data."' WHERE `data_name` = 'mechanics_codename'";
+				$this->ucs_Database->query($sql);
+			}
+		}
+
+		// Cables data
+		public function addCable($data, $files){
+			print_r($data);
+			print_r($files);
 		}
 
 		// Get mechanic materials
@@ -232,7 +314,6 @@
 			$materials = $this->ucs_Database->getAllData($sql)[0]['data_text'];
 			return json_decode($materials, true)['materials'];
 		}
-
 
 		public function getPager($page, $count, $table, $url){
 			$sql = "SELECT COUNT(*) FROM `".$table."`";

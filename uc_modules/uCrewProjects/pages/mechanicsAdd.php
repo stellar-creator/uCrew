@@ -3,22 +3,8 @@
 	require_once('uc_modules/uCrewProjects/api/projects_system.php');
 	// Init class
 	$uc_Projects = new uCrewProjects();
-	// Get last codename
-	$codename = $uc_Projects->getLastCodeName('mechanics_codename', 'TBM');
-	// Get directory data
-	$directory_data = $uc_Projects->getProjectDirectoryData();
-	// Get materials
-	$materials = $uc_Projects->getMechanicMaterials();
-	// Generate list
-	$options = '';
-	foreach ($materials as $material) {
-		$options .= "<option value=\"$material\">$material</option>\n";
-	}
-
 	// Message variable
-
 	$message = "";
-
 	// Check if isset data
 	if(isset($_POST['mechanic_name'])){
 		// Add data
@@ -29,6 +15,17 @@
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		';
+	}
+	// Get last codename
+	$codename = $uc_Projects->getLastCodeName('mechanics_codename', 'TBM');
+	// Get directory data
+	$directory_data = $uc_Projects->getProjectDirectoryData();
+	// Get materials
+	$materials = $uc_Projects->getMechanicMaterials();
+	// Generate list
+	$options = '';
+	foreach ($materials as $material) {
+		$options .= "<option value=\"$material\">$material</option>\n";
 	}
 
 	echo $message;
@@ -90,6 +87,7 @@
 		<div class="mb-3">
 		  <label for="mechanic_codename" class="form-label">Шифр изделия <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
 		  <input class="form-control" type="text" id="mechanic_codename" name="mechanic_codename" readonly value="<?php echo $codename; ?>" required>
+		  <input type="hidden" id="mechanic_codename_state" name="mechanic_codename_state" value="auto">
 		</div>
 		<div class="mb-3">
 		  <label for="mechanic_image" class="form-label">Изображение изделия - JPEG (*.jpeg, *.jpg)</label>
@@ -129,17 +127,13 @@
 		</div>
 
 		<div class="mb-3">
-
 		  	<label for="checkboxes" class="form-label">Дополнительно</label>
-
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addStl">
 			  <label class="form-check-label" for="flexCheckDefault">
 			    Прикрепить 3D модель для печати (*.stl)
 			  </label>
 			</div>
-
-
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addDraw">
 			  <label class="form-check-label" for="flexCheckDefault">
@@ -153,8 +147,6 @@
 			    Прикрепить векторный файл для лазера (*.dxf)
 			  </label>
 			</div>
-
-
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addPhotos">
 			  <label class="form-check-label" for="flexCheckDefault">
@@ -170,14 +162,14 @@
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addAnnotations">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить аннотации (*.txt, *.docx)
+			    Прикрепить аннотации (*.txt, *.docx, *.pdf)
 			  </label>
 			</div>
 		</div>
 
 		<div class="mb-3" id="3dStlSourceSelect">
-		  <label for="mechanic_drawsource" class="form-label">Готовый файл 3D модели - STL (*.stl)</label>
-		  <input class="form-control" type="file" id="mechanic_3dstl" name="mechanic_drawsource" accept=".stl">
+		  <label for="mechanic_3dstl" class="form-label">Готовый файл 3D модели - STL (*.stl)</label>
+		  <input class="form-control" type="file" id="mechanic_3dstl" name="mechanic_3dstl" accept=".stl">
 		</div>
 		<div class="mb-3" id="drawSourceSelect">
 		  <label for="mechanic_drawsource" class="form-label">Исходный файл чертежа - Компас 3D (*.cdw)</label>
@@ -201,8 +193,8 @@
 		</div>
 
 		<div class="mb-3" id="annotationsSelect">
-		  <label for="mechanic_annotations" class="form-label">Аннотации - Text (*.txt), Microsoft Word (*.docx) <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="mechanic_annotations" name="mechanic_annotations[]" multiple="multiple">
+		  <label for="mechanic_annotations" class="form-label">Аннотации - Text (*.txt), Microsoft Word (*.docx), Portable Document Format (*.pdf) <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="mechanic_annotations" name="mechanic_annotations[]" multiple="multiple"  accept=".txt,.docx,.pdf">
 		</div>
 
 		<div class="d-grid gap-1 d-md-flex justify-content-md-end" style="padding-bottom: 10px">
@@ -347,9 +339,12 @@
 		if(readonly == true){
 			readonly = false;
 			$("#codeNameState").html("пользователем");
+			$("#mechanic_codename_state").val("manual");
+
 		}else{
 			readonly = true;
 			$("#codeNameState").html("автоматически");
+			$("#mechanic_codename_state").val("auto");
 		}
 
 		$("#mechanic_codename").attr("readonly", readonly);  
