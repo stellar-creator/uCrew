@@ -2,7 +2,7 @@
 	/**
 	 * uCrew Projects Class
 	 */
-	class uCrewProjects	{
+	class uCrewProjects	extends uCrewConfiguration{
 
 		public $ucs_Database;
 		public $ucp_mount;
@@ -10,6 +10,7 @@
 		public $ucs_Directories;
 		public $ucs_DirectoriesNames;
 		public $ucs_DirectoriesTemplates;
+		public $ucs_DirectoriesPath;
 
 		function __construct(){
 			$this->ucs_Database = new uCrewDatabase('ucrew_projects');
@@ -115,8 +116,20 @@
 				)
 			);
 
-
+			// Directories watchdog
 			$this->checkDirectories($this->ucs_Directories);
+
+			$directory_data = $this->getProjectDirectoryData();
+
+			// Make directories path
+			$this->ucs_DirectoriesPath = array(
+				'mechanics' => array(
+					'local' => $directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['mechanics'] . '/',
+					'smb' => $directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['mechanics'] . '\\',
+					'web' => 'http://' . $this->system['main_domain'] . '/uc_resources/projects/mount/' . $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['mechanics'] . '/',
+				)
+			); 
+			///uc_resources/projects/mount/
 		}
 
 		// Common projects data
@@ -159,6 +172,24 @@
 				print_r($folder);
 			}
 			
+		}
+
+		public function directoryToArray($dir){
+		     $result = array();
+			 $cdir = scandir($dir);
+
+			 foreach ($cdir as $key => $value)
+			 {
+			    if (!in_array($value,array(".",".."))){
+			        if (is_dir($dir . DIRECTORY_SEPARATOR . $value)){
+			        	$result[$value] = $this->directoryToArray($dir . DIRECTORY_SEPARATOR . $value);
+			        }else{
+			        	$result[] = $value;
+			        }
+			    }
+			}
+
+			return $result;
 		}
 
 		// Mechanics data
@@ -283,13 +314,14 @@
 
 			// Set data
 			$mechanic_data['material'] = $data['mechanic_material'];
+			$mechanic_data['fullname'] =  $data['mechanic_fullname'];
 
 			// Create query
 			$sql = "INSERT INTO `ucp_mechanics` (`mechanic_id`, `mechanic_name`, `mechanic_description`, `mechanic_codename`, `mechanic_author_id`, `mechanic_create_timestamp`, `mechanic_status`, `mechanic_image`, `mechanic_data`, `mechanic_activation`) VALUES (NULL, '".$data['mechanic_name']."', '".$data['mechanic_description']."', '".$data['mechanic_codename']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['mechanic_status']."', '', '".json_encode($mechanic_data, JSON_UNESCAPED_UNICODE)."', '1')";
 			
 			// Add data
 			$this->ucs_Database->query($sql);
-			
+
 			// Change codename if auto
 			if($data['mechanic_codename_state'] == 'auto'){
 				// Get codename

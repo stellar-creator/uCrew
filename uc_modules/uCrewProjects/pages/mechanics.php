@@ -51,8 +51,12 @@
 
   	if($list != 0){
 		foreach ($list as $item => $values) {
+
+			$mechanic_paths = $uc_Projects->ucs_DirectoriesPath['mechanics'];
+
+			$mechanic_paths['web'] = $mechanic_paths['web'] . $values['mechanic_data']['fullname'] . '/';
+			$mechanic_image = $mechanic_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $values['mechanic_data']['fullname'] . '.jpeg' ;
 			$count++;
-			$image = $this->uc_CompilatorData->checkImage($values['mechanic_image']);
 			$status = $statuses[$values['mechanic_status']][0];
 			$class = $statuses[$values['mechanic_status']][1];
 			$inprojects = "";
@@ -78,7 +82,7 @@
 			array_push($rows, 
 				array(
 					$count => array('class' => 'align-middle text-center'),
-					'<img src="'.$image.'" class="img-thumbnail imagecat" alt="'.$image.'">',
+					'<img src="'.$mechanic_image.'" class="img-thumbnail imagecat" alt="'.$values['mechanic_codename'].'">',
 					'<a href="/?page=uCrewProjects/mechanicsItem&id='.$values['mechanic_id'].'" class="link-dark" style="text-decoration:none">'.$values['mechanic_codename'].'</a>' => array('class' => 'align-middle text-center'),
 					'<p>'.$values['mechanic_name'].'</p><p>
 					<figcaption class="blockquote-footer">
