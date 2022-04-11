@@ -31,7 +31,7 @@
   <div class="row">
     <h4>Общая информация</h4>
     <hr>
-       <div class="col">
+       <div class="col-sm-6">
         <p>Шифр изделия: <?php echo $data['mechanic_codename']; ?></p>
         <p>Наиминование: <?php echo $data['mechanic_name']; ?></p>
         <p>Описание: <?php echo $data['mechanic_description']; ?></p>
@@ -40,8 +40,8 @@
         <p>Материал: <?php echo $data['mechanic_data']['material']; ?></p>
         <p>Статус: <?php echo $statuses[$data['mechanic_status']][0]; ?></p>
       </div>
-      <div class="col d-flex justify-content-center">
-        <img src="<?php echo $mechanic_image; ?>" class="img-thumbnail" style="width: 50%">
+      <div class="col-sm-6 justify-content-end d-flex">
+        <img src="<?php echo $mechanic_image; ?>" class="img-fluid img-thumbnail" style="width: 500px">
       </div>
     </div>
 
