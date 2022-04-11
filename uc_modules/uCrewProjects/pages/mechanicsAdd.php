@@ -62,7 +62,7 @@
 		</div>
 		<div class="mb-3">
 		  <label for="mechanic_material" class="form-label">Материал изделия</label>
-		  <select class="selectpicker show-tick form-control" id="mechanic_material" name="mechanic_material" data-live-search="true" data-size="5" required>
+		  <select class="selectpicker show-tick form-control" id="mechanic_material" name="mechanic_material" data-live-search="true" data-size="15" required>
 		  	<?php
 		  		echo $options;
 		  	?>

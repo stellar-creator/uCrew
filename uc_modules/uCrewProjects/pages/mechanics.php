@@ -39,7 +39,7 @@
 		'№' => array('class' => 'text-center', 'width' => '5%'),
 		'Изображение' => array('class' => 'text-center', 'width' => '150px'),
 		'Шифр' => array('class' => 'text-center', 'width' => '10%'),
-		'Краткая информация' => array('class' => 'text-center', 'width' => '40%'),
+		'Краткая информация' => array('width' => '35%'),
 		'Статус' => array('class' => 'text-center'),
 		'Материал',
 		'Управление' => array('class' => 'text-center'),

@@ -344,7 +344,20 @@
 		public function getMechanicMaterials(){
 			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'mechanics_materials'";
 			$materials = $this->ucs_Database->getAllData($sql)[0]['data_text'];
-			return json_decode($materials, true)['materials'];
+			$materials = json_decode($materials, true)['materials'];
+			$result = array();
+
+			foreach ($materials as $material => $data) {
+				if(empty($data)){
+					array_push($result, $material);
+				}else{
+					foreach ($data as $index => $value) {
+						array_push($result, $material . ', толщиной ' . $value . ' (мм)');
+					}
+				}
+			}
+
+			return $result;
 		}
 
 		public function getPager($page, $count, $table, $url){

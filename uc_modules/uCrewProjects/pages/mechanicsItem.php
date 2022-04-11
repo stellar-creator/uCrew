@@ -59,7 +59,7 @@
           Скачать весь проект архивом: <a href="<?php echo $mechanic_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $data['mechanic_data']['fullname']; ?>.zip</a>
       </p>-->
       <p>
-        Поделться: 
+        Поделиться: 
         <a href="tg://msg?text=<?php echo urlencode($mechanic_paths['web']); ?>" class="link-dark">Telegram</a>, 
         <a href='mailto:?subject=<?php echo $_SESSION['user_email']; ?>&body=Посмотреть изделие <?php
          echo $data['mechanic_data']['fullname'] . ' '.urlencode( $mechanic_paths['web'] ); 
