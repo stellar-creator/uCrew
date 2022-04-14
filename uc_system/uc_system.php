@@ -174,6 +174,91 @@
 			return $this->version != $remote_version ? array('state' => true, 'version' => $remote_version) : array('state' => false, 'version' => $remote_version); 
 		}
 
+		public function setSpecialCharacters($str){
+			$characters = array(
+				array('\'', '&#39;'),
+				array('"', '&#34;'),
+				array('\\', '&#92'),
+				array('\\', '&#92'),
+				array('*', '&#42;')
+			);
+
+			foreach ($characters as $data) {
+				$str = str_replace($data[0], $data[1], $str);
+			}
+
+			return $str;
+		}
+
+		public function deleteDirectory($dir){
+	    	if (!file_exists($dir)) {
+	        	return true;
+	    	}
+
+	    	if (!is_dir($dir)) {
+	        	return unlink($dir);
+	    	}
+
+	    	foreach (scandir($dir) as $item) {
+	        	if ($item == '.' || $item == '..') {
+	            	continue;
+	        	}
+
+	        	if (!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+	            	return false;
+	       		}
+	   
+			}
+		}
+
+		public function uploadFile($remote_name, $file_name, $directory, $files){
+			if($files[$remote_name]["tmp_name"] != '' ){
+				$f_name = $file_name;
+				$f_dir = $directory;
+				$f_mount =  $f_dir . $f_name;
+				$this->createDirectorySpecial($f_dir);
+				move_uploaded_file($files[$remote_name]["tmp_name"], $f_mount);
+			}
+		}
+
+		public function uploadFiles($remote_name, $directory, $files){
+			for($i = 0; $i < count($files[$remote_name]["tmp_name"]); $i++) { 
+				$f_name = $files[$remote_name]["name"][$i];
+				$f_dir = $directory;
+				$f_mount =  $f_dir . $f_name;
+				$this->createDirectorySpecial($f_dir);
+				move_uploaded_file($files[$remote_name]["tmp_name"][$i], $f_mount);
+			}
+		}
+
+		public function pdfToJpeg($input, $output, $quality = 95, $dpi = 300){
+			echo $this->sh(
+				array(
+					"pdftoppm -singlefile -f 1 -r $dpi -jpeg -jpegopt quality=$quality \"$input\" \"$output\"",
+					"cp \"$output.jpg\" \"$output.jpeg\"",
+					"rm \"$output.jpg\"",
+				)
+			);
+		}
+
+		public function stepConverter($input, $output){
+			$directory = $this->system['main_directory'] . 'uc_resources/applications/freecad/';
+			$this->sh(
+				array(
+					"cd \"$directory\"",
+					"python main.py \"$input\" \"$output\""
+				)
+			);
+		}
+
+		public function createDirectorySpecial($directory){
+			if(!file_exists($directory)){
+				mkdir($directory, 0777, true);
+				return true;
+			}
+			return false;
+		}
+
 		public function sh($commands){
 			$result = "";
 			if(is_array($commands)){
@@ -202,6 +287,8 @@
 					'rm uCrewUpdate/uc_system/uc_configuration.php',
 					// Copy old configuration
 					'cp uCrew/uc_system/uc_configuration.php uCrewUpdate/uc_system/uc_configuration.php',
+					// Copy applications
+					'cp -a uCrewUpdate/uc_resources/applications/. uCrew/uc_resources/applications',
 					// Dont touch resources
 					'rm -rf uCrewUpdate/uc_resources',
 					// Dont touch modules

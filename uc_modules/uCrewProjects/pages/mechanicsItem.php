@@ -21,11 +21,30 @@
 
   $mechanic_files = $uc_Projects->directoryToArray($mechanic_paths['local']);
 
-  //print_r($mechanic_files);
-?>
+  $mechanic_x3d = $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $data['mechanic_data']['fullname'] . '.x3d';
 
-<!--<script type='text/javascript' src='uc_resources/applications/x3dom/x3dom-full.js'> </script> 
-<link rel='stylesheet' type='text/css' href='uc_resources/applications/x3dom/x3dom.css'></link> -->
+  $mechanic_x3d_web = "";
+
+  if(file_exists($mechanic_x3d)){
+    $mechanic_x3d_web = $mechanic_paths['web']. $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $data['mechanic_data']['fullname'] . '.x3d';
+    echo "
+    <script type='text/javascript' src='uc_resources/applications/x3dom/x3dom-full.js'> </script> \n
+    <link rel='stylesheet' type='text/css' href='uc_resources/applications/x3dom/x3dom.css'></link> \n";
+  }else{
+    $uc_SystemPipe = new uCrewSystemPipe();
+    // Convert step to x3d
+    $uc_SystemPipe->stepConverter(
+      $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' .  '3D модель ' . $data['mechanic_data']['fullname'] . '.step',
+      $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $data['mechanic_data']['fullname'] . '.x3d'
+    );
+    echo '
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Внимание! <strong>'.$data['mechanic_data']['fullname'].'</strong> - создана 3D веб модель!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    ';
+  }
+?>
 
 <div class="container-fluid">
   <div class="row">
@@ -41,7 +60,21 @@
         <p>Статус: <?php echo $statuses[$data['mechanic_status']][0]; ?></p>
       </div>
       <div class="col-sm-6 justify-content-end d-flex">
-        <img src="<?php echo $mechanic_image; ?>" class="img-fluid img-thumbnail" style="width: 500px">
+
+<?php
+
+  if(!file_exists($mechanic_x3d)){
+    echo '<img src="'.$mechanic_image.'" class="img-fluid img-thumbnail" style="width: 500px">';
+  }else{
+    echo '<x3d width="600px" height="400px" id="x3dElement"> 
+        <scene> 
+          <Transform id="scaleTransformation" scale="0.33 0.33 0.33">
+            <inline url="'.$mechanic_x3d_web.'"> </inline> 
+          </Transform>
+        </scene> 
+      </x3d>   ';
+  }
+?> 
       </div>
     </div>
 
@@ -93,7 +126,7 @@
           array(
             '<i class="fa fa-folder" aria-hidden="true"></i> ' . $dir => array('width' => '15%'),
             '<i class="fa fa-file" aria-hidden="true"></i> ' .  $file => array('width' => '30%'),
-            $size . ' (Байт)',
+            $size,
             date ("H:i:s d/m/Y", filemtime($fullpath)),
             $dropdown => array('class' => 'text-center')
           )
@@ -107,11 +140,11 @@
               $subdirname = $index;
               if(!is_array($file)){
                 $fullpath = $mechanic_paths['local'] . $dirname . '/' . $file;
-                _pushRow($dirname, '<a href="' . $mechanic_paths['web'] . $dirname . '/' . $file . '" download>' . $file . '</a>', filesize($fullpath), $index + 1, $rows, $fullpath);
+                _pushRow($dirname, '<a href="' . $mechanic_paths['web'] . $dirname . '/' . $file . '" download>' . $file . '</a>', $uc_Projects->formatBytes(filesize($fullpath)), $index + 1, $rows, $fullpath);
               }else{
                 foreach ($file as $subindex => $subfile) {
                    $fullpath = $mechanic_paths['local'] . $dirname . '/' . $subdirname . '/' . $subfile;
-                  _pushRow($dirname . '<br> &#8594; <i class="fa fa-folder" aria-hidden="true"></i> ' . $subdirname, '<a href="' . $mechanic_paths['web'] . $dirname . '/' . $subdirname . '/' . $subfile . '" download>' . $subfile . '</a>', filesize($fullpath), $subindex + 1, $rows, $fullpath);
+                  _pushRow($dirname . '<br> &#8594; <i class="fa fa-folder" aria-hidden="true"></i> ' . $subdirname, '<a href="' . $mechanic_paths['web'] . $dirname . '/' . $subdirname . '/' . $subfile . '" download>' . $subfile . '</a>', $uc_Projects->formatBytes(filesize($fullpath)), $subindex + 1, $rows, $fullpath);
                 }
               }
           }

@@ -156,7 +156,7 @@
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addMarks">
 			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить шильдик, маркеровку (*.*)
+			    Прикрепить шильдик, маркировку (*.*)
 			  </label>
 			</div>
 			<div class="form-check" id="checkboxes">
@@ -254,6 +254,9 @@
 						                  	<li id="f_3dstl">
 						                  		<i class="fa fa-file" aria-hidden="true"></i> 3D модель stl
 						                  	</li>
+						                  	<li id="f_3dx3d">
+						                  		<i class="fa fa-file" aria-hidden="true"></i> 3D модель x3d
+						                  	</li>
 						                  </ul>
 					              	  </li>
 					                  <li id="f_drawings">
@@ -302,7 +305,7 @@
 			</li>
 				  <li id="warn"  class="text-center">
 				  	<br>
-				  	<i>* Обратите внимание! У вас недостаточно информации!</i>
+				  	<i>* Внимательно проверьте информацию!</i>
 				  </li>
 
 				</ul>
@@ -393,12 +396,12 @@
 	    
 	    // Replace bad symbols in name
 	    $('body').on('input', '#mechanic_name', function(){
-			this.value = this.value.replace(/[^0-9A-Za-zА-Яа-я\.\, ]/g, '');
+			this.value = this.value.replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
 		});
 
 	    // Set mechanic name
 	    $('#mechanic_name').on('input', function(){ 
-	    	var text = $('#mechanic_name').val().replace(/[^0-9A-Za-zА-Яа-я\.\, ]/g, '');
+	    	var text = $('#mechanic_name').val().replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
 	    	
 	    	$('#lmechanic_name').html(
 	    		'<i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: <i>' + text + '</i>'
@@ -663,6 +666,7 @@
 		changeTreeFile('#f_drawsource', sourcedrawFile, filename + '.cdw', 'Исходник ');
 		changeTreeFile('#f_drawpdf', pdfdrawFile, filename + '.pdf', 'Чертёж ');
 		changeTreeFile('#f_vector', vectordrawFile, filename + '.dxf', 'Векторный файл ');
+		changeTreeFile('#f_3dx3d', step3dFile, filename + '.x3d', 'Веб 3D модель ');
 
 		changeTreeFiles('#f_photos', photos, 'Фотографии');
 		changeTreeFiles('#f_annotations', annotations, 'Аннотации');

@@ -15,9 +15,9 @@
 			"mechanics" => "Механика",
 			"mechanicsItem" => "&Просмотр изделия",
 			"mechanicsAdd" => "&Добавить изделие",
-			//"cables" => "Кабели",
-			//"cablesItem" => "&Просмотр кабеля",
-			//"cablesAdd" => "&Добавить кабель"
+			"cables" => "Кабели",
+			"cablesItem" => "&Просмотр кабеля",
+			"cablesAdd" => "&Добавить кабель"
 			//"other" => "Различные изделия",
 		],												// Pages
 		["configuration" => [							// Configuration
