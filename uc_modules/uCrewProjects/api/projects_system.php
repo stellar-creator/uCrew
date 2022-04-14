@@ -241,14 +241,6 @@
 				$files
 			);
 
-			// Move 3D model (*.stl)
-			$this->uc_SystemPipe->uploadFile(
-				'mechanic_3dstl',
-				'Для печати ' . $data['mechanic_fullname'] . '.stl',
-				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/',
-				$files
-			);
-
 			// Move drawings source if isset (*.cdw)
 			$this->uc_SystemPipe->uploadFile(
 				'mechanic_drawsource',
@@ -298,6 +290,12 @@
 			$this->uc_SystemPipe->stepConverter(
 				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . '3D модель ' . $data['mechanic_fullname'] . '.step',
 				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $data['mechanic_fullname'] . '.x3d'
+			);
+
+			// Convert step to stl
+			$this->uc_SystemPipe->stepConverter(
+				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . '3D модель ' . $data['mechanic_fullname'] . '.step',
+				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . 'Для печати ' . $data['mechanic_fullname'] . '.stl'
 			);
 
 			// Set data

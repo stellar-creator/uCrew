@@ -129,12 +129,6 @@
 		<div class="mb-3">
 		  	<label for="checkboxes" class="form-label">Дополнительно</label>
 			<div class="form-check" id="checkboxes">
-			  <input class="form-check-input" type="checkbox" id="addStl">
-			  <label class="form-check-label" for="flexCheckDefault">
-			    Прикрепить 3D модель для печати (*.stl)
-			  </label>
-			</div>
-			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addDraw">
 			  <label class="form-check-label" for="flexCheckDefault">
 			    Прикрепить файлы чертежа изделия (*.pdf, *.cdw)
@@ -167,10 +161,6 @@
 			</div>
 		</div>
 
-		<div class="mb-3" id="3dStlSourceSelect">
-		  <label for="mechanic_3dstl" class="form-label">Готовый файл 3D модели - STL (*.stl)</label>
-		  <input class="form-control" type="file" id="mechanic_3dstl" name="mechanic_3dstl" accept=".stl">
-		</div>
 		<div class="mb-3" id="drawSourceSelect">
 		  <label for="mechanic_drawsource" class="form-label">Исходный файл чертежа - Компас 3D (*.cdw)</label>
 		  <input class="form-control" type="file" id="mechanic_drawsource" name="mechanic_drawsource" accept=".cdw">
@@ -328,7 +318,6 @@
 	var imageFile = '';
 	var source3dFile = '';
 	var step3dFile = '';
-	var stl3dFile = '';
 	var sourcedrawFile = '';
 	var pdfdrawFile = '';
 	var vectordrawFile = '';
@@ -379,14 +368,12 @@
 		$("#annotationsSelect").hide();
 		$("#photoSelect").hide();
 		$("#marksSelect").hide();
-		$("#3dStlSourceSelect").hide();
 
 		$("#f_drawings").hide();
 		$("#f_vectors").hide();
 		$("#f_photos").hide();
 		$("#f_marks").hide();
 		$("#f_annotations").hide();		
-		$("#f_3dstl").hide();
 
 		// Description change
 	    $('#mechanic_description').on('input', function(){ 
@@ -430,12 +417,6 @@
 	     $('#mechanic_3dstep').change(function(e){
             var fileName = e.target.files[0].name;
             step3dFile = fileName;
-        });
-
-	    // On source 3d change
-	     $('#mechanic_3dstl').change(function(e){
-            var fileName = e.target.files[0].name;
-            stl3dFile = fileName;
         });
 
 		// On source draw change
@@ -534,18 +515,6 @@
   			}else{
 				$("#marksSelect").hide("fast");
 				$("#f_marks").hide("fast");
-  			}
-        });
-
-
-	    // On add draw changed
-	    $('#addStl').change(function(e){
-			if ($(this).is(':checked')) {
-				$("#3dStlSourceSelect").show("fast");
-				$("#f_3dstl").show("fast");
-  			}else{
-				$("#3dStlSourceSelect").hide("fast");
-				$("#f_3dstl").hide("fast");
   			}
         });
         
@@ -662,7 +631,7 @@
 
 		changeTreeFile('#f_3dsource', source3dFile, filename + '.m3d', 'Исходник ');
 		changeTreeFile('#f_3dstep', step3dFile, filename + '.step', '3D модель ');
-		changeTreeFile('#f_3dstl', stl3dFile, filename + '.stl', '3D модель для печати ');
+		changeTreeFile('#f_3dstl', step3dFile, filename + '.stl', '3D модель для печати ');
 		changeTreeFile('#f_drawsource', sourcedrawFile, filename + '.cdw', 'Исходник ');
 		changeTreeFile('#f_drawpdf', pdfdrawFile, filename + '.pdf', 'Чертёж ');
 		changeTreeFile('#f_vector', vectordrawFile, filename + '.dxf', 'Векторный файл ');

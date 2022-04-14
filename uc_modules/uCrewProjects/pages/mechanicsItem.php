@@ -75,6 +75,8 @@
       </x3d>   ';
   }
 ?> 
+
+
       </div>
     </div>
 
@@ -158,9 +160,3 @@
     </div>
   </div>
   </div>
-
-<script type="text/javascript">
-  $( document ).ready(function() {
-      document.getElementById('scaleTransformation').setAttribute('scale', '25 25 25');
-  }
-</script>
