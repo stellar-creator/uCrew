@@ -6,18 +6,18 @@
 	// Message variable
 	$message = "";
 	// Check if isset data
-	if(isset($_POST['cable_name'])){
+	if(isset($_POST['pcb_name'])){
 		// Add data
-		$uc_Projects->addCable($_POST, $_FILES);
+		$uc_Projects->addPcb($_POST, $_FILES);
 		$message .= '
 			<div class="alert alert-success alert-dismissible fade show" role="alert">
-			  Кабель <strong>'.$_POST['cable_fullname'].'</strong> успешно добавлен.
+			  Печатная плата <strong>'.$_POST['pcb_fullname'].'</strong> успешно добавлена.
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		';
 	}
 	// Get last codename
-	$codename = $uc_Projects->getLastCodeName('cables_codename', 'TBC');
+	$codename = $uc_Projects->getLastCodeName('pcbs_codename', 'TBP');
 	// Get directory data
 	$directory_data = $uc_Projects->getProjectDirectoryData();
 
@@ -25,27 +25,27 @@
 ?>
 
 <div class="row">
-	<form action="/?page=uCrewProjects/cablesAdd" method="post" id="addcableForm" enctype="multipart/form-data">
+	<form action="/?page=uCrewProjects/pcbsAdd" method="post" id="addpcbForm" enctype="multipart/form-data">
 		<h4>Общая информация</h4>
 		<hr>
-		<input type="hidden" name="cable_fullname" id="cable_fullname" value="">
+		<input type="hidden" name="pcb_fullname" id="pcb_fullname" value="">
 		<div class="mb-3">
-		  <label for="cable_name" class="form-label">Наиминование кабеля <i>(*обратите внимание, что следующие символы запрещены: \/():*?"|+.%!@&lt;&gt;)</i></label>
-		  <input class="form-control" type="text" id="cable_name" name="cable_name" required>
+		  <label for="pcb_name" class="form-label">Наиминование печатной платы <i>(*обратите внимание, что следующие символы запрещены: \/():*?"|+.%!@&lt;&gt;)</i></label>
+		  <input class="form-control" type="text" id="pcb_name" name="pcb_name" required>
 		  <p>
 		  	<figcaption class="blockquote-footer">
 		  		Директория на диске: 
 		  		<cite id="directory">
 		  			<?php 
-		  				echo '"' . $directory_data['mask'] . $uc_Projects->ucs_DirectoriesNames['develop_documentation'] . "\\" . $uc_Projects->ucs_DirectoriesNames['cables'] . "\\" . $codename . '"'; 
+		  				echo '"' . $directory_data['mask'] . $uc_Projects->ucs_DirectoriesNames['develop_documentation'] . "\\" . $uc_Projects->ucs_DirectoriesNames['pcbs'] . "\\" . $codename . '"'; 
 		  			?>
 		  		</cite>  
 		  	</figcaption>
 		  </p>
 		</div>
 		<div class="mb-3">
-		  <label for="cable_description" class="form-label">Краткое описание</label>
-		  <input class="form-control" type="text" id="cable_description" name="cable_description" required>
+		  <label for="pcb_description" class="form-label">Краткое описание</label>
+		  <input class="form-control" type="text" id="pcb_description" name="pcb_description" required>
  			<p>
 		  	<figcaption class="blockquote-footer">
 		  		Осталось символов: 
@@ -55,8 +55,8 @@
 		</div>
 
 		<div class="mb-3">
-		  <label for="cable_status" class="form-label">Статус</label>
-		  <select class="form-control" id="cable_status" name="cable_status" required>
+		  <label for="pcb_status" class="form-label">Статус</label>
+		  <select class="form-control" id="pcb_status" name="pcb_status" required>
 <?php
   	$statuses = $uc_Projects->getStatuses();
 
@@ -71,32 +71,24 @@
 		  </select>
 		</div>
 		<div class="mb-3">
-		  <label for="cable_codename" class="form-label">Шифр кабеля <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
-		  <input class="form-control" type="text" id="cable_codename" name="cable_codename" readonly value="<?php echo $codename; ?>" required>
-		  <input type="hidden" id="cable_codename_state" name="cable_codename_state" value="auto">
+		  <label for="pcb_codename" class="form-label">Шифр печатной платы <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
+		  <input class="form-control" type="text" id="pcb_codename" name="pcb_codename" readonly value="<?php echo $codename; ?>" required>
+		  <input type="hidden" id="pcb_codename_state" name="pcb_codename_state" value="auto">
 		</div>
 
 		<h4>Файлы изделия</h4>
 		<hr>
 
 		<div class="mb-3">
-		  <label for="cable_drawsource" class="form-label">Исходный файл чертежа - Компас 3D (*.cdw)</label>
-		  <input class="form-control" type="file" id="cable_drawsource" name="cable_drawsource" accept=".cdw" required>
+		  <label for="pcb_archive" class="form-label">Исходный проект печатной платы - Архив (*.zip)</label>
+		  <input class="form-control" type="file" id="pcb_archive" name="pcb_archive" accept=".zip" required>
 			<p>
 		  		<figcaption class="blockquote-footer">
 		  			Данный файл <cite>является обязательным</cite>  
 		  		</figcaption>
 		  	</p>
 		</div>
-		<div class="mb-3">
-		  <label for="cable_drawpdf" class="form-label">Готовый файл чертежа - Portable Document Format (*.pdf)</label>
-		  <input class="form-control" type="file" id="cable_drawpdf" name="cable_drawpdf" accept=".pdf" required>
-			<p>
-		  		<figcaption class="blockquote-footer">
-		  			Данный файл <cite>является обязательным</cite>  
-		  		</figcaption>
-		  	</p>
-		</div>
+
 
 		<div class="mb-3">
 		  	<label for="checkboxes" class="form-label">Дополнительно</label>
@@ -121,46 +113,44 @@
 		</div>
 
 		<div class="mb-3" id="photoSelect">
-		  <label for="cable_photos" class="form-label">Фотографии <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="cable_photos" name="cable_photos[]"  accept=".jpeg,.jpg" multiple="multiple">
+		  <label for="pcb_photos" class="form-label">Фотографии <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="pcb_photos" name="pcb_photos[]"  accept=".jpeg,.jpg" multiple="multiple">
 		</div>
 		<div class="mb-3" id="marksSelect">
-		  <label for="cable_marks" class="form-label">Маркировка, наклейки - любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="cable_marks" name="cable_marks[]" multiple="multiple">
+		  <label for="pcb_marks" class="form-label">Маркировка, наклейки - любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="pcb_marks" name="pcb_marks[]" multiple="multiple">
 		</div>
 
 		<div class="mb-3" id="annotationsSelect">
-		  <label for="cable_annotations" class="form-label">Аннотации - Text (*.txt), Microsoft Word (*.docx), Portable Document Format (*.pdf) <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="cable_annotations" name="cable_annotations[]" multiple="multiple"  accept=".txt,.docx,.pdf">
+		  <label for="pcb_annotations" class="form-label">Аннотации - Text (*.txt), Microsoft Word (*.docx), Portable Document Format (*.pdf) <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="pcb_annotations" name="pcb_annotations[]" multiple="multiple"  accept=".txt,.docx,.pdf">
 		</div>
 
 		<div class="d-grid gap-1 d-md-flex justify-content-md-end" style="padding-bottom: 10px">
-			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addcableModal" onclick="changeModalPresubmit()">
+			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addpcbModal" onclick="changeModalPresubmit()">
   				Добавить изделие
 			</button>
 		</div>
-
-		<div class="modal fade" id="addcableModal" tabindex="-1" aria-labelledby="addcableModalLabel" aria-hidden="true">
+		<div class="modal fade" id="addpcbModal" tabindex="-1" aria-labelledby="addpcbModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="addcableModalLabel">Проверьте верность данных</h5>
+		        <h5 class="modal-title" id="addpcbModalLabel">Проверьте верность данных</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
-
 				<ul class="list-unstyled">
-				  <li id="lcable_codename"><i class="fa fa-check-circle" aria-hidden="true"></i> Шифр изделия: *</li>
-				  <li id="lcable_name"><i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: *</li>
-				  <li id="lcable_description"><i class="fa fa-check-circle" aria-hidden="true"></i> Краткое описание: *</li>
-				  <li id="lcable_status"><i class="fa fa-check-circle" aria-hidden="true"></i> Статус: *</li>
-				  <li id="lcable_directory">
+				  <li id="lpcb_codename"><i class="fa fa-check-circle" aria-hidden="true"></i> Шифр изделия: *</li>
+				  <li id="lpcb_name"><i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: *</li>
+				  <li id="lpcb_description"><i class="fa fa-check-circle" aria-hidden="true"></i> Краткое описание: *</li>
+				  <li id="lpcb_status"><i class="fa fa-check-circle" aria-hidden="true"></i> Статус: *</li>
+				  <li id="lpcb_directory">
 				  	<i class="fa fa-exclamation-circle" aria-hidden="true"></i> Расположение файлов:
 <?php
 					/*$fullpath = array(
 						$uc_Projects->ucs_DirectoriesNames['develop_documentation'] => array(
-							$uc_Projects->ucs_DirectoriesNames['cables'] => array( 'Шифр' =>
-								$uc_Projects->ucs_DirectoriesTemplates['cables']
+							$uc_Projects->ucs_DirectoriesNames['pcbs'] => array( 'Шифр' =>
+								$uc_Projects->ucs_DirectoriesTemplates['pcbs']
 							)
 						)
 					);
@@ -171,26 +161,30 @@
 					<li>
 					   Конструкторская документация
 					   <ul>
-					      <li id="cables_dir">
-					         Провода и кабели
+					      <li id="pcbs_dir">
+					         Печатные платы
 					         <ul>
 					            <li id="codename">
-					               <div id="f_cable_fullname">Шифр</div>
+					               <div id="f_pcb_fullname">Шифр</div>
 					               <ul>
-					                  <li id="f_drawings">
-					                  Чертежи
- 										<ul>
-						                  	<li id="f_drawsource">
-						                  		<i class="fa fa-file" aria-hidden="true"></i> Исходный файл
-						                  	</li>
-						                  	<li id="f_drawpdf">
-						                  		<i class="fa fa-file" aria-hidden="true"></i> PDF
-						                  	</li>
-						                  	<li id="f_drawjpeg">
-						                  		<i class="fa fa-file" aria-hidden="true"></i> JPEG
-						                  	</li>
-						                  </ul>
-					              	  </li>
+					               	  <li>
+					               	  	3D модель
+					               	  </li>
+					               	  <li>
+					               	  	Исходники
+					               	  </li>
+					               	  <li>
+					               	  	Спецификация
+					               	  </li>
+					               	  <li>
+					               	  	Файлы для производства
+					               	  	<ul>
+					               	  		<li>Gerber</li>
+					               	  		<li>Файлы позиций</li>
+					               	  		<li>Сборочный чертёж</li>
+					               	  	</ul>
+					               	  </li>
+					                 
 					                  <li id="f_images">
 					                     Изображения
 					                     <ul>
@@ -225,7 +219,7 @@
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-		        <input type="submit" name="addcable" class="btn btn-success me-md-1" value="Добавить изделие">
+		        <input type="submit" name="addpcb" class="btn btn-success me-md-1" value="Добавить изделие">
 		      </div>
 		    </div>
 		  </div>
@@ -238,9 +232,7 @@
 
 	var readonly = true;
 
-	var imageFile = '';
-	var sourcedrawFile = '';
-	var pdfdrawFile = '';
+	var archive = '';
 	var photos = [];
 	var annotations = [];
 	var marks = [];
@@ -250,15 +242,15 @@
 		if(readonly == true){
 			readonly = false;
 			$("#codeNameState").html("пользователем");
-			$("#cable_codename_state").val("manual");
+			$("#pcb_codename_state").val("manual");
 
 		}else{
 			readonly = true;
 			$("#codeNameState").html("автоматически");
-			$("#cable_codename_state").val("auto");
+			$("#pcb_codename_state").val("auto");
 		}
 
-		$("#cable_codename").attr("readonly", readonly);  
+		$("#pcb_codename").attr("readonly", readonly);  
 	}
 
 	$( document ).ready(function() {
@@ -273,45 +265,39 @@
 		$("#f_annotations").hide();	
 
 		// Description change
-	    $('#cable_description').on('input', function(){ 
-	    	var count = 250 - $('#cable_description').val().length;
+	    $('#pcb_description').on('input', function(){ 
+	    	var count = 250 - $('#pcb_description').val().length;
 	    	$('#symbols').html(count);
 	    });
 	    
 	    // Replace bad symbols in name
-	    $('body').on('input', '#cable_name', function(){
+	    $('body').on('input', '#pcb_name', function(){
 			this.value = this.value.replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
 		});
 
-	    // Set cable name
-	    $('#cable_name').on('input', function(){ 
-	    	var text = $('#cable_name').val().replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
+	    // Set pcb name
+	    $('#pcb_name').on('input', function(){ 
+	    	var text = $('#pcb_name').val().replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
 	    	
-	    	$('#lcable_name').html(
+	    	$('#lpcb_name').html(
 	    		'<i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: <i>' + text + '</i>'
 	    	);
 
-	    	if($('#cable_name').val().length > 0){
+	    	if($('#pcb_name').val().length > 0){
 	    		text = ' - ' + text;
 	    	}
 
-	    	$('#directory').html('"\\<?php echo $directory_data['mask'] ?>\\Конструкторская документация\\Провода и кабели\\' + $('#cable_codename').val() + text  + '"');
+	    	$('#directory').html('"\\<?php echo $directory_data['mask'] ?>\\Конструкторская документация\\Печатные платы\\' + $('#pcb_codename').val() + text  + '"');
 	    });
 
 		// On source draw change
-	     $('#cable_drawsource').change(function(e){
+	     $('#pcb_archive').change(function(e){
             var fileName = e.target.files[0].name;
-            sourcedrawFile = fileName;
-        });
-
-        // On source pdf change
-	     $('#cable_drawpdf').change(function(e){
-            var fileName = e.target.files[0].name;
-            pdfdrawFile = fileName;
+            archive = fileName;
         });
 
 		// On source photos
-	    $('#cable_photos').change(function(e){
+	    $('#pcb_photos').change(function(e){
 	    	photos = [];
             for (var i = 0; i < e.target.files.length; i++){
 				photos.push(e.target.files[i].name);
@@ -319,7 +305,7 @@
         });
 
         // On source photos
-	    $('#cable_annotations').change(function(e){
+	    $('#pcb_annotations').change(function(e){
 	    	annotations = [];
             for (var i = 0; i < e.target.files.length; i++){
 				annotations.push(e.target.files[i].name);
@@ -327,7 +313,7 @@
         });
 
         // On source photos
-	    $('#cable_marks').change(function(e){
+	    $('#pcb_marks').change(function(e){
 	    	marks = [];
             for (var i = 0; i < e.target.files.length; i++){
 				marks.push(e.target.files[i].name);
@@ -395,73 +381,66 @@
 		$(id).html(html);
 	}
 
-
-
 	function changeModalPresubmit() {
 
 		var success = 'fa fa-check-circle';
 		var warning = 'fa fa-exclamation-circle';
 		var error = 'fa fa-times-circle';
 
-		var filename = $('#cable_codename').val();
+		var filename = $('#pcb_codename').val();
 
-		if($('#cable_name').val().length > 0){
-			filename =  filename + ' - ' + $('#cable_name').val();
+		if($('#pcb_name').val().length > 0){
+			filename =  filename + ' - ' + $('#pcb_name').val();
 		}
 
-		// Check cables name
-		var cables_state = error;
-		var cables_value = $('#cable_name').val();
-		if( cables_value.length > 0 ){
-			cables_state = success;
+		// Check pcbs name
+		var pcbs_state = error;
+		var pcbs_value = $('#pcb_name').val();
+		if( pcbs_value.length > 0 ){
+			pcbs_state = success;
 		}
-		var html = '<i class="' + cables_state + '" aria-hidden="true"></i> Наиминование изделия: ' + cables_value + '</li>';
-		$('#lcable_name').html(html)
+		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Наиминование изделия: ' + pcbs_value + '</li>';
+		$('#lpcb_name').html(html)
 
-		// Check cables codename
-		var cables_state = error;
-		var cables_value = $('#cable_codename').val();
-		if( cables_value.length > 0 ){
-			cables_state = success;
+		// Check pcbs codename
+		var pcbs_state = error;
+		var pcbs_value = $('#pcb_codename').val();
+		if( pcbs_value.length > 0 ){
+			pcbs_state = success;
 		}
-		var html = '<i class="' + cables_state + '" aria-hidden="true"></i> Шифр изделия: ' + cables_value + '</li>';
-		$('#lcable_codename').html(html)
+		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Шифр изделия: ' + pcbs_value + '</li>';
+		$('#lpcb_codename').html(html)
 
 
-		// Check cables description
-		var cables_state = error;
-		var cables_value = $('#cable_description').val();
-		if( cables_value.length > 0 ){
-			cables_state = success;
+		// Check pcbs description
+		var pcbs_state = error;
+		var pcbs_value = $('#pcb_description').val();
+		if( pcbs_value.length > 0 ){
+			pcbs_state = success;
 		}
-		var html = '<i class="' + cables_state + '" aria-hidden="true"></i> Краткое описание: ' + cables_value + '</li>';
+		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Краткое описание: ' + pcbs_value + '</li>';
 
-		$('#lcable_description').html(html)
+		$('#lpcb_description').html(html)
 
-		// Check cables status
-		var cables_state = error;
-		var cables_value = $('#cable_status option:selected').text();
-		if( cables_value.length > 0 ){
-			cables_state = success;
+		// Check pcbs status
+		var pcbs_state = error;
+		var pcbs_value = $('#pcb_status option:selected').text();
+		if( pcbs_value.length > 0 ){
+			pcbs_state = success;
 		}
-		var html = '<i class="' + cables_state + '" aria-hidden="true"></i> Статус: ' + cables_value + '</li>';
-		$('#lcable_status').html(html);
+		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Статус: ' + pcbs_value + '</li>';
+		$('#lpcb_status').html(html);
 
 		var html = '<i class="fa fa-file" aria-hidden="true"></i> Описание ' + filename + '.txt';
 		$('#f_description').html(html);
 
-
-
-		changeTreeFile('#f_drawsource', sourcedrawFile, filename + '.cdw', 'Исходник ');
-		changeTreeFile('#f_drawpdf', pdfdrawFile, filename + '.pdf', 'Чертёж ');
-		changeTreeFile('#f_drawjpeg', pdfdrawFile, filename + '.jpeg', 'Чертёж ');
-		changeTreeFile('#f_image', pdfdrawFile, filename + '.jpeg', 'Изображение ');
+		changeTreeFile('#f_image', archive, filename + '.jpeg', 'Изображение ');
 
 		changeTreeFiles('#f_photos', photos, 'Фотографии');
 		changeTreeFiles('#f_annotations', annotations, 'Аннотации');
 		changeTreeFiles('#f_marks', marks, 'Маркировка и наклейки');
 
-		$('#f_cable_fullname').html(filename);
-		$('#cable_fullname').val(filename);	
+		$('#f_pcb_fullname').html(filename);
+		$('#pcb_fullname').val(filename);	
 	}
 </script>

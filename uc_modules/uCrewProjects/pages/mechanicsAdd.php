@@ -398,7 +398,7 @@
 	    		text = ' - ' + text;
 	    	}
 
-	    	$('#directory').html('"<?php echo $directory_data['mask'] ?>Оборудование\\Механические изделия\\' + $('#mechanic_codename').val() + text  + '"');
+	    	$('#directory').html('"\\<?php echo $directory_data['mask'] ?>\\Конструкторская документация\\Механические изделия\\' + $('#mechanic_codename').val() + text  + '"');
 	    });
 
 	    // On image change

@@ -32,7 +32,9 @@
 				'photos' => 'Фотографии',
 				'marks' => 'Маркировка и наклейки',
 				'annotations' => 'Аннотации',
-				'cables' => 'Провода и кабели'
+				'cables' => 'Провода и кабели',
+				'pcbs' => 'Печатные платы',
+				'sources' => 'Исходники'
 			);
 
 			$typicalTemplate_imgae = array(
@@ -45,8 +47,8 @@
 					'Проекты',
 					'Устройства и модули',
 					$this->ucs_DirectoriesNames['mechanics'],
-					'Провода и кабели',
-					'Печатные платы'
+					$this->ucs_DirectoriesNames['cables'],
+					$this->ucs_DirectoriesNames['pcbs']
 				), 
 				'Программное обеспечение' => array(
 					'Внешнее ПО',
@@ -67,7 +69,7 @@
 				// Проект -> Категория -> Подкатегория -> Ревизиия
 				'projects' => array(
 					$this->ucs_DirectoriesNames['mechanics'],
-					'Печатные платы',
+					$this->ucs_DirectoriesNames['pcbs'],
 					$this->ucs_DirectoriesNames['cables'],
 					'Программное обеспечение',
 					'Спецификации',
@@ -81,7 +83,7 @@
 
 				'modules' => array(
 					$this->ucs_DirectoriesNames['mechanics'],
-					'Печатные платы',
+					$this->ucs_DirectoriesNames['pcbs'],
 					$this->ucs_DirectoriesNames['cables'],
 					'Программное обеспечение',
 					'Спецификации',
@@ -101,9 +103,7 @@
 				),
 
 				'cables' => array(
-					'Спецификация',
 					'Чертёж',
-					'Маркировка',
 					$this->ucs_DirectoriesNames['images'] => $typicalTemplate_imgae,
 				),
 
@@ -437,6 +437,91 @@
 			);
 		}
 
+		// pcbs data
+		public function addPcb($data, $files, $revision = 1){
+			// Init json
+			$pcb_data = array(
+				"fullname" => "",
+				"material" => "",
+				"projects" => array(),
+				"changes" => array(),
+				"revisions" => array()
+			);
+
+			$revision_directory = "Ревизия " . $revision;
+
+			// Get upload directory
+			$upload_directory = 
+			$this->getProjectDirectoryData()['directory'] . 
+			$this->ucs_DirectoriesNames['develop_documentation'] . '/' .
+			$this->ucs_DirectoriesNames['pcbs'] . '/' . $data['pcb_fullname'] . '/' . $revision_directory . '/';
+			
+			// Prepare special characteristics
+			$data['pcb_fullname'] = $this->uc_SystemPipe->setSpecialCharacters($data['pcb_fullname']);
+			$data['pcb_codename'] = $this->uc_SystemPipe->setSpecialCharacters($data['pcb_codename']);
+
+			// If directory exists, remove
+			if(file_exists($upload_directory)){
+				$this->uc_SystemPipe->deleteDirectory($upload_directory);
+			}else{
+				$state = false;
+			}
+
+			// Create new directory
+			$this->uc_SystemPipe->createDirectorySpecial($upload_directory);
+
+			// Write description
+			$description_file = fopen($upload_directory . 'Описание ' . $data['pcb_fullname'] . '.txt', "w");
+			fwrite($description_file, $data['pcb_description']);
+			fclose($description_file);
+
+			// Prepare special characteristics description
+			$data['pcb_description'] = $this->uc_SystemPipe->setSpecialCharacters($data['pcb_description']);
+
+			// Move zip arcive
+			$this->uc_SystemPipe->uploadFile(
+				'pcb_archive',
+				'tmp.zip',
+				$upload_directory . $this->ucs_DirectoriesNames['sources'] . '/',
+				$files
+			);
+
+			// Unzip archive
+			$this->uc_SystemPipe->unzip(
+				$upload_directory . $this->ucs_DirectoriesNames['sources'] . '/tmp.zip',
+				$upload_directory . $this->ucs_DirectoriesNames['sources'] . '/'
+			);
+
+			// Remove archive
+			unlink($upload_directory . $this->ucs_DirectoriesNames['sources'] . '/tmp.zip');
+
+			// Prepare KiCad Project
+			require_once('uc_resources/applications/kicad/kicad.php');
+			// Run KiCad Converter
+			$kicad = new KiCadConverter($upload_directory . $this->ucs_DirectoriesNames['sources']);
+
+			// Move images
+			$this->uc_SystemPipe->uploadFiles(
+				'pcb_photos',
+				$upload_directory . $this->ucs_DirectoriesNames['images'] . '/' . $this->ucs_DirectoriesNames['photos'] . '/',
+				$files
+			);
+
+			// Move marks
+			$this->uc_SystemPipe->uploadFiles(
+				'pcb_marks',
+				$upload_directory . $this->ucs_DirectoriesNames['images'] . '/' . $this->ucs_DirectoriesNames['marks'] . '/',
+				$files
+			);
+
+			// Move annotations
+			$this->uc_SystemPipe->uploadFiles(
+				'pcb_annotations',
+				$upload_directory . $this->ucs_DirectoriesNames['annotations'] . '/',
+				$files
+			);
+		}
+
 		// Get mechanic materials
 		public function getMechanicMaterials(){
 			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'mechanics_materials'";
@@ -537,15 +622,16 @@
 		}
 
 		public function getPcbsList($page, $count){
+			
 			$start = ($page * $count) - $count;
 			$end = $count;
 
-			$sql = "SELECT * FROM `ucp_pcbs` ORDER BY `ucp_pcbs`.`pcb_id` DESC LIMIT $start,$end";
+			$sql = "SELECT * FROM `ucp_pcbs` ORDER BY `ucp_pcbs`.`pcb_codename` DESC LIMIT $start,$end";
 			$list = $this->ucs_Database->getAllData($sql);
 			
 			if($list != 0){
 				foreach ($list as $key => &$value) {
-					$value['cable_data'] = json_decode($value['pcb_data'], true);
+					$value['pcb_data'] = json_decode($value['pcb_data'], true);
 				}
 			}
 			return $list;
@@ -562,6 +648,13 @@
 			$sql = "SELECT * FROM `ucp_cables` WHERE `cable_id` = $item_id";
 			$data = $this->ucs_Database->getData($sql);
 			$data['cable_data'] = json_decode($data['cable_data'], true);
+			return $data;
+		}
+
+		public function getPcbItem($item_id){
+			$sql = "SELECT * FROM `ucp_pcbs` WHERE `pcb_id` = $item_id";
+			$data = $this->ucs_Database->getData($sql);
+			$data['pcb_data'] = json_decode($data['pcb_data'], true);
 			return $data;
 		}
 

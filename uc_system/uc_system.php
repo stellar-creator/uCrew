@@ -222,12 +222,14 @@
 		}
 
 		public function uploadFiles($remote_name, $directory, $files){
-			for($i = 0; $i < count($files[$remote_name]["tmp_name"]); $i++) { 
-				$f_name = $files[$remote_name]["name"][$i];
-				$f_dir = $directory;
-				$f_mount =  $f_dir . $f_name;
-				$this->createDirectorySpecial($f_dir);
-				move_uploaded_file($files[$remote_name]["tmp_name"][$i], $f_mount);
+			if($files[$remote_name]["tmp_name"][0] != ''){
+				for($i = 0; $i < count($files[$remote_name]["tmp_name"]); $i++) { 
+					$f_name = $files[$remote_name]["name"][$i];
+					$f_dir = $directory;
+					$f_mount =  $f_dir . $f_name;
+					$this->createDirectorySpecial($f_dir);
+					move_uploaded_file($files[$remote_name]["tmp_name"][$i], $f_mount);
+				}
 			}
 		}
 
@@ -257,6 +259,15 @@
 				return true;
 			}
 			return false;
+		}
+
+		public function unzip($file, $path){
+			$archive = new ZipArchive;
+			$result = $archive->open($file);
+			if ($result === true) {
+				$archive->extractTo($path);
+				$archive->close();
+			}
 		}
 
 		public function sh($commands){
@@ -304,7 +315,7 @@
 					// Change privileges
 					'chmod 777 -R uCrew/',
 					// Show result
-					'll'
+					'ls'
 				)
 			);
 			return $result;	
