@@ -18,6 +18,7 @@
 			$this->ucs_CommonDatabase = new uCrewDatabase();
 			$this->ucp_mount = 'uc_resources/projects/mount/';
 			$this->uc_SystemPipe = new uCrewSystemPipe();
+			$this->directory_data = $this->getProjectDirectoryData();
 
 			// Init default directories
 	
@@ -122,18 +123,16 @@
 			// Directories watchdog
 			$this->checkDirectories($this->ucs_Directories);
 
-			$directory_data = $this->getProjectDirectoryData();
-
 			// Make directories path
 			$this->ucs_DirectoriesPath = array(
 				'mechanics' => array(
-					'local' => $directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['mechanics'] . '/',
-					'smb' => $directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['mechanics'] . '\\',
+					'local' => $this->directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['mechanics'] . '/',
+					'smb' => $this->directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['mechanics'] . '\\',
 					'web' => 'http://' . $this->system['main_domain'] . '/uc_resources/projects/mount/' . $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['mechanics'] . '/',
 				),
 				'cables' => array(
-					'local' => $directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['cables'] . '/',
-					'smb' => $directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['cables'] . '\\',
+					'local' => $this->directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['cables'] . '/',
+					'smb' => $this->directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['cables'] . '\\',
 					'web' => 'http://' . $this->system['main_domain'] . '/uc_resources/projects/mount/' . $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['cables'] . '/',
 				)
 			); 
@@ -358,15 +357,6 @@
 			// Prepare special characteristics description
 			$data['cable_description'] = $this->uc_SystemPipe->setSpecialCharacters($data['cable_description']);
 
-			// Move image
-			/*$this->uc_SystemPipe->uploadFile(
-				'cable_image',
-				'Изображение ' . $data['cable_fullname'] . '.jpeg',
-				$upload_directory . $this->ucs_DirectoriesNames['images'] . '/',
-				$files
-			);*/
-
-
 			// Move drawings source if isset (*.cdw)
 			$this->uc_SystemPipe->uploadFile(
 				'cable_drawsource',
@@ -425,16 +415,26 @@
 			// Add data
 			$this->ucs_Database->query($sql);
 
+			$code = 0;
+
 			// Change codename if auto
 			if($data['cable_codename_state'] == 'auto'){
 				// Get codename
 				$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'cables_codename'";
 				$data = $this->ucs_Database->getAllData($sql)[0]['data_value'];
+				$code = $data;
 				// Update codename
 				$data = $data + 1;
 				$sql = "UPDATE `ucp_data` SET `data_value` = '".$data."' WHERE `data_name` = 'cables_codename'";
 				$this->ucs_Database->query($sql);
 			}
+
+			// Generate lables
+			$this->generateDymoLables(
+				$upload_directory . $this->ucs_DirectoriesNames['images'] . '/' . $this->ucs_DirectoriesNames['marks'] . '/',
+				$cable_data['fullname'],
+				$this->prepareCodename($code, '')
+			);
 		}
 
 		// Get mechanic materials
@@ -565,26 +565,31 @@
 			return $data;
 		}
 
+		public function prepareCodename($code, $sufix){
+			
+			if($code >= 0 and $code < 10 ){
+				$code = $sufix . '000' . $code;
+			}
+			if($code >= 10 and $code < 100 ){
+				$code = $sufix . '00' . $code;
+			}
+			if($code >= 100 and $code < 1000){
+				$code = $sufix . '0' . $code;
+			}
+			if($code >= 1000 and $code < 10000){
+				$code = $sufix . '00' . $code;
+			}
+			if($code >= 10000 and $code < 100000){
+				$code = $sufix . '000' . $code;
+			}
+
+			return $code;
+		}
+
 		public function getLastCodeName($codename, $sufix){
 			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = '$codename'";
 			$data = $this->ucs_Database->getAllData($sql)[0]['data_value'];
-			
-			if($data >= 0 and $data < 10 ){
-				$data = $sufix . '000' . $data;
-			}
-			if($data >= 10 and $data < 100 ){
-				$data = $sufix . '00' . $data;
-			}
-			if($data >= 100 and $data < 1000){
-				$data = $sufix . '0' . $data;
-			}
-			if($data >= 1000 and $data < 10000){
-				$data = $sufix . '00' . $data;
-			}
-			if($data >= 10000 and $data < 100000){
-				$data = $sufix . '000' . $data;
-			}
-			return $data;
+			return $this->prepareCodename($data, $sufix);
 		}
 
 		public function getStatuses(){
@@ -625,6 +630,22 @@
 
 		    return round($bytes, $precision) . ' ' . $units[$pow]; 
 		} 
+
+		function generateDymoLables($location, $filename, $code = '0001'){
+			$sizes = array(6, 9, 12, 19, 24);
+			foreach ($sizes as $size) {
+				$this->generateDymoLable($location, 'Маркировка ' . $size . ' мм для ' . $filename . '.label', $code, $size);
+			}
+		}
+
+		function generateDymoLable($location, $filename, $code = '0001', $size = 6){
+			$template = file_get_contents($this->system['main_directory'] . 'uc_modules/uCrewProjects/data/dymo/data.label');
+			$template = str_replace("%code%", $code, $template);
+			$template = str_replace("%size%", $size, $template);
+			$template = str_replace("%length%", round($size * 755.9), $template);
+			file_put_contents($location . $filename, $template);
+			return $location . $filename;
+		}
 
 	}
 ?>

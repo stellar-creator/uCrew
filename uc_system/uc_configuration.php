@@ -5,15 +5,15 @@
 	class uCrewConfiguration extends uCrewVersion {
 		// Database configuration data
 		public $database = array(
-			"server" => "*",
-			"user" => "*",
-			"password" => "*",
-			"database" => "*"
+			"server" => "localhost",
+			"user" => "root",
+			"password" => "4d92f93WATCH",
+			"database" => "ucrew_database"
 		);
 		// System configuration data
 		public $system = array(
-			"main_directory" => "*",
-			"main_domain" => "*",
+			"main_directory" => "/home/pavel/Works/Software/Cross Platform/Web/uCrew/",
+			"main_domain" => "94.51.83.132",
 			"template" => "uCrewBase",
 			"organization" => "uCrew",
 			"update_server" => "https://github.com/stellar-creator/uCrew"
