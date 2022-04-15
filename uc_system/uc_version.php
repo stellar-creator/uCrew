@@ -4,6 +4,6 @@
 	 */
 	class uCrewVersion {
 		// System version
-		public $version = "0.2.1";
+		public $version = "0.2.3";
 	}
 ?>

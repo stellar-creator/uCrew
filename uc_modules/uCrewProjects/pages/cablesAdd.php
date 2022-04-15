@@ -172,7 +172,7 @@
 					   Конструкторская документация
 					   <ul>
 					      <li id="cables_dir">
-					         Механические изделия
+					         Провода и кабели
 					         <ul>
 					            <li id="codename">
 					               <div id="f_cable_fullname">Шифр</div>
@@ -295,7 +295,7 @@
 	    		text = ' - ' + text;
 	    	}
 
-	    	$('#directory').html('"<?php echo $directory_data['mask'] ?>Оборудование\\Механические изделия\\' + $('#cable_codename').val() + text  + '"');
+	    	$('#directory').html('"<?php echo $directory_data['mask'] ?>Оборудование\\Провода и кабели\\' + $('#cable_codename').val() + text  + '"');
 	    });
 
 		// On source draw change
