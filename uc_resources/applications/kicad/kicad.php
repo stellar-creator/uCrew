@@ -52,9 +52,8 @@
 			$this->project['directory'] = $location;
 			// Find files
 			$this->project['files']['unformatted'] = $this->getFiles($this->project['directory']);
-			$this->formatFiles($this->project['files']['unformatted']);
 			// Format files
-			print_r($this);
+			$this->formatFiles($this->project['files']['unformatted']);
 		}
 
 		private function getFiles($directory, $allFiles = []) {
@@ -129,7 +128,80 @@
 
 			}
 		}
+	}
 
+	/**
+	 * 
+	 */
 
+	class KiBotConverter {
+
+		public $kidata;
+
+		function __construct($project) {
+			// Set data
+			$this->kidata = array(
+				'location' => $project,
+				'yaml' => $project . '/.kibot.yaml'
+			);
+			// Generate yaml file
+			$this->generateYaml();
+		}
+
+		public function generateYaml(){
+
+			$data = "kibot:
+  version: 1
+
+preflight:
+  run_drc: false
+
+outputs:
+  - name: 'gerbers'
+    comment: \"Generate gerber files for production\"
+    type: gerber
+    dir: Gerber
+    options:
+      # generic layer options
+      exclude_edge_layer: false
+      exclude_pads_from_silkscreen: true
+      plot_sheet_reference: false
+      plot_footprint_refs: true
+      plot_footprint_values: false
+      force_plot_invisible_refs_vals: false
+      tent_vias: true
+      line_width: 0.15
+
+      # gerber options
+      use_aux_axis_as_origin: false
+      subtract_mask_from_silk: true
+      use_protel_extensions: false
+      gerber_precision: 4.6
+      create_gerber_job_file: false
+      use_gerber_x2_attributes: true
+      use_gerber_net_attributes: true
+
+    layers: 'selected'
+
+  - name: 'ibom'
+    comment: \"Generate ibom files for production\"
+    type: ibom
+    dir: Bom
+    options:
+      # generic layer options
+      dark_mode: true
+      highlight_pin1: true
+
+  - name: 'pcbdraw'
+    comment: \"Generate pcbdraw files\"
+    type: pcbdraw
+    dir: Images
+    options:
+      format: jpg
+      warnings: none
+";
+
+			file_put_contents($this->kidata['yaml'], $data, LOCK_EX);
+		}
 	}
 ?>

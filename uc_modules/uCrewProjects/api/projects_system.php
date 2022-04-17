@@ -497,8 +497,12 @@
 
 			// Prepare KiCad Project
 			require_once('uc_resources/applications/kicad/kicad.php');
+			
 			// Run KiCad Converter
 			$kicad = new KiCadConverter($upload_directory . $this->ucs_DirectoriesNames['sources']);
+			
+			// Run KiBot Converter
+			$kibot = new KiBotConverter($upload_directory . $this->ucs_DirectoriesNames['sources']);
 
 			// Move images
 			$this->uc_SystemPipe->uploadFiles(

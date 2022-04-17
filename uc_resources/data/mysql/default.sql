@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost:3306
--- Время создания: Апр 02 2022 г., 01:02
+-- Время создания: Апр 17 2022 г., 22:40
 -- Версия сервера: 5.7.37-0ubuntu0.18.04.1
 -- Версия PHP: 7.2.24-0ubuntu0.18.04.11
 
@@ -41,17 +41,13 @@ CREATE TABLE IF NOT EXISTS `uc_chats` (
   PRIMARY KEY (`chat_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `uc_chats`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Структура таблицы `uc_events`
 --
 -- Создание: Фев 06 2022 г., 12:57
--- Последнее обновление: Апр 01 2022 г., 19:49
+-- Последнее обновление: Апр 17 2022 г., 17:16
 --
 
 DROP TABLE IF EXISTS `uc_events`;
@@ -64,10 +60,6 @@ CREATE TABLE IF NOT EXISTS `uc_events` (
   `event_wasviewed` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`event_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `uc_events`:
---
 
 -- --------------------------------------------------------
 
@@ -85,10 +77,6 @@ CREATE TABLE IF NOT EXISTS `uc_groups` (
   PRIMARY KEY (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `uc_groups`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -103,10 +91,6 @@ CREATE TABLE IF NOT EXISTS `uc_locations` (
   `location_name` varchar(2048) NOT NULL,
   PRIMARY KEY (`location_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `uc_locations`:
---
 
 -- --------------------------------------------------------
 
@@ -128,10 +112,6 @@ CREATE TABLE IF NOT EXISTS `uc_messages` (
   PRIMARY KEY (`message_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `uc_messages`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -146,10 +126,6 @@ CREATE TABLE IF NOT EXISTS `uc_posts` (
   `post_name` varchar(512) NOT NULL,
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `uc_posts`:
---
 
 -- --------------------------------------------------------
 
@@ -168,17 +144,12 @@ CREATE TABLE IF NOT EXISTS `uc_settings` (
   PRIMARY KEY (`setting_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `uc_settings`:
---
-
 -- --------------------------------------------------------
 
 --
 -- Структура таблицы `uc_users`
 --
--- Создание: Апр 01 2022 г., 16:51
--- Последнее обновление: Апр 01 2022 г., 19:27
+-- Создание: Апр 04 2022 г., 16:22
 --
 
 DROP TABLE IF EXISTS `uc_users`;
@@ -196,10 +167,6 @@ CREATE TABLE IF NOT EXISTS `uc_users` (
   `user_groups` varchar(256) NOT NULL DEFAULT '0;' COMMENT 'User groups privileges list',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='uCrew users table';
-
---
--- СВЯЗИ ТАБЛИЦЫ `uc_users`:
---
 
 
 --
@@ -282,7 +249,7 @@ USE `ucrew_projects`;
 --
 -- Структура таблицы `ucp_cables`
 --
--- Создание: Мар 27 2022 г., 15:21
+-- Создание: Апр 14 2022 г., 14:15
 --
 
 DROP TABLE IF EXISTS `ucp_cables`;
@@ -300,10 +267,6 @@ CREATE TABLE IF NOT EXISTS `ucp_cables` (
   PRIMARY KEY (`cable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `ucp_cables`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -320,10 +283,6 @@ CREATE TABLE IF NOT EXISTS `ucp_data` (
   `data_text` text NOT NULL,
   PRIMARY KEY (`data_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `ucp_data`:
---
 
 -- --------------------------------------------------------
 
@@ -348,10 +307,6 @@ CREATE TABLE IF NOT EXISTS `ucp_mechanics` (
   PRIMARY KEY (`mechanic_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `ucp_mechanics`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -375,10 +330,6 @@ CREATE TABLE IF NOT EXISTS `ucp_pcbs` (
   PRIMARY KEY (`pcb_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `ucp_pcbs`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -401,10 +352,6 @@ CREATE TABLE IF NOT EXISTS `ucp_projects` (
   `project_activation` int(2) NOT NULL DEFAULT '1',
   PRIMARY KEY (`project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `ucp_projects`:
---
 
 
 --
@@ -468,10 +415,6 @@ CREATE TABLE IF NOT EXISTS `ucs_categories` (
   PRIMARY KEY (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `ucs_categories`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -496,10 +439,6 @@ CREATE TABLE IF NOT EXISTS `ucs_items` (
   PRIMARY KEY (`item_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `ucs_items`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -514,10 +453,6 @@ CREATE TABLE IF NOT EXISTS `ucs_locations` (
   `location_name` varchar(512) NOT NULL,
   PRIMARY KEY (`location_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `ucs_locations`:
---
 
 -- --------------------------------------------------------
 
@@ -539,10 +474,6 @@ CREATE TABLE IF NOT EXISTS `ucs_suppliers` (
   PRIMARY KEY (`supplier_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- СВЯЗИ ТАБЛИЦЫ `ucs_suppliers`:
---
-
 -- --------------------------------------------------------
 
 --
@@ -559,10 +490,6 @@ CREATE TABLE IF NOT EXISTS `ucs_templates` (
   `template_activated` int(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`template_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `ucs_templates`:
---
 
 -- --------------------------------------------------------
 
@@ -582,10 +509,6 @@ CREATE TABLE IF NOT EXISTS `usc_releases` (
   `release_comment` varchar(1024) NOT NULL,
   PRIMARY KEY (`release_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- СВЯЗИ ТАБЛИЦЫ `usc_releases`:
---
 
 
 --
