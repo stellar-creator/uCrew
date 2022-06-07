@@ -134,6 +134,11 @@
 					'local' => $this->directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['cables'] . '/',
 					'smb' => $this->directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['cables'] . '\\',
 					'web' => 'http://' . $this->system['main_domain'] . '/uc_resources/projects/mount/' . $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['cables'] . '/',
+				),
+				'pcbs' => array(
+					'local' => $this->directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['pcbs'] . '/',
+					'smb' => $this->directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['pcbs'] . '\\',
+					'web' => 'http://' . $this->system['main_domain'] . '/uc_resources/projects/mount/' . $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['pcbs'] . '/',
 				)
 			); 
 			///uc_resources/projects/mount/
@@ -443,12 +448,14 @@
 			$pcb_data = array(
 				"fullname" => "",
 				"material" => "",
+				"silkscreen" => "",
+				"mask" => "",
 				"projects" => array(),
 				"changes" => array(),
-				"revisions" => array()
+				"revisions" => array($data['pcb_revision'])
 			);
 
-			$revision_directory = "Ревизия " . $revision;
+			$revision_directory = "Ревизия " . $data['pcb_revision'];
 
 			// Get upload directory
 			$upload_directory = 
@@ -472,7 +479,8 @@
 
 			// Write description
 			$description_file = fopen($upload_directory . 'Описание ' . $data['pcb_fullname'] . '.txt', "w");
-			fwrite($description_file, $data['pcb_description']);
+			$description = "Описание:\n\t". $data['pcb_description'] . "\n\nМатериал: " . $data['pcb_material'] . ";\nЦвет шелкографии: " . $data['pcb_silk'] . ";\nЦвет паяльной маски: " . $data['pcb_mask'] . ";\n";
+			fwrite($description_file, $description);
 			fclose($description_file);
 
 			// Prepare special characteristics description
@@ -524,6 +532,34 @@
 				$upload_directory . $this->ucs_DirectoriesNames['annotations'] . '/',
 				$files
 			);
+
+			// Set data
+			$pcb_data['fullname'] =  $this->uc_SystemPipe->setSpecialCharacters($data['pcb_fullname']);
+			$pcb_data['material'] =  $data['pcb_material'];
+			$pcb_data['silkscreen'] =  $data['pcb_silk'];
+			$pcb_data['mask'] =  $data['pcb_mask'];
+
+			// Create query
+			$sql = "INSERT INTO `ucp_pcbs` (`pcb_id`, `pcb_name`, `pcb_description`, `pcb_codename`, `pcb_author_id`, `pcb_create_timestamp`, `pcb_status`, `pcb_image`, `pcb_data`, `pcb_activation`) VALUES (NULL, '".$data['pcb_name']."', '".$data['pcb_description']."', '".$data['pcb_codename']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['pcb_status']."', '', '".json_encode($pcb_data, JSON_UNESCAPED_UNICODE)."', '1')";
+			
+			// Add data
+			$this->ucs_Database->query($sql);
+
+			$code = 0;
+
+			// Change codename if auto
+			if($data['pcb_codename_state'] == 'auto'){
+				// Get codename
+				$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_codename'";
+				$data = $this->ucs_Database->getAllData($sql)[0]['data_value'];
+				$code = $data;
+				// Update codename
+				$data = $data + 1;
+				$sql = "UPDATE `ucp_data` SET `data_value` = '".$data."' WHERE `data_name` = 'pcbs_codename'";
+				$this->ucs_Database->query($sql);
+			}
+
+
 		}
 
 		// Get mechanic materials
@@ -539,6 +575,46 @@
 				}else{
 					foreach ($data as $index => $value) {
 						array_push($result, $material . ', толщиной ' . $value . ' (мм)');
+					}
+				}
+			}
+
+			return $result;
+		}
+
+		// Get mechanic materials
+		public function getPcbMaterials(){
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_materials'";
+			$materials = $this->ucs_Database->getAllData($sql)[0]['data_text'];
+			$materials = json_decode($materials, true)['materials'];
+			$result = array();
+
+			foreach ($materials as $material => $data) {
+				if(empty($data)){
+					array_push($result, $material);
+				}else{
+					foreach ($data as $index => $value) {
+						array_push($result, $material . ', толщиной ' . $value . ' (мм)');
+					}
+				}
+			}
+
+			return $result;
+		}
+
+		// Get mechanic materials
+		public function getPcbColors(){
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_colors'";
+			$materials = $this->ucs_Database->getAllData($sql)[0]['data_text'];
+			$materials = json_decode($materials, true)['colors'];
+			$result = array();
+
+			foreach ($materials as $material => $data) {
+				if(empty($data)){
+					array_push($result, $material);
+				}else{
+					foreach ($data as $index => $value) {
+						array_push($result, $material . ', оттенок ' . $value);
 					}
 				}
 			}

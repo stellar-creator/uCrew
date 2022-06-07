@@ -139,6 +139,7 @@
 		public $kidata;
 
 		function __construct($project) {
+			echo "# KiBot Converter v 0.1 \n";
 			// Set data
 			$this->kidata = array(
 				'location' => $project,
@@ -146,6 +147,24 @@
 			);
 			// Generate yaml file
 			$this->generateYaml();
+			// Execute script
+			$this->execute();
+		}
+
+		public function execute(){
+			$uc_SystemPipe = new uCrewSystemPipe();
+			echo $uc_SystemPipe->sh(
+				array(
+					'chmod 777 -R "' . $this->kidata['location'] . '"', 
+					'cd "' . $this->kidata['location'] . '"', 
+					'pwd',
+					'ln -s "$(pwd)/" /tmp/pcb',
+					'cd /tmp/pcb',
+					'kibot -v -c .kibot.yaml',
+					'cd "'.$this->kidata['location'].'"'//,
+					//'rm /tmp/pcb'
+				)
+			);
 		}
 
 		public function generateYaml(){
@@ -183,6 +202,11 @@ outputs:
 
     layers: 'selected'
 
+  - name: 'drill'
+    comment: \"Generate drill file for production\"
+    type: excellon
+    dir: Gerber
+ 
   - name: 'ibom'
     comment: \"Generate ibom files for production\"
     type: ibom
@@ -191,14 +215,6 @@ outputs:
       # generic layer options
       dark_mode: true
       highlight_pin1: true
-
-  - name: 'pcbdraw'
-    comment: \"Generate pcbdraw files\"
-    type: pcbdraw
-    dir: Images
-    options:
-      format: jpg
-      warnings: none
 ";
 
 			file_put_contents($this->kidata['yaml'], $data, LOCK_EX);

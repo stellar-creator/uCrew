@@ -41,6 +41,7 @@
 		'Шифр' => array('class' => 'text-center', 'width' => '10%'),
 		'Краткая информация' => array('width' => '35%'),
 		'Статус' => array('class' => 'text-center'),
+		'Материал' => array('class' => 'text-center'),
 		'Управление' => array('class' => 'text-center')
 	);
 
@@ -58,6 +59,7 @@
 			$count++;
 			$status = $statuses[$values['pcb_status']][0];
 			$class = $statuses[$values['pcb_status']][1];
+			$material = $values['pcb_data']['material'];
 			$inprojects = "";
 			if( isset($values['pcb_data']['projects']) ){
 				if( count($values['pcb_data']['projects']) > 0 ){
@@ -89,6 +91,7 @@
 					<cite title="Source Title">'.$values['pcb_description'].'</cite>  
 					</figcaption></p>'.$inprojects => array('class' => 'align-middle'),
 					$status => array('class' => 'align-middle text-center '.$class),
+					$material => array('class' => 'align-middle text-center'),
 					$dropdown => array('class' => 'align-middle text-center')
 				)
 			);

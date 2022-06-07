@@ -21,6 +21,22 @@
 	// Get directory data
 	$directory_data = $uc_Projects->getProjectDirectoryData();
 
+	// Get materials
+	$materials = $uc_Projects->getPcbMaterials();
+	// Generate list
+	$options = '';
+	foreach ($materials as $material) {
+		$options .= "<option value=\"$material\">$material</option>\n";
+	}
+
+	// Get materials
+	$colors = $uc_Projects->getPcbColors();
+	// Generate list
+	$options_colors = '';
+	foreach ($colors as $color) {
+		$options_colors .= "<option value=\"$color\">$color</option>\n";
+	}
+
 	echo $message;
 ?>
 
@@ -75,12 +91,46 @@
 		  <input class="form-control" type="text" id="pcb_codename" name="pcb_codename" readonly value="<?php echo $codename; ?>" required>
 		  <input type="hidden" id="pcb_codename_state" name="pcb_codename_state" value="auto">
 		</div>
+		<div class="mb-3">
+		  <label for="pcb_revision" class="form-label">Ревизия печатной платы</label>
+		  <input class="form-control" type="text" id="pcb_revision" name="pcb_revision" readonly value="1" required>
+		</div>
+
+		<h4>Характеристики печатной платы</h4>
+		<hr>
+
+		<div class="mb-3">
+		  <label for="pcb_material" class="form-label">Материал печатной платы</label>
+		  <select class="selectpicker show-tick form-control" id="pcb_material" name="pcb_material" data-live-search="true" data-size="15" required>
+		  	<?php
+		  		echo $options;
+		  	?>
+		  </select>
+		</div>
+
+		<div class="mb-3">
+		  <label for="pcb_silk" class="form-label">Цвет шелкографии</label>
+		  <select class="selectpicker show-tick form-control" id="pcb_silk" name="pcb_silk" data-live-search="true" data-size="15" required>
+		  	<?php
+		  		echo $options_colors;
+		  	?>
+		  </select>
+		</div>
+
+		<div class="mb-3">
+		  <label for="pcb_mask" class="form-label">Цвет паяльной маски</label>
+		  <select class="selectpicker show-tick form-control" id="pcb_mask" name="pcb_mask" data-live-search="true" data-size="15" required>
+		  	<?php
+		  		echo $options_colors;
+		  	?>
+		  </select>
+		</div>
 
 		<h4>Файлы изделия</h4>
 		<hr>
 
 		<div class="mb-3">
-		  <label for="pcb_archive" class="form-label">Исходный проект печатной платы - Архив (*.zip)</label>
+		  <label for="pcb_archive" class="form-label">Исходный проект печатной платы KiCad 6 - Архив (*.zip)</label>
 		  <input class="form-control" type="file" id="pcb_archive" name="pcb_archive" accept=".zip" required>
 			<p>
 		  		<figcaption class="blockquote-footer">
