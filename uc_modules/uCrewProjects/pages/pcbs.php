@@ -55,12 +55,17 @@
 			$pcb_paths = $uc_Projects->ucs_DirectoriesPath['pcbs'];
 
 			$pcb_paths['web'] = $pcb_paths['web'] . $values['pcb_data']['fullname'] . '/';
-			$pcb_image = $pcb_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $values['pcb_data']['fullname'] . '.jpeg' ;
+			
+			if( count($values['pcb_data']['revisions']) <= 1 ){
+				$pcb_image = $pcb_paths['web'] . 'Ревизия 1/' . $uc_Projects->ucs_DirectoriesNames['images'] . '/Изображение ' . $values['pcb_codename'] . '.' . $values['pcb_data']['revisions'][0] . ' - ' . $values['pcb_name'] . '.jpeg' ;
+			}
+
 			$count++;
 			$status = $statuses[$values['pcb_status']][0];
 			$class = $statuses[$values['pcb_status']][1];
 			$material = $values['pcb_data']['material'];
 			$inprojects = "";
+
 			if( isset($values['pcb_data']['projects']) ){
 				if( count($values['pcb_data']['projects']) > 0 ){
 					$inprojects = '<p>
@@ -69,6 +74,7 @@
 								<cite title="Source Title">КИПТ "Азимут 4 - Моноблок"</cite>  
 							</figcaption>
 						</p>';
+
 					// Тут надо вписывать, в каких проектах
 				}
 			}

@@ -137,14 +137,16 @@
 	class KiBotConverter {
 
 		public $kidata;
+		public $projectName;
 
-		function __construct($project) {
+		function __construct($project, $name) {
 			echo "# KiBot Converter v 0.1 \n";
 			// Set data
 			$this->kidata = array(
 				'location' => $project,
 				'yaml' => $project . '/.kibot.yaml'
 			);
+			$this->projectName = $name;
 			// Generate yaml file
 			$this->generateYaml();
 			// Execute script
@@ -152,19 +154,33 @@
 		}
 
 		public function execute(){
+			
 			$uc_SystemPipe = new uCrewSystemPipe();
-			echo $uc_SystemPipe->sh(
+			
+			$result = $uc_SystemPipe->sh(
 				array(
+					'sudo rm -rf /backup/pcb/',
 					'chmod 777 -R "' . $this->kidata['location'] . '"', 
 					'cd "' . $this->kidata['location'] . '"', 
-					'pwd',
-					'ln -s "$(pwd)/" /tmp/pcb',
-					'cd /tmp/pcb',
-					'kibot -v -c .kibot.yaml',
-					'cd "'.$this->kidata['location'].'"'//,
-					//'rm /tmp/pcb'
+					//'pwd',
+					'sudo mkdir /backup/pcb/',
+					'sudo chmod 777 -R /backup/pcb/', 
+					'sudo cp -a "$(pwd)/." /backup/pcb/',
+					//'ls',
+					'cd /backup/pcb/',
+					//'pwd',
+					'sudo kibot -v -c .kibot.yaml',
+					'sudo cp -a /backup/pcb/. "' . $this->kidata['location'] . '"',
+					'cd "'.$this->kidata['location'].'"',
+					'ls',
+					'sudo rm -rf /backup/pcb/',
+					'cd ..',
+					'mkdir Изображения',
+					'cp Исходники/Images/image.jpg "Изображения/Изображение ' . $this->projectName . '.jpeg"'
 				)
 			);
+
+			echo $uc_SystemPipe->setTerminalToHtml($result);
 		}
 
 		public function generateYaml(){
@@ -206,7 +222,24 @@ outputs:
     comment: \"Generate drill file for production\"
     type: excellon
     dir: Gerber
- 
+  
+  - name: 'dxf'
+    comment: \"Generate dxf file for production\"
+    type: dxf
+    layers: 'selected'
+    dir: DXF
+    options:
+      metric_units: true
+
+  - name: 'pcbdraw'
+    comment: \"Print PCB image\"
+    type: pcbdraw
+    dir: Images
+    options:
+      format: 'jpg'
+      show_components: 'none'
+      output: 'image.%x'
+
   - name: 'ibom'
     comment: \"Generate ibom files for production\"
     type: ibom

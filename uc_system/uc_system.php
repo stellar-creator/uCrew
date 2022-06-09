@@ -174,6 +174,19 @@
 			return $this->version != $remote_version ? array('state' => true, 'version' => $remote_version) : array('state' => false, 'version' => $remote_version); 
 		}
 
+		public function setTerminalToHtml($str){
+			$characters = array(
+				array("1", "2"),
+				array("1", "#")
+			);
+
+			foreach ($characters as $data) {
+				$str = str_replace($data[0], $data[1], $str);
+			}
+
+			return $str;
+		}
+
 		public function setSpecialCharacters($str){
 			$characters = array(
 				array('\'', '&#39;'),

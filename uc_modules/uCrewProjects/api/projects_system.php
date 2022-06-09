@@ -456,6 +456,7 @@
 			);
 
 			$revision_directory = "Ревизия " . $data['pcb_revision'];
+			$revision_name = $data['pcb_codename'] . '.' .  $data['pcb_revision'] . ' - ' . $data['pcb_name'];
 
 			// Get upload directory
 			$upload_directory = 
@@ -510,7 +511,7 @@
 			$kicad = new KiCadConverter($upload_directory . $this->ucs_DirectoriesNames['sources']);
 			
 			// Run KiBot Converter
-			$kibot = new KiBotConverter($upload_directory . $this->ucs_DirectoriesNames['sources']);
+			$kibot = new KiBotConverter($upload_directory . $this->ucs_DirectoriesNames['sources'], $revision_name);
 
 			// Move images
 			$this->uc_SystemPipe->uploadFiles(
