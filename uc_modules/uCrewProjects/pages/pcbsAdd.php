@@ -37,6 +37,25 @@
 		$options_colors .= "<option value=\"$color\">$color</option>\n";
 	}
 
+	// Get materials
+	$surfaces = $uc_Projects->getPcbSurfaces();
+	// Generate list
+	$options_surfaces = '';
+	foreach ($surfaces as $surface) {
+		$options_surfaces .= "<option value=\"$surface\">$surface</option>\n";
+	}
+
+	
+	// Get pcbs
+	$pcbs = $uc_Projects->getPcbsData();
+	// Get pcbs
+	$pcbs_json = $uc_Projects->getPcbsData($raw = true);
+	// Generate list
+	$options_pcbs = '<option value=\"0\">Выберите печатную плату из базы данных...</option>\n';
+	foreach ($pcbs as $pcb => $data) {
+		$options_pcbs .= "<option value=\"$pcb\">$pcb - ".$data['name']."</option>\n";
+	}
+
 	echo $message;
 ?>
 
@@ -45,6 +64,26 @@
 		<h4>Общая информация</h4>
 		<hr>
 		<input type="hidden" name="pcb_fullname" id="pcb_fullname" value="">
+
+		<div class="mb-3">
+			<div class="form-check" id="checkboxes">
+			  <input class="form-check-input" type="checkbox" id="addRevision">
+			  <label class="form-check-label" for="addRevision">
+			    Добавить ревизию к плате
+			  </label>
+			</div>
+		</div>
+		<div id="append_pcb">
+			<div class="mb-3">
+			  <label for="pcb_parrent" class="form-label">Выберите печатную плату</label>
+			  <select class="selectpicker show-tick form-control" id="pcb_parrent" name="pcb_parrent" data-live-search="true" data-size="15" required>
+			  	<?php
+			  		echo $options_pcbs;
+			  	?>
+			  </select>
+			</div>
+		</div>
+
 		<div class="mb-3">
 		  <label for="pcb_name" class="form-label">Наиминование печатной платы <i>(*обратите внимание, что следующие символы запрещены: \/():*?"|+.%!@&lt;&gt;)</i></label>
 		  <input class="form-control" type="text" id="pcb_name" name="pcb_name" required>
@@ -59,6 +98,7 @@
 		  	</figcaption>
 		  </p>
 		</div>
+
 		<div class="mb-3">
 		  <label for="pcb_description" class="form-label">Краткое описание</label>
 		  <input class="form-control" type="text" id="pcb_description" name="pcb_description" required>
@@ -70,7 +110,20 @@
 		  </p>
 		</div>
 
+
+		<div id="new_pcb">
+			<div class="mb-3">
+			  <label for="pcb_codename" class="form-label">Шифр печатной платы <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
+			  <input class="form-control" type="text" id="pcb_codename" name="pcb_codename" readonly value="<?php echo $codename; ?>" required>
+			  <input type="hidden" id="pcb_codename_state" name="pcb_codename_state" value="auto">
+			</div>
+		</div>
 		<div class="mb-3">
+			<label for="pcb_revision" class="form-label">Ревизия печатной платы</label>
+			<input class="form-control" type="text" id="pcb_revision" name="pcb_revision" readonly value="1" required>
+		</div>
+		
+				<div class="mb-3">
 		  <label for="pcb_status" class="form-label">Статус</label>
 		  <select class="form-control" id="pcb_status" name="pcb_status" required>
 <?php
@@ -85,15 +138,6 @@
   	}
 ?>
 		  </select>
-		</div>
-		<div class="mb-3">
-		  <label for="pcb_codename" class="form-label">Шифр печатной платы <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
-		  <input class="form-control" type="text" id="pcb_codename" name="pcb_codename" readonly value="<?php echo $codename; ?>" required>
-		  <input type="hidden" id="pcb_codename_state" name="pcb_codename_state" value="auto">
-		</div>
-		<div class="mb-3">
-		  <label for="pcb_revision" class="form-label">Ревизия печатной платы</label>
-		  <input class="form-control" type="text" id="pcb_revision" name="pcb_revision" readonly value="1" required>
 		</div>
 
 		<h4>Характеристики печатной платы</h4>
@@ -122,6 +166,15 @@
 		  <select class="selectpicker show-tick form-control" id="pcb_mask" name="pcb_mask" data-live-search="true" data-size="15" required>
 		  	<?php
 		  		echo $options_colors;
+		  	?>
+		  </select>
+		</div>
+
+		<div class="mb-3">
+		  <label for="pcb_surface" class="form-label">Покрытие контактных площадок</label>
+		  <select class="selectpicker show-tick form-control" id="pcb_surface" name="pcb_surface" data-live-search="true" data-size="15" required>
+		  	<?php
+		  		echo $options_surfaces;
 		  	?>
 		  </select>
 		</div>
@@ -287,6 +340,8 @@
 	var annotations = [];
 	var marks = [];
 
+	var pcbs = <?php echo $pcbs_json; ?>;
+
 	// Change codename state
 	function changeCodeNameState(){
 		if(readonly == true){
@@ -309,6 +364,7 @@
 		$("#annotationsSelect").hide();
 		$("#photoSelect").hide();
 		$("#marksSelect").hide();
+		$("#append_pcb").hide();
 
 		$("#f_photos").hide();
 		$("#f_marks").hide();
@@ -381,6 +437,24 @@
   			}
         });
 
+	    // On add revision
+	    $('#addRevision').change(function(e){
+			if ($(this).is(':checked')) {
+				$("#append_pcb").show("fast");
+				$("#new_pcb").hide("fast");
+				$("#pcb_name").attr("readonly", true);
+				$("#pcb_description").attr("readonly", true);
+				$("#pcb_revision").val("-");
+  			}else{
+				$("#append_pcb").hide("fast");
+				$("#new_pcb").show("fast");
+				$("#pcb_name").attr("readonly", false);
+				$("#pcb_description").attr("readonly", false);
+				$("#pcb_revision").val("1");
+  			}
+        });
+        
+
 	    // On add draw changed
 	    $('#addPhotos').change(function(e){
 			if ($(this).is(':checked')) {
@@ -391,6 +465,16 @@
 				$("#f_photos").hide("fast");
   			}
         });
+
+	    // On add draw changed
+	    $('#pcb_parrent').change(function(e){
+			$('#pcb_name').val(pcbs['pcbs'][this.value]['name']);
+			$('#pcb_description').val(pcbs['pcbs'][this.value]['description']);
+			var lastKey = Object.keys(pcbs['pcbs'][this.value]['revisions']).sort().reverse()[0];
+			$("#pcb_revision").val(lastKey);
+			$('pcb_codename').val(this.value);
+        });
+
 
 	    // On add draw changed
 	    $('#addMarks').change(function(e){

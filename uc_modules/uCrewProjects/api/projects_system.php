@@ -623,6 +623,47 @@
 			return $result;
 		}
 
+		// Get mechanic materials
+		public function getPcbSurfaces(){
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_surfaces'";
+			$materials = $this->ucs_Database->getAllData($sql)[0]['data_text'];
+			$materials = json_decode($materials, true)['surfaces'];
+			$result = array();
+
+			foreach ($materials as $material => $data) {
+				if(empty($data)){
+					array_push($result, $material);
+				}else{
+					foreach ($data as $index => $value) {
+						array_push($result, $material . ', медь толщиной ' . $value . ' µm');
+					}
+				}
+			}
+
+			return $result;
+		}
+
+		// Get mechanic materials
+		public function getPcbsData($raw = false){
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_data'";
+			$pcbs_json = $this->ucs_Database->getAllData($sql)[0]['data_text'];
+			$pcbs = json_decode($pcbs_json, true)['pcbs'];
+			//$result = array();
+
+			//foreach ($pcbs as $pcb => $data) {
+			//	array_push($result, $pcb);
+			//}
+
+			if($raw == true){
+				return $pcbs_json;
+			}else{
+				return $pcbs;
+			}
+			
+		}
+		
+
+
 		public function getPager($page, $count, $table, $url){
 			$sql = "SELECT COUNT(*) FROM `".$table."`";
 			$data = $this->ucs_Database->getAllData($sql)[0]['COUNT(*)'];
