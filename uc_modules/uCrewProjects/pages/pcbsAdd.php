@@ -64,6 +64,7 @@
 		<h4>Общая информация</h4>
 		<hr>
 		<input type="hidden" name="pcb_fullname" id="pcb_fullname" value="">
+		<input type="hidden" name="pcb_isnew" id="pcb_isnew" value="1">
 
 		<div class="mb-3">
 			<div class="form-check" id="checkboxes">
@@ -445,12 +446,14 @@
 				$("#pcb_name").attr("readonly", true);
 				$("#pcb_description").attr("readonly", true);
 				$("#pcb_revision").val("-");
+				$('#pcb_isnew').val('0');	
   			}else{
 				$("#append_pcb").hide("fast");
 				$("#new_pcb").show("fast");
 				$("#pcb_name").attr("readonly", false);
 				$("#pcb_description").attr("readonly", false);
 				$("#pcb_revision").val("1");
+				$('#pcb_isnew').val('1');	
   			}
         });
         
@@ -466,13 +469,13 @@
   			}
         });
 
-	    // On add draw changed
+	    // On pcb revision changed
 	    $('#pcb_parrent').change(function(e){
 			$('#pcb_name').val(pcbs['pcbs'][this.value]['name']);
 			$('#pcb_description').val(pcbs['pcbs'][this.value]['description']);
 			var lastKey = Object.keys(pcbs['pcbs'][this.value]['revisions']).sort().reverse()[0];
-			$("#pcb_revision").val(lastKey);
-			$('pcb_codename').val(this.value);
+			$("#pcb_revision").val( (parseInt(lastKey) + 1) );
+			$('#pcb_codename').val(this.value);
         });
 
 

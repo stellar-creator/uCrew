@@ -248,6 +248,16 @@ outputs:
       # generic layer options
       dark_mode: true
       highlight_pin1: true
+
+  - name: 'render_3d'
+    comment: \"Generate 3D file\"
+    type: render_3d
+    dir: 3D
+
+  - name: 'step'
+    comment: \"Generate 3D file\"
+    type: step
+    dir: 3D
 ";
 
 			file_put_contents($this->kidata['yaml'], $data, LOCK_EX);

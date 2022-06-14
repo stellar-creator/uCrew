@@ -56,14 +56,16 @@
 
 			$pcb_paths['web'] = $pcb_paths['web'] . $values['pcb_data']['fullname'] . '/';
 			
-			if( count($values['pcb_data']['revisions']) <= 1 ){
-				$pcb_image = $pcb_paths['web'] . 'Ревизия 1/' . $uc_Projects->ucs_DirectoriesNames['images'] . '/Изображение ' . $values['pcb_codename'] . '.' . $values['pcb_data']['revisions'][0] . ' - ' . $values['pcb_name'] . '.jpeg' ;
-			}
+			$pcb_image = $pcb_paths['web'] . 'Ревизия '.$values['pcb_data']['revision'].'/' . $uc_Projects->ucs_DirectoriesNames['images'] . '/Изображение ' . $values['pcb_codename'] . ' - ' . $values['pcb_name'] . '.jpeg' ;
+		
 
 			$count++;
 			$status = $statuses[$values['pcb_status']][0];
 			$class = $statuses[$values['pcb_status']][1];
 			$material = $values['pcb_data']['material'];
+			$silkscreen = $values['pcb_data']['silkscreen'];
+			$mask = $values['pcb_data']['mask'];
+			$surface = $values['pcb_data']['surface'];
 			$inprojects = "";
 
 			if( isset($values['pcb_data']['projects']) ){
@@ -95,6 +97,9 @@
 					<figcaption class="blockquote-footer">
 					Описание:
 					<cite title="Source Title">'.$values['pcb_description'].'</cite>  
+					</figcaption><figcaption class="blockquote-footer">
+					Характеристики:
+					<cite title="Source Title">Цвет шелкографии: ' . $silkscreen . ', цвет маски: ' . $mask . ', покрытие: ' . $surface.'</cite>  
 					</figcaption></p>'.$inprojects => array('class' => 'align-middle'),
 					$status => array('class' => 'align-middle text-center '.$class),
 					$material => array('class' => 'align-middle text-center'),

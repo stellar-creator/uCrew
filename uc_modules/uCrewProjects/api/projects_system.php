@@ -160,7 +160,7 @@
 		public function generateFolderTree($dirdata, $mask){
 			
 			foreach ($dirdata as $index => $folder) {
-				print_r($folder);
+				//print_r($folder);
 			}
 			
 		}
@@ -444,16 +444,23 @@
 
 		// pcbs data
 		public function addPcb($data, $files, $revision = 1){
+
+			$data['pcb_isnew'] = intval($data['pcb_isnew']);
+
+			$pcbs = $this->getPcbsData();
+
 			// Init json
 			$pcb_data = array(
 				"fullname" => "",
 				"material" => "",
 				"silkscreen" => "",
 				"mask" => "",
+				"surface" => "",
 				"projects" => array(),
 				"changes" => array(),
-				"revisions" => array($data['pcb_revision'])
+				"revision" => $data['pcb_revision']
 			);
+
 
 			$revision_directory = "Ревизия " . $data['pcb_revision'];
 			$revision_name = $data['pcb_codename'] . '.' .  $data['pcb_revision'] . ' - ' . $data['pcb_name'];
@@ -539,9 +546,10 @@
 			$pcb_data['material'] =  $data['pcb_material'];
 			$pcb_data['silkscreen'] =  $data['pcb_silk'];
 			$pcb_data['mask'] =  $data['pcb_mask'];
+			$pcb_data['surface'] =  $data['pcb_surface'];
 
 			// Create query
-			$sql = "INSERT INTO `ucp_pcbs` (`pcb_id`, `pcb_name`, `pcb_description`, `pcb_codename`, `pcb_author_id`, `pcb_create_timestamp`, `pcb_status`, `pcb_image`, `pcb_data`, `pcb_activation`) VALUES (NULL, '".$data['pcb_name']."', '".$data['pcb_description']."', '".$data['pcb_codename']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['pcb_status']."', '', '".json_encode($pcb_data, JSON_UNESCAPED_UNICODE)."', '1')";
+			$sql = "INSERT INTO `ucp_pcbs` (`pcb_id`, `pcb_name`, `pcb_description`, `pcb_codename`, `pcb_author_id`, `pcb_create_timestamp`, `pcb_status`, `pcb_image`, `pcb_data`, `pcb_activation`) VALUES (NULL, '".$data['pcb_name']."', '".$data['pcb_description']."', '".$data['pcb_codename'].".".$data['pcb_revision']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['pcb_status']."', '', '".json_encode($pcb_data, JSON_UNESCAPED_UNICODE)."', '1')";
 			
 			// Add data
 			$this->ucs_Database->query($sql);
@@ -552,15 +560,29 @@
 			if($data['pcb_codename_state'] == 'auto'){
 				// Get codename
 				$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_codename'";
-				$data = $this->ucs_Database->getAllData($sql)[0]['data_value'];
-				$code = $data;
+				$data_num = $this->ucs_Database->getAllData($sql)[0]['data_value'];
+				$code = $data_num;
 				// Update codename
-				$data = $data + 1;
-				$sql = "UPDATE `ucp_data` SET `data_value` = '".$data."' WHERE `data_name` = 'pcbs_codename'";
+				$data_num = $data_num + 1;
+				$sql = "UPDATE `ucp_data` SET `data_value` = '".$data_num."' WHERE `data_name` = 'pcbs_codename'";
 				$this->ucs_Database->query($sql);
 			}
 
+			// Update pcb data
+			if($data['pcb_isnew'] == 1){
+				// Init board info
+				$pcb_info = array(
+					"name" => $data['pcb_name'],
+					"description" => $data['pcb_description'],
+					"revisions" => array( "1" => "true" ),
+				);
 
+				$pcbs[$data['pcb_codename']] = $pcb_info;
+			}else{
+				array_push($pcbs[$data['pcb_codename']]["revisions"], $data['pcb_revision'] = "true" );
+			}
+
+			$this->setPcbsData($pcbs);
 		}
 
 		// Get mechanic materials
@@ -647,12 +669,13 @@
 		public function getPcbsData($raw = false){
 			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_data'";
 			$pcbs_json = $this->ucs_Database->getAllData($sql)[0]['data_text'];
-			$pcbs = json_decode($pcbs_json, true)['pcbs'];
-			//$result = array();
 
-			//foreach ($pcbs as $pcb => $data) {
-			//	array_push($result, $pcb);
-			//}
+			if(!isset(json_decode($pcbs_json, true)['pcbs'])){
+				$pcbs = array();
+			    $pcbs_json = "{}";
+			}else{
+				$pcbs = json_decode($pcbs_json, true)['pcbs'];
+			}
 
 			if($raw == true){
 				return $pcbs_json;
@@ -662,7 +685,20 @@
 			
 		}
 		
+		// Get mechanic materials
+		public function setPcbsData($data_array){
+			$data['pcbs'] = $data_array;
+			
+			echo "<b>";
+			print_r($data);
+			echo "</b>";
 
+			$data = json_encode($data, JSON_UNESCAPED_UNICODE);
+
+			$sql = "UPDATE `ucp_data` SET `data_text` = '$data' WHERE `data_name` = 'pcbs_data'";
+			
+			$this->ucs_Database->query($sql);
+		}
 
 		public function getPager($page, $count, $table, $url){
 			$sql = "SELECT COUNT(*) FROM `".$table."`";
@@ -765,6 +801,7 @@
 			$data['mechanic_data'] = json_decode($data['mechanic_data'], true);
 			return $data;
 		}
+
 
 		public function getCableItem($item_id){
 			$sql = "SELECT * FROM `ucp_cables` WHERE `cable_id` = $item_id";
