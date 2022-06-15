@@ -462,6 +462,13 @@
 			);
 
 
+			// Set data
+			$pcb_data['fullname'] =  $this->uc_SystemPipe->setSpecialCharacters($data['pcb_fullname']);
+			$pcb_data['material'] =  $data['pcb_material'];
+			$pcb_data['silkscreen'] =  $data['pcb_silk'];
+			$pcb_data['mask'] =  $data['pcb_mask'];
+			$pcb_data['surface'] =  $data['pcb_surface'];
+
 			$revision_directory = "Ревизия " . $data['pcb_revision'];
 			$revision_name = $data['pcb_codename'] . '.' .  $data['pcb_revision'] . ' - ' . $data['pcb_name'];
 
@@ -486,8 +493,8 @@
 			$this->uc_SystemPipe->createDirectorySpecial($upload_directory);
 
 			// Write description
-			$description_file = fopen($upload_directory . 'Описание ' . $data['pcb_fullname'] . '.txt', "w");
-			$description = "Описание:\n\t". $data['pcb_description'] . "\n\nМатериал: " . $data['pcb_material'] . ";\nЦвет шелкографии: " . $data['pcb_silk'] . ";\nЦвет паяльной маски: " . $data['pcb_mask'] . ";\n";
+			$description_file = fopen($upload_directory . 'Описание ' . $revision_name . '.txt', "w");
+			$description = "Описание:\n\t". $data['pcb_description'] . "\n\nМатериал: " . $data['pcb_material'] . ";\nЦвет шелкографии: " . $data['pcb_silk'] . ";\nЦвет паяльной маски: " . $data['pcb_mask'] . ";\n". ";\nПокрытие: " . $data['pcb_surface'] . ";\n";
 			fwrite($description_file, $description);
 			fclose($description_file);
 
@@ -518,7 +525,7 @@
 			$kicad = new KiCadConverter($upload_directory . $this->ucs_DirectoriesNames['sources']);
 			
 			// Run KiBot Converter
-			$kibot = new KiBotConverter($upload_directory . $this->ucs_DirectoriesNames['sources'], $revision_name);
+			$kibot = new KiBotConverter($upload_directory . $this->ucs_DirectoriesNames['sources'], $revision_name, $pcb_data);
 
 			// Move images
 			$this->uc_SystemPipe->uploadFiles(
@@ -540,13 +547,6 @@
 				$upload_directory . $this->ucs_DirectoriesNames['annotations'] . '/',
 				$files
 			);
-
-			// Set data
-			$pcb_data['fullname'] =  $this->uc_SystemPipe->setSpecialCharacters($data['pcb_fullname']);
-			$pcb_data['material'] =  $data['pcb_material'];
-			$pcb_data['silkscreen'] =  $data['pcb_silk'];
-			$pcb_data['mask'] =  $data['pcb_mask'];
-			$pcb_data['surface'] =  $data['pcb_surface'];
 
 			// Create query
 			$sql = "INSERT INTO `ucp_pcbs` (`pcb_id`, `pcb_name`, `pcb_description`, `pcb_codename`, `pcb_author_id`, `pcb_create_timestamp`, `pcb_status`, `pcb_image`, `pcb_data`, `pcb_activation`) VALUES (NULL, '".$data['pcb_name']."', '".$data['pcb_description']."', '".$data['pcb_codename'].".".$data['pcb_revision']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['pcb_status']."', '', '".json_encode($pcb_data, JSON_UNESCAPED_UNICODE)."', '1')";
@@ -688,15 +688,8 @@
 		// Get mechanic materials
 		public function setPcbsData($data_array){
 			$data['pcbs'] = $data_array;
-			
-			echo "<b>";
-			print_r($data);
-			echo "</b>";
-
 			$data = json_encode($data, JSON_UNESCAPED_UNICODE);
-
 			$sql = "UPDATE `ucp_data` SET `data_text` = '$data' WHERE `data_name` = 'pcbs_data'";
-			
 			$this->ucs_Database->query($sql);
 		}
 

@@ -9,7 +9,7 @@
 		public $structure;
 
 		function __construct($location){
-			echo "# KiCad Converter v 0.1 \n";
+			//echo "# KiCad Converter v 0.1 \n";
 			
 			// Init array
 			$this->project = array(
@@ -138,17 +138,74 @@
 
 		public $kidata;
 		public $projectName;
+		public $settings;
+		public $colors;
 
-		function __construct($project, $name) {
-			echo "# KiBot Converter v 0.1 \n";
+		function __construct($project, $name, $pcb_settings = array()) {
+			//echo "# KiBot Converter v 0.1 \n";
 			// Set data
 			$this->kidata = array(
 				'location' => $project,
 				'yaml' => $project . '/.kibot.yaml'
 			);
+
+			// Set data
+			$this->settings = array(
+				'colors' => array(
+					'core' => "",
+					'silkscreen' => "",
+					'mask' => "",
+					'surface' => ""
+				)
+			);
+
+			// Set data
+			$this->colors = array(
+				"Зелёный" => "#0D680B",
+				"Чёрный, оттенок матовый" => "#0B0B0B",
+				"Чёрный, оттенок глянцевый" => "#1A1A1A",
+				"Синий" => "#023BA2",
+				"Красный" => "#D2280E",
+				"Жёлтый" => "#C2C300",
+				"Белый, оттенок матовый" => "#E4E4E4",
+				"Белый, оттенок глянцевый" => "#F5F5F5",
+				"Медь" => "#B87332",
+				"Золото" => "#B29C00",
+				"Серебро" => "#D5D5D5",
+				"Олово" => "#A0A0A0"
+			);
+
+			if(isset($pcb_settings['mask'])){
+				$this->settings['colors']['mask'] = $this->colors[$pcb_settings['mask']];
+			}
+
+			if(isset($pcb_settings['mask'])){
+				$this->settings['colors']['silkscreen'] = $this->colors[$pcb_settings['silkscreen']];
+			}
+
+			if(isset($pcb_settings['surface'])){
+				if(strpos($pcb_settings['surface'], "Голая медь") !== false){
+				    $this->settings['colors']['surface'] = $this->colors['Медь'];
+				}
+				if(strpos($pcb_settings['surface'], "золото") !== false){
+				    $this->settings['colors']['surface'] = $this->colors['Золото'];
+				}
+				if(strpos($pcb_settings['surface'], "серебро") !== false){
+				    $this->settings['colors']['surface'] = $this->colors['Серебро'];
+				}
+				if(strpos($pcb_settings['surface'], "ПОС") !== false){
+				    $this->settings['colors']['surface'] = $this->colors['Олово'];
+				}
+				if(strpos($pcb_settings['surface'], "припой") !== false){
+				    $this->settings['colors']['surface'] = $this->colors['Олово'];
+				}
+			}
+
 			$this->projectName = $name;
+
 			// Generate yaml file
 			$this->generateYaml();
+
 			// Execute script
 			$this->execute();
 		}
@@ -176,11 +233,30 @@
 					'sudo rm -rf /backup/pcb/',
 					'cd ..',
 					'mkdir Изображения',
-					'cp Исходники/Images/image.jpg "Изображения/Изображение ' . $this->projectName . '.jpeg"'
+					'cp Исходники/Images/image.jpg "Изображения/Изображение ' . $this->projectName . '.jpeg"',
+					'cp Исходники/3D/*.png "Изображения/Изображение 3D модели ' . $this->projectName . '.png"',
+					'convert "Изображения/Изображение 3D модели ' . $this->projectName . '.png" -quality 80 "Изображения/Изображение 3D модели ' . $this->projectName . '.jpeg"',
+
+					'mkdir "3D модели"',
+					'cp Исходники/3D/*.step "3D модели/3D модель ' . $this->projectName . '.step"',
+					'mkdir "Файлы для производства"',
+					'mkdir "Файлы для производства/Gerber/"',
+					'mkdir "Файлы для производства/Файлы позиций/"',
+					'mkdir "Файлы для производства/Сборочный чертёж/"',
+					'mkdir "Файлы для производства/Векторные файлы/"',
+					'sudo chmod 777 -R Исходники/',
+					'cp -a Исходники/DXF/. "Файлы для производства/Векторные файлы/"',
+					'cp -a Исходники/Gerber/. "Файлы для производства/Gerber/"',
+					'cp Исходники/Bom/*.html "Файлы для производства/Сборочный чертёж/Интерактивынй сборочный чертёж ' . $this->projectName . '.html"',
+					'rm -rf Исходники/3D/',
+					'rm -rf Исходники/DXF/',
+					'rm -rf Исходники/Gerber/',
+					'rm -rf Исходники/Bom/',
+					'rm -rf Исходники/Images/'
 				)
 			);
 
-			echo $uc_SystemPipe->setTerminalToHtml($result);
+			// echo $uc_SystemPipe->setTerminalToHtml($result);
 		}
 
 		public function generateYaml(){
@@ -239,6 +315,11 @@ outputs:
       format: 'jpg'
       show_components: 'none'
       output: 'image.%x'
+      style:
+        outline: '#ffffff'
+        board: '" . $this->settings['colors']['mask'] . "'
+        silk: '" . $this->settings['colors']['silkscreen'] . "'
+        pads: '" . $this->settings['colors']['surface'] . "' 
 
   - name: 'ibom'
     comment: \"Generate ibom files for production\"
@@ -253,11 +334,26 @@ outputs:
     comment: \"Generate 3D file\"
     type: render_3d
     dir: 3D
+    options:
+      ray_tracing: true
+      wait_render: -120
+      wait_ray_tracing: -120
+      zoom: 5
+      background1: '#ffffff'
+      background2: '#ffffff'
+      width: 1920
+      height: 1080
+      solder_mask: '" . $this->settings['colors']['mask'] . "'
+      silk: '" . $this->settings['colors']['silkscreen'] . "'
+      solder_paste: '" . $this->settings['colors']['surface'] . "' 
 
   - name: 'step'
     comment: \"Generate 3D file\"
     type: step
     dir: 3D
+    options:
+      origin: 'drill'
+
 ";
 
 			file_put_contents($this->kidata['yaml'], $data, LOCK_EX);

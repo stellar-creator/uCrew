@@ -10,23 +10,24 @@
   $directory_data = $uc_Projects->getProjectDirectoryData();
   $statuses = $uc_Projects->getStatuses();
 
+  $fullname_revision = $data['pcb_codename'] . ' - ' . $data['pcb_name'];
 
   $pcb_paths = $uc_Projects->ucs_DirectoriesPath['pcbs'];
-  $pcb_paths['web'] = $pcb_paths['web'] . $data['pcb_data']['fullname'] . '/';
-  $pcb_paths['smb'] = $pcb_paths['smb'] . $data['pcb_data']['fullname'] . '\\';
-  $pcb_paths['local'] = $pcb_paths['local'] . $data['pcb_data']['fullname'] . '/';
+  $pcb_paths['web'] = $pcb_paths['web'] . $data['pcb_data']['fullname'] . '/Ревизия ' . $data['pcb_data']['revision'] . '/';
+  $pcb_paths['smb'] = $pcb_paths['smb'] . $data['pcb_data']['fullname'] . '\\Ревизия ' . $data['pcb_data']['revision'] . '\\';
+  $pcb_paths['local'] = $pcb_paths['local'] . $data['pcb_data']['fullname'] . '/Ревизия ' . $data['pcb_data']['revision'] . '/';
 
-  $pcb_image = $pcb_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $data['pcb_data']['fullname'] . '.jpeg' ;
+  $pcb_image = $pcb_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $fullname_revision . '.jpeg' ;
   $pcb_image = $this->uc_CompilatorData->checkImage($pcb_image);
 
   $pcb_files = $uc_Projects->directoryToArray($pcb_paths['local']);
 
-  $pcb_x3d = $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $data['pcb_data']['fullname'] . '.x3d';
+  $pcb_x3d = $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $fullname_revision . '.x3d';
 
   $pcb_x3d_web = "";
 
   if(file_exists($pcb_x3d)){
-    $pcb_x3d_web = $pcb_paths['web']. $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $data['pcb_data']['fullname'] . '.x3d';
+    $pcb_x3d_web = $pcb_paths['web']. $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $fullname_revision . '.x3d';
     echo "
     <script type='text/javascript' src='uc_resources/applications/x3dom/x3dom-full.js'> </script> \n
     <link rel='stylesheet' type='text/css' href='uc_resources/applications/x3dom/x3dom.css'></link> \n";
@@ -34,12 +35,12 @@
     $uc_SystemPipe = new uCrewSystemPipe();
     // Convert step to x3d
     $uc_SystemPipe->stepConverter(
-      $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' .  '3D модель ' . $data['pcb_data']['fullname'] . '.step',
-      $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $data['pcb_data']['fullname'] . '.x3d'
+      $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' .  '3D модель ' . $fullname_revision . '.step',
+      $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $fullname_revision . '.x3d'
     );
     echo '
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Внимание! <strong>'.$data['pcb_data']['fullname'].'</strong> - создана 3D веб модель!
+        Внимание! <strong>'.$fullname_revision.'</strong> - создана 3D веб модель!
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     ';
@@ -119,7 +120,7 @@
       $rows = array();
 
       function _pushRow($dir, $file, $size, $date, &$rows, $fullpath){
-        
+    
         $dropdown = '<div class="dropdown">
             <button class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Действие</button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -149,8 +150,10 @@
                 _pushRow($dirname, '<a href="' . $pcb_paths['web'] . $dirname . '/' . $file . '" download>' . $file . '</a>', $uc_Projects->formatBytes(filesize($fullpath)), $index + 1, $rows, $fullpath);
               }else{
                 foreach ($file as $subindex => $subfile) {
+                  if(!is_array($subfile)){
                    $fullpath = $pcb_paths['local'] . $dirname . '/' . $subdirname . '/' . $subfile;
                   _pushRow($dirname . '<br> &#8594; <i class="fa fa-folder" aria-hidden="true"></i> ' . $subdirname, '<a href="' . $pcb_paths['web'] . $dirname . '/' . $subdirname . '/' . $subfile . '" download>' . $subfile . '</a>', $uc_Projects->formatBytes(filesize($fullpath)), $subindex + 1, $rows, $fullpath);
+                  }
                 }
               }
           }
