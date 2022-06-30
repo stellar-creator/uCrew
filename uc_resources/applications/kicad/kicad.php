@@ -212,31 +212,41 @@
 
 		public function execute(){
 			
+			$uc_Configuration = new uCrewConfiguration();
+
 			$uc_SystemPipe = new uCrewSystemPipe();
 			
+			$workdir = $uc_Configuration->system["main_directory"] . $uc_Configuration->directories["temporary"] . 'pcb/';
+
+			echo "$workdir";
+
 			$result = $uc_SystemPipe->sh(
 				array(
-					'sudo rm -rf /backup/pcb/',
+					// Remove workdir
+					'sudo rm -rf "' . $workdir . '"',
+					// Change KiCad project mode
 					'chmod 777 -R "' . $this->kidata['location'] . '"', 
+					// Go to directory with project
 					'cd "' . $this->kidata['location'] . '"', 
-					//'pwd',
-					'sudo mkdir /backup/pcb/',
-					'sudo chmod 777 -R /backup/pcb/', 
-					'sudo cp -a "$(pwd)/." /backup/pcb/',
-					//'ls',
-					'cd /backup/pcb/',
-					//'pwd',
-					'sudo kibot -v -c .kibot.yaml',
-					'sudo cp -a /backup/pcb/. "' . $this->kidata['location'] . '"',
+					// Make workdir
+					'sudo mkdir "' . $workdir . '"',
+					// Make workdir mode
+					'sudo chmod 777 -R "' . $workdir . '"', 
+					// Copy project to workdir
+					'sudo cp -a "$(pwd)/." "' . $workdir . '"',
+					// Go to workdir
+					'cd "' . $workdir . '"',
+					// Run docker container
+					'sudo ucrew-kicad', // kibot -v -c .kibot.yaml
+					'sudo cp -a "'.$workdir.'". "' . $this->kidata['location'] . '"',
 					'cd "'.$this->kidata['location'].'"',
 					'ls',
-					'sudo rm -rf /backup/pcb/',
+					//'sudo rm -rf "' . $workdir . '"',
 					'cd ..',
 					'mkdir Изображения',
 					'cp Исходники/Images/image.jpg "Изображения/Изображение ' . $this->projectName . '.jpeg"',
 					'cp Исходники/3D/*.png "Изображения/Изображение 3D модели ' . $this->projectName . '.png"',
 					'convert "Изображения/Изображение 3D модели ' . $this->projectName . '.png" -quality 80 "Изображения/Изображение 3D модели ' . $this->projectName . '.jpeg"',
-
 					'mkdir "3D модели"',
 					'cp Исходники/3D/*.step "3D модели/3D модель ' . $this->projectName . '.step"',
 					'mkdir "Файлы для производства"',

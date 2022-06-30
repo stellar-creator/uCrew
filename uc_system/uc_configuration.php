@@ -23,6 +23,7 @@
 			"modules" => "uc_modules/",
 			"resources" => "uc_resources/",
 			"templates" => "uc_templates/",
+			"temporary" => "uc_temporary/"
 		);
 		// System configuration data
 		public $modules = array(
