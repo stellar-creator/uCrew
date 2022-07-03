@@ -290,21 +290,15 @@
 				$files
 			);
 
-			// Convert step to x3d
-			$this->uc_SystemPipe->stepConverter(
-				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . '3D модель ' . $data['mechanic_fullname'] . '.step',
-				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $data['mechanic_fullname'] . '.x3d'
-			);
-
-			// Convert step to stl
-			$this->uc_SystemPipe->stepConverter(
-				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . '3D модель ' . $data['mechanic_fullname'] . '.step',
-				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/' . 'Для печати ' . $data['mechanic_fullname'] . '.stl'
-			);
-
 			// Set data
 			$mechanic_data['material'] = $this->uc_SystemPipe->setSpecialCharacters($data['mechanic_material']);
 			$mechanic_data['fullname'] =  $this->uc_SystemPipe->setSpecialCharacters($data['mechanic_fullname']);
+
+			// Converte 3D files
+			$this->uc_SystemPipe->stepConverter(
+				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/',
+				$mechanic_data['fullname']
+			);
 
 			// Create query
 			$sql = "INSERT INTO `ucp_mechanics` (`mechanic_id`, `mechanic_name`, `mechanic_description`, `mechanic_codename`, `mechanic_author_id`, `mechanic_create_timestamp`, `mechanic_status`, `mechanic_image`, `mechanic_data`, `mechanic_activation`) VALUES (NULL, '".$data['mechanic_name']."', '".$data['mechanic_description']."', '".$data['mechanic_codename']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['mechanic_status']."', '', '".json_encode($mechanic_data, JSON_UNESCAPED_UNICODE)."', '1')";
@@ -548,6 +542,12 @@
 				$files
 			);
 
+			// Converte 3D files
+			$this->uc_SystemPipe->stepConverter(
+				$upload_directory . $this->ucs_DirectoriesNames['3dmodels'] . '/',
+				$revision_name
+			);
+
 			// Create query
 			$sql = "INSERT INTO `ucp_pcbs` (`pcb_id`, `pcb_name`, `pcb_description`, `pcb_codename`, `pcb_author_id`, `pcb_create_timestamp`, `pcb_status`, `pcb_image`, `pcb_data`, `pcb_activation`) VALUES (NULL, '".$data['pcb_name']."', '".$data['pcb_description']."', '".$data['pcb_codename'].".".$data['pcb_revision']."', '".$_SESSION['user_id']."', CURRENT_TIMESTAMP, '".$data['pcb_status']."', '', '".json_encode($pcb_data, JSON_UNESCAPED_UNICODE)."', '1')";
 			
@@ -740,12 +740,19 @@
 			';
 		}
 
-		public function getMechanicsList($page, $count){
+		public function getMechanicsList($page, $count, $like = "", $getCount = false){
 			
 			$start = ($page * $count) - $count;
 			$end = $count;
 
-			$sql = "SELECT * FROM `ucp_mechanics` ORDER BY `ucp_mechanics`.`mechanic_codename` DESC LIMIT $start,$end";
+			$sql = "";
+
+			if($like == ""){
+				$sql = "SELECT * FROM `ucp_mechanics` ORDER BY `ucp_mechanics`.`mechanic_codename` DESC LIMIT $start,$end";
+			}else{
+				$sql = "SELECT * FROM `ucp_mechanics` WHERE `mechanic_name` LIKE '%" . $like . "%' OR `mechanic_description` LIKE '%" . $like . "%' OR `mechanic_codename` LIKE '%" . $like . "%' ORDER BY `ucp_mechanics`.`mechanic_codename` DESC LIMIT $start,$end";
+			}
+
 			$list = $this->ucs_Database->getAllData($sql);
 			
 			if($list != 0){
@@ -753,15 +760,35 @@
 					$value['mechanic_data'] = json_decode($value['mechanic_data'], true);
 				}
 			}
-			return $list;
+
+			if($getCount == false){
+				return $list;
+			}else{
+				if($like == ""){
+					$sql = "SELECT COUNT(*) FROM `ucp_mechanics` ORDER BY `ucp_mechanics`.`mechanic_codename` DESC";
+				}else{
+					$sql = "SELECT COUNT(*) FROM `ucp_mechanics` WHERE `mechanic_name` LIKE '%" . $like . "%' OR `mechanic_description` LIKE '%" . $like . "%' OR `mechanic_codename` LIKE '%" . $like . "%' ORDER BY `ucp_mechanics`.`mechanic_codename` DESC";
+				}
+				return array(
+					"count" => $this->ucs_Database->getQueryRecordsCount($sql), 
+					"list" => $list
+				);
+			}
 		}
 
-		public function getCablesList($page, $count){
+		public function getCablesList($page, $count, $like = "", $getCount = false){
 			
 			$start = ($page * $count) - $count;
 			$end = $count;
 
-			$sql = "SELECT * FROM `ucp_cables` ORDER BY `ucp_cables`.`cable_codename` DESC LIMIT $start,$end";
+			$sql = "";
+
+			if($like == ""){
+				$sql = "SELECT * FROM `ucp_cables` ORDER BY `ucp_cables`.`cable_codename` DESC LIMIT $start,$end";
+			}else{
+				$sql = "SELECT * FROM `ucp_cables` WHERE `cable_name` LIKE '%" . $like . "%' OR `cable_description` LIKE '%" . $like . "%' OR `cable_codename` LIKE '%" . $like . "%' ORDER BY `ucp_cables`.`cable_codename` DESC LIMIT $start,$end";
+			}
+
 			$list = $this->ucs_Database->getAllData($sql);
 			
 			if($list != 0){
@@ -769,15 +796,34 @@
 					$value['cable_data'] = json_decode($value['cable_data'], true);
 				}
 			}
-			return $list;
+
+			if($getCount == false){
+				return $list;
+			}else{
+				if($like == ""){
+					$sql = "SELECT COUNT(*) FROM `ucp_cables` ORDER BY `ucp_cables`.`cable_codename` DESC";
+				}else{
+					$sql = "SELECT COUNT(*) FROM `ucp_cables` WHERE `cable_name` LIKE '%" . $like . "%' OR `cable_description` LIKE '%" . $like . "%' OR `cable_codename` LIKE '%" . $like . "%' ORDER BY `ucp_cables`.`cable_codename` DESC";
+				}
+				return array(
+					"count" => $this->ucs_Database->getQueryRecordsCount($sql), 
+					"list" => $list
+				);
+			}
+			
 		}
 
-		public function getPcbsList($page, $count){
+		public function getPcbsList($page, $count, $like = "", $getCount = false){
 			
 			$start = ($page * $count) - $count;
 			$end = $count;
 
-			$sql = "SELECT * FROM `ucp_pcbs` ORDER BY `ucp_pcbs`.`pcb_codename` DESC LIMIT $start,$end";
+			if($like == ""){
+				$sql = "SELECT * FROM `ucp_pcbs` ORDER BY `ucp_pcbs`.`pcb_codename` DESC LIMIT $start,$end";
+			}else{
+				$sql = "SELECT * FROM `ucp_pcbs`  WHERE `pcb_name` LIKE '%" . $like . "%' OR `pcb_description` LIKE '%" . $like . "%' OR `pcb_codename` LIKE '%" . $like . "%' ORDER BY `ucp_pcbs`.`pcb_codename` DESC LIMIT $start,$end";
+			}
+
 			$list = $this->ucs_Database->getAllData($sql);
 			
 			if($list != 0){
@@ -785,7 +831,20 @@
 					$value['pcb_data'] = json_decode($value['pcb_data'], true);
 				}
 			}
-			return $list;
+
+			if($getCount == false){
+				return $list;
+			}else{
+				if($like == ""){
+					$sql = "SELECT COUNT(*) FROM `ucp_pcbs` ORDER BY `ucp_pcbs`.`pcb_codename` DESC";
+				}else{
+					$sql = "SELECT COUNT(*) FROM `ucp_pcbs`  WHERE `pcb_name` LIKE '%" . $like . "%' OR `pcb_description` LIKE '%" . $like . "%' OR `pcb_codename` LIKE '%" . $like . "%' ORDER BY `ucp_pcbs`.`pcb_codename` DESC";
+				}
+				return array(
+					"count" => $this->ucs_Database->getQueryRecordsCount($sql), 
+					"list" => $list
+				);
+			}
 		}
 
 		public function getMechanicItem($item_id){

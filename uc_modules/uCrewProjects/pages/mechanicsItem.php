@@ -59,23 +59,39 @@
         <p>Материал: <?php echo $data['mechanic_data']['material']; ?></p>
         <p>Статус: <?php echo $statuses[$data['mechanic_status']][0]; ?></p>
       </div>
-      <div class="col-sm-6 justify-content-end d-flex">
 
-<?php
+      <div class="col-sm-6">
 
-  if(!file_exists($mechanic_x3d)){
-    echo '<img src="'.$mechanic_image.'" class="img-fluid img-thumbnail" style="width: 500px">';
-  }else{
-    echo '<x3d width="600px" height="400px" id="x3dElement"> 
-        <scene> 
-          <Transform id="scaleTransformation" scale="0.33 0.33 0.33">
-            <inline url="'.$mechanic_x3d_web.'"> </inline> 
-          </Transform>
-        </scene> 
-      </x3d>   ';
-  }
-?> 
+      <ul class="nav nav-tabs justify-content-center d-flex" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="image-tab" data-bs-toggle="tab" data-bs-target="#image" type="button" role="tab" aria-controls="image" aria-selected="true">Изображение</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="model-tab" data-bs-toggle="tab" data-bs-target="#model" type="button" role="tab" aria-controls="model" aria-selected="false">3D модель</button>
+        </li>
+      </ul>
 
+      <div class="tab-content d-flex justify-content-center" id="myTabContent">
+        <div class="tab-pane fade show active" id="image" role="tabpanel" aria-labelledby="image-tab">
+          <?php
+           echo '<img src="'.$mechanic_image.'" class="img-fluid img-thumbnail" style="width: 400px">';
+          ?>
+        </div>
+        <div class="tab-pane fade" id="model" role="tabpanel" aria-labelledby="model-tab">
+        <?php
+
+          if(file_exists($mechanic_x3d)){
+            echo '<x3d width="400px" height="400px" id="x3dElement"> 
+                <scene> 
+                  <Transform id="scaleTransformation" scale="0.33 0.33 0.33">
+                    <inline url="'.$mechanic_x3d_web.'"> </inline> 
+                  </Transform>
+                </scene> 
+              </x3d>   ';
+          }
+        ?> 
+        </div>
+      </div>
 
       </div>
     </div>

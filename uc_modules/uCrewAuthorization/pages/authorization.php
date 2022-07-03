@@ -96,7 +96,7 @@
                <button type="submit" class="btn btn-primary btn-block">Войти</button>
             </div>
             <div class="clearfix">
-               <label class="float-start form-check-label"><input type="checkbox" name="keep"> Запонить меня</label>
+               <label class="float-start form-check-label"><input type="checkbox" name="keep"> Запомнить меня</label>
                <a href="/?page=uCrewAuthorization/recovery" class="float-end">Забыли пароль?</a>
             </div>
             <div class="clearfix" style="padding-top: 10px">

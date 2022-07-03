@@ -82,7 +82,7 @@
 			array_push($rows, 
 				array(
 					$count => array('class' => 'align-middle text-center'),
-					'<img src="'.$mechanic_image.'" class="img-thumbnail imagecat" alt="'.$values['mechanic_codename'].'">',
+					'<img src="'.$mechanic_image.'" class="img-thumbnail imagecat zoom" alt="'.$values['mechanic_codename'].'">' => array('class' => 'align-middle text-center'),
 					'<a href="/?page=uCrewProjects/mechanicsItem&id='.$values['mechanic_id'].'" class="link-dark" style="text-decoration:none">'.$values['mechanic_codename'].'</a>' => array('class' => 'align-middle text-center'),
 					'<p>'.$values['mechanic_name'].'</p><p>
 					<figcaption class="blockquote-footer">

@@ -171,6 +171,12 @@
 			return $this->getAllData($sql)[0]['COUNT(*)'];
 		}	
 
+		// Get total count by query
+		public function getQueryRecordsCount($query){
+			// Return count
+			return $this->getAllData($query)[0]['COUNT(*)'];
+		}
+
 		// Get user by id
 		public function getRecordsCountSpecific($table, $sql_add){
 			// Get count of records

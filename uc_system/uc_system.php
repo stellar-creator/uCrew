@@ -117,6 +117,7 @@
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -256,14 +257,27 @@
 			);
 		}
 
-		public function stepConverter($input, $output){
-			$directory = $this->system['main_directory'] . 'uc_resources/applications/freecad/';
+		public function stepConverter($location, $filename){
+
+			$workdir = $this->system['main_directory'] . $this->directories['temporary'] . '3d';
+			$source = $location .  '3D модель ' .  $filename  . '.step';
+			$stl = $location . 'Для печати ' . $filename  . '.stl';
+			$x3d = $location . 'Веб 3D модель ' . $filename  . '.x3d';
+
 			$this->sh(
 				array(
-					"cd \"$directory\"",
-					"python main.py \"$input\" \"$output\""
+					"sudo mkdir -p \"$location\"",
+					"cd \"$workdir\"/",
+					"ls \"$workdir\"/",
+					"ls \"$location\"",
+					"sudo cp \"$source\" \"$workdir/file.step\"",
+					"sudo ucrew-freecad",
+					"cp \"$workdir/file.stl\" \"$stl\"",
+					"cp \"$workdir/file.x3d\" \"$x3d\"",
+					"sudo rm -rf \"$workdir/\""
 				)
 			);
+
 		}
 
 		public function createDirectorySpecial($directory){

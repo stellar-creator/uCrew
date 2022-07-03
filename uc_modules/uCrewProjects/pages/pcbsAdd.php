@@ -132,7 +132,7 @@
 
   	foreach ($statuses as $id => $data) {
   		$sel = "";
-  		if($id == 2){
+  		if($id == 1){
   			$sel = "selected";
   		}
   		echo '<option value="'.$id.'" class="'.$data[1].'" '.$sel.'>'.$data[0].'</option>';

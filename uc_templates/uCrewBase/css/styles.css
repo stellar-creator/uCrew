@@ -11910,3 +11910,7 @@ body {
 .fa-times-circle {
   color: #dc3545;
 }
+
+.zoom:hover {
+  transform: scale(2); 
+}

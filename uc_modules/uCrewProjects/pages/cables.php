@@ -81,7 +81,7 @@
 			array_push($rows, 
 				array(
 					$count => array('class' => 'align-middle text-center'),
-					'<img src="'.$cable_image.'" class="img-thumbnail imagecat" alt="'.$values['cable_codename'].'">',
+					'<img src="'.$cable_image.'" class="img-thumbnail imagecat zoom" alt="'.$values['cable_codename'].'">' => array('class' => 'align-middle text-center'),
 					'<a href="/?page=uCrewProjects/cablesItem&id='.$values['cable_id'].'" class="link-dark" style="text-decoration:none">'.$values['cable_codename'].'</a>' => array('class' => 'align-middle text-center'),
 					'<p>'.$values['cable_name'].'</p><p>
 					<figcaption class="blockquote-footer">

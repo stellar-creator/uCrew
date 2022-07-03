@@ -17,7 +17,7 @@
   $pcb_paths['smb'] = $pcb_paths['smb'] . $data['pcb_data']['fullname'] . '\\Ревизия ' . $data['pcb_data']['revision'] . '\\';
   $pcb_paths['local'] = $pcb_paths['local'] . $data['pcb_data']['fullname'] . '/Ревизия ' . $data['pcb_data']['revision'] . '/';
 
-  $pcb_image = $pcb_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $fullname_revision . '.jpeg' ;
+  $pcb_image = $pcb_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение 3D модели ' . $fullname_revision . '.jpeg' ;
   $pcb_image = $this->uc_CompilatorData->checkImage($pcb_image);
 
   $pcb_files = $uc_Projects->directoryToArray($pcb_paths['local']);
@@ -31,19 +31,6 @@
     echo "
     <script type='text/javascript' src='uc_resources/applications/x3dom/x3dom-full.js'> </script> \n
     <link rel='stylesheet' type='text/css' href='uc_resources/applications/x3dom/x3dom.css'></link> \n";
-  }else{
-    $uc_SystemPipe = new uCrewSystemPipe();
-    // Convert step to x3d
-    $uc_SystemPipe->stepConverter(
-      $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' .  '3D модель ' . $fullname_revision . '.step',
-      $pcb_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $fullname_revision . '.x3d'
-    );
-    echo '
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Внимание! <strong>'.$fullname_revision.'</strong> - создана 3D веб модель!
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    ';
   }
 ?>
 
@@ -64,23 +51,40 @@
         <p>Ревизия: <?php echo $data['pcb_data']['revision']; ?></p>
         <p>Статус: <?php echo $statuses[$data['pcb_status']][0]; ?></p>
       </div>
-      <div class="col-sm-6 justify-content-end d-flex">
+      
 
-<?php
+      <div class="col-sm-6">
 
-  if(!file_exists($pcb_x3d)){
-    echo '<img src="'.$pcb_image.'" class="img-fluid img-thumbnail" style="width: 500px">';
-  }else{
-    echo '<x3d width="600px" height="400px" id="x3dElement"> 
-        <scene> 
-          <Transform id="scaleTransformation" scale="0.33 0.33 0.33">
-            <inline url="'.$pcb_x3d_web.'"> </inline> 
-          </Transform>
-        </scene> 
-      </x3d>   ';
-  }
-?> 
+      <ul class="nav nav-tabs justify-content-center d-flex" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="image-tab" data-bs-toggle="tab" data-bs-target="#image" type="button" role="tab" aria-controls="image" aria-selected="true">Изображение</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="model-tab" data-bs-toggle="tab" data-bs-target="#model" type="button" role="tab" aria-controls="model" aria-selected="false">3D модель</button>
+        </li>
+      </ul>
 
+      <div class="tab-content d-flex justify-content-center" id="myTabContent">
+        <div class="tab-pane fade show active" id="image" role="tabpanel" aria-labelledby="image-tab">
+          <?php
+           echo '<img src="'.$pcb_image.'" class="img-fluid img-thumbnail" style="width: 400px">';
+          ?>
+        </div>
+        <div class="tab-pane fade" id="model" role="tabpanel" aria-labelledby="model-tab">
+        <?php
+
+          if(file_exists($pcb_x3d)){
+            echo '<x3d width="400px" height="400px" id="x3dElement"> 
+                <scene> 
+                  <Transform id="scaleTransformation" scale="0.33 0.33 0.33">
+                    <inline url="'.$pcb_x3d_web.'"> </inline> 
+                  </Transform>
+                </scene> 
+              </x3d>   ';
+          }
+        ?> 
+        </div>
+      </div>
 
       </div>
     </div>

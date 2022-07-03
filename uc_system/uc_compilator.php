@@ -199,7 +199,7 @@
 	        return $out;
 		}
 
-		public function generatePager($page, $count, $total, $url){
+		public function generatePager($page, $count, $total, $url, $_p = "p", $_c = "c"){
 			$number = $total / $count;
 
 			$total_pages = floor($number);     
@@ -240,20 +240,20 @@
 					$class = 'active';
 				}
 
-				$pages .= '<li class="page-item '.$class.'"><a class="page-link" href="'.$url.'&p='.$i.'&c='.$count.'">'.$i.'</a></li>';
+				$pages .= '<li class="page-item '.$class.'"><a class="page-link" href="'.$url.'&'.$_p.'='.$i.'&'.$_c.'='.$count.'">'.$i.'</a></li>';
 			}
 
 			return '
 			<nav aria-label="Page navigation">
 			  <ul class="pagination justify-content-end">
 			    <li class="page-item">
-			      <a class="page-link" href="'.$url.'&p=1&c='.$count.'" aria-label="Начало">
+			      <a class="page-link" href="'.$url.'&'.$_p.'=1&'.$_c.'='.$count.'" aria-label="Начало">
 			        <span aria-hidden="true">&laquo;</span>
 			      </a>
 			    </li>
 			   	'.$pages.'
 			    <li class="page-item">
-			      <a class="page-link" href="'.$url.'&p='.$total_pages.'&c='.$count.'" aria-label="Конец">
+			      <a class="page-link" href="'.$url.'&'.$_p.'='.$total_pages.'&'.$_c.'='.$count.'" aria-label="Конец">
 			        <span aria-hidden="true">&raquo;</span>
 			      </a>
 			    </li>
@@ -452,6 +452,22 @@
 			$this->ucSystemPipe = new uCrewSystemPipe();
 			// Init variables
 			$this->template_folder =  $this->directories["templates"] . $this->system["template"] . '/';
+		}
+
+
+		public function moduleSearchApi($modules){
+			// Check modules for search api
+			foreach ( $modules as $module => $state ) {
+				// If module activated
+				if($state == 1){
+					$searchApi = $this->system['main_directory'] . $this->directories['modules'] . $module . '/search.php';
+					if(file_exists($searchApi)){
+						require_once($searchApi);
+						$class = $module . 'SearchApi';
+						$api = new $class();
+					}
+				}
+			}
 		}
 
 		private function clearVirtualLink($string){

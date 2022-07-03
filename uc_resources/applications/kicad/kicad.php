@@ -218,8 +218,6 @@
 			
 			$workdir = $uc_Configuration->system["main_directory"] . $uc_Configuration->directories["temporary"] . 'pcb/';
 
-			echo "$workdir";
-
 			$result = $uc_SystemPipe->sh(
 				array(
 					// Remove workdir
@@ -241,10 +239,10 @@
 					'sudo cp -a "'.$workdir.'". "' . $this->kidata['location'] . '"',
 					'cd "'.$this->kidata['location'].'"',
 					'ls',
-					//'sudo rm -rf "' . $workdir . '"',
+					'sudo rm -rf "' . $workdir . '"',
 					'cd ..',
 					'mkdir Изображения',
-					'cp Исходники/Images/image.jpg "Изображения/Изображение ' . $this->projectName . '.jpeg"',
+					//'cp Исходники/Images/image.jpg "Изображения/Изображение ' . $this->projectName . '.jpeg"',
 					'cp Исходники/3D/*.png "Изображения/Изображение 3D модели ' . $this->projectName . '.png"',
 					'convert "Изображения/Изображение 3D модели ' . $this->projectName . '.png" -quality 80 "Изображения/Изображение 3D модели ' . $this->projectName . '.jpeg"',
 					'mkdir "3D модели"',
@@ -266,7 +264,6 @@
 				)
 			);
 
-			// echo $uc_SystemPipe->setTerminalToHtml($result);
 		}
 
 		public function generateYaml(){
@@ -316,20 +313,20 @@ outputs:
     dir: DXF
     options:
       metric_units: true
-
-  - name: 'pcbdraw'
-    comment: \"Print PCB image\"
-    type: pcbdraw
-    dir: Images
-    options:
-      format: 'jpg'
-      show_components: 'none'
-      output: 'image.%x'
-      style:
-        outline: '#ffffff'
-        board: '" . $this->settings['colors']['mask'] . "'
-        silk: '" . $this->settings['colors']['silkscreen'] . "'
-        pads: '" . $this->settings['colors']['surface'] . "' 
+# 
+#  - name: 'pcbdraw'
+#    comment: \"Print PCB image\"
+#    type: pcbdraw
+#    dir: Images
+#    options:
+#      format: 'jpg'
+#      show_components: 'none'
+#      output: 'image.%x'
+#      style:
+#        outline: '#ffffff'
+#        board: '" . $this->settings['colors']['mask'] . "'
+#        silk: '" . $this->settings['colors']['silkscreen'] . "'
+#        pads: '" . $this->settings['colors']['surface'] . "' 
 
   - name: 'ibom'
     comment: \"Generate ibom files for production\"
@@ -346,8 +343,8 @@ outputs:
     dir: 3D
     options:
       ray_tracing: true
-      wait_render: -120
-      wait_ray_tracing: -120
+      wait_render: -180
+      wait_ray_tracing: -180
       zoom: 5
       background1: '#ffffff'
       background2: '#ffffff'

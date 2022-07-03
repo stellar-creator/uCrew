@@ -23,6 +23,7 @@
 		'/?page=uCrewProjects/pcbs'
 	);
 ?>
+
 <div class="row">
 	<div class="d-grid gap-1 d-md-flex justify-content-md-end" style="padding-bottom: 10px">
 	 	<a href="/?page=uCrewProjects/pcbsAdd" class="btn btn-primary me-md-1" >
@@ -56,7 +57,7 @@
 
 			$pcb_paths['web'] = $pcb_paths['web'] . $values['pcb_data']['fullname'] . '/';
 			
-			$pcb_image = $pcb_paths['web'] . 'Ревизия '.$values['pcb_data']['revision'].'/' . $uc_Projects->ucs_DirectoriesNames['images'] . '/Изображение ' . $values['pcb_codename'] . ' - ' . $values['pcb_name'] . '.jpeg' ;
+			$pcb_image = $pcb_paths['web'] . 'Ревизия '.$values['pcb_data']['revision'].'/' . $uc_Projects->ucs_DirectoriesNames['images'] . '/Изображение 3D модели ' . $values['pcb_codename'] . ' - ' . $values['pcb_name'] . '.jpeg' ;
 		
 
 			$count++;
@@ -91,7 +92,7 @@
 			array_push($rows, 
 				array(
 					$count => array('class' => 'align-middle text-center'),
-					'<img src="'.$pcb_image.'" class="img-thumbnail imagecat" alt="'.$values['pcb_codename'].'">',
+					'<img src="'.$pcb_image.'" class="img-thumbnail imagecat zoom" alt="'.$values['pcb_codename'].'">' => array('class' => 'align-middle text-center'),
 					'<a href="/?page=uCrewProjects/pcbsItem&id='.$values['pcb_id'].'" class="link-dark" style="text-decoration:none">'.$values['pcb_codename'].'</a>' => array('class' => 'align-middle text-center'),
 					'<p>'.$values['pcb_name'].'</p><p>
 					<figcaption class="blockquote-footer">
