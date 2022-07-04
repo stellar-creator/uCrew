@@ -4,18 +4,16 @@
   // Init class
   $uc_Projects = new uCrewProjects();
   // Get data
-  $data = $uc_Projects->getpcbItem($_GET['id']);
-  $user_name =  $uc_Projects->ucs_CommonDatabase->getUser($data['pcb_author_id'])['user_name'];
-  $date = date_format(date_create($data['pcb_create_timestamp']),"d.m.Y в H:i");
-  $directory_data = $uc_Projects->getProjectDirectoryData();
-  $statuses = $uc_Projects->getStatuses();
+  $common_data = $uc_Projects->getCommonData('pcb', $_GET['id']);
 
-  $fullname_revision = $data['pcb_codename'] . ' - ' . $data['pcb_name'];
+  $common_data['statuses'] = $uc_Projects->getStatuses();
+
+  $fullname_revision = $common_data['data']['pcb_codename'] . ' - ' . $common_data['data']['pcb_name'];
 
   $pcb_paths = $uc_Projects->ucs_DirectoriesPath['pcbs'];
-  $pcb_paths['web'] = $pcb_paths['web'] . $data['pcb_data']['fullname'] . '/Ревизия ' . $data['pcb_data']['revision'] . '/';
-  $pcb_paths['smb'] = $pcb_paths['smb'] . $data['pcb_data']['fullname'] . '\\Ревизия ' . $data['pcb_data']['revision'] . '\\';
-  $pcb_paths['local'] = $pcb_paths['local'] . $data['pcb_data']['fullname'] . '/Ревизия ' . $data['pcb_data']['revision'] . '/';
+  $pcb_paths['web'] = $pcb_paths['web'] . $common_data['data']['pcb_data']['fullname'] . '/Ревизия ' . $common_data['data']['pcb_data']['revision'] . '/';
+  $pcb_paths['smb'] = $pcb_paths['smb'] . $common_data['data']['pcb_data']['fullname'] . '\\Ревизия ' . $common_data['data']['pcb_data']['revision'] . '\\';
+  $pcb_paths['local'] = $pcb_paths['local'] . $common_data['data']['pcb_data']['fullname'] . '/Ревизия ' . $common_data['data']['pcb_data']['revision'] . '/';
 
   $pcb_image = $pcb_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение 3D модели ' . $fullname_revision . '.jpeg' ;
   $pcb_image = $this->uc_CompilatorData->checkImage($pcb_image);
@@ -39,17 +37,17 @@
     <h4>Общая информация</h4>
     <hr>
        <div class="col-sm-6">
-        <p>Шифр печатной платы: <?php echo $data['pcb_codename']; ?></p>
-        <p>Наиминование: <?php echo $data['pcb_name']; ?></p>
-        <p>Описание: <?php echo $data['pcb_description']; ?></p>
-        <p>Автор: <?php echo $user_name; ?></p>
-        <p>Дата добавления: <?php echo $date; ?></p>
-        <p>Материал: <?php echo $data['pcb_data']['material']; ?></p>
-        <p>Цвет шелгорафии: <?php echo $data['pcb_data']['silkscreen']; ?></p>
-        <p>Цвет паяльной маски: <?php echo $data['pcb_data']['mask']; ?></p>
-        <p>Покрытие: <?php echo $data['pcb_data']['surface']; ?></p>
-        <p>Ревизия: <?php echo $data['pcb_data']['revision']; ?></p>
-        <p>Статус: <?php echo $statuses[$data['pcb_status']][0]; ?></p>
+        <p>Шифр печатной платы: <?php echo $common_data['data']['pcb_codename']; ?></p>
+        <p>Наиминование: <?php echo $common_data['data']['pcb_name']; ?></p>
+        <p>Описание: <?php echo $common_data['data']['pcb_description']; ?></p>
+        <p>Автор: <?php echo $common_data['user_name']; ?></p>
+        <p>Дата добавления: <?php echo $common_data['date']; ?></p>
+        <p>Материал: <?php echo $common_data['data']['pcb_data']['material']; ?></p>
+        <p>Цвет шелгорафии: <?php echo $common_data['data']['pcb_data']['silkscreen']; ?></p>
+        <p>Цвет паяльной маски: <?php echo $common_data['data']['pcb_data']['mask']; ?></p>
+        <p>Покрытие: <?php echo $common_data['data']['pcb_data']['surface']; ?></p>
+        <p>Ревизия: <?php echo $common_data['data']['pcb_data']['revision']; ?></p>
+        <p>Статус: <?php echo $common_data['statuses'][$common_data['data']['pcb_status']][0]; ?></p>
       </div>
       
 
@@ -100,13 +98,13 @@
           Ссылка для браузеров: <a href="<?php echo $pcb_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $pcb_paths['web']; ?></a>
       </p>
       <!--<p class="text-break">
-          Скачать весь проект архивом: <a href="<?php echo $pcb_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $data['pcb_data']['fullname']; ?>.zip</a>
+          Скачать весь проект архивом: <a href="<?php echo $pcb_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $common_data['data']['pcb_data']['fullname']; ?>.zip</a>
       </p>-->
       <p>
         Поделиться: 
         <a href="tg://msg?text=<?php echo urlencode($pcb_paths['web']); ?>" class="link-dark">Telegram</a>, 
         <a href='mailto:?subject=<?php echo $_SESSION['user_email']; ?>&body=Посмотреть изделие <?php
-         echo $data['pcb_data']['fullname'] . ' '.urlencode( $pcb_paths['web'] ); 
+         echo $common_data['data']['pcb_data']['fullname'] . ' '.urlencode( $pcb_paths['web'] ); 
        ?>' class="link-dark">Электронная почта</a>
       </p>
 

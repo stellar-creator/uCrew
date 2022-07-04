@@ -267,9 +267,8 @@
 			$this->sh(
 				array(
 					"sudo mkdir -p \"$location\"",
+					"sudo mkdir -p \"$workdir\"",
 					"cd \"$workdir\"/",
-					"ls \"$workdir\"/",
-					"ls \"$location\"",
 					"sudo cp \"$source\" \"$workdir/file.step\"",
 					"sudo ucrew-freecad",
 					"cp \"$workdir/file.stl\" \"$stl\"",
@@ -327,8 +326,8 @@
 					'cp uCrew/uc_system/uc_configuration.php uCrewUpdate/uc_system/uc_configuration.php',
 					// Copy applications
 					'cp -a uCrewUpdate/uc_resources/applications/. uCrew/uc_resources/applications',
-					// Dont touch resources
-					'rm -rf uCrewUpdate/uc_resources',
+					// Dont touch data resources
+					'rm -rf uCrewUpdate/uc_resources/',
 					// Dont touch modules
 					//'rm -rf uCrewUpdate/uc_modules',
 					// Dont touch templates

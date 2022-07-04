@@ -34,7 +34,8 @@
 				'annotations' => 'Аннотации',
 				'cables' => 'Провода и кабели',
 				'pcbs' => 'Печатные платы',
-				'sources' => 'Исходники'
+				'sources' => 'Исходники',
+				'devices' => 'Устройства'
 			);
 
 			$typicalTemplate_imgae = array(
@@ -106,7 +107,6 @@
 					'Чертёж',
 					$this->ucs_DirectoriesNames['images'] => $typicalTemplate_imgae,
 				),
-
 				'pcbs' => array(
 					$this->ucs_DirectoriesNames['3dmodels'],
 					'Исходники',
@@ -139,12 +139,31 @@
 					'local' => $this->directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['pcbs'] . '/',
 					'smb' => $this->directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['pcbs'] . '\\',
 					'web' => 'http://' . $this->system['main_domain'] . '/uc_resources/projects/mount/' . $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['pcbs'] . '/',
+				),
+				'devices' => array(
+					'local' => $this->directory_data['directory'] .  $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['devices'] . '/',
+					'smb' => $this->directory_data['mask'] . $this->ucs_DirectoriesNames['develop_documentation'] . '\\' . $this->ucs_DirectoriesNames['devices'] . '\\',
+					'web' => 'http://' . $this->system['main_domain'] . '/uc_resources/projects/mount/' . $this->ucs_DirectoriesNames['develop_documentation'] . '/' . $this->ucs_DirectoriesNames['devices'] . '/',
 				)
 			); 
 			///uc_resources/projects/mount/
 		}
 
 		// Common projects data
+
+		public function getCommonData($prefix, $id){
+
+			$data = $this->getCommonItem("${prefix}", $_GET['id']);
+
+			return array(
+				"data" => $data,
+				"user_name" => $this->ucs_CommonDatabase->getUser($data["${prefix}_author_id"])["user_name"],
+				"date" => date_format(date_create($data["${prefix}_create_timestamp"]),"d.m.Y в H:i"),
+				"directory_data" => $this->getProjectDirectoryData(),
+				"statuses" => $this->getStatuses()
+			);
+
+		}
 
 		public function getProjectDirectoryData(){
 			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'work_directory'";
@@ -441,7 +460,7 @@
 
 			$data['pcb_isnew'] = intval($data['pcb_isnew']);
 
-			$pcbs = $this->getPcbsData();
+			$pcbs = $this->getCommonJsonData('pcb');
 
 			// Init json
 			$pcb_data = array(
@@ -582,7 +601,7 @@
 				array_push($pcbs[$data['pcb_codename']]["revisions"], $data['pcb_revision'] = "true" );
 			}
 
-			$this->setPcbsData($pcbs);
+			$this->setCommonJsonData('pcb', $pcbs);
 		}
 
 		// Get mechanic materials
@@ -666,15 +685,15 @@
 		}
 
 		// Get mechanic materials
-		public function getPcbsData($raw = false){
-			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = 'pcbs_data'";
+		public function getCommonJsonData($prefix, $raw = false){
+			$sql = "SELECT * FROM `ucp_data` WHERE `data_name` = '${prefix}s_data'";
 			$pcbs_json = $this->ucs_Database->getAllData($sql)[0]['data_text'];
 
-			if(!isset(json_decode($pcbs_json, true)['pcbs'])){
+			if(!isset(json_decode($pcbs_json, true)["${prefix}s"])){
 				$pcbs = array();
 			    $pcbs_json = "{}";
 			}else{
-				$pcbs = json_decode($pcbs_json, true)['pcbs'];
+				$pcbs = json_decode($pcbs_json, true)["${prefix}s"];
 			}
 
 			if($raw == true){
@@ -682,14 +701,13 @@
 			}else{
 				return $pcbs;
 			}
-			
 		}
-		
+
 		// Get mechanic materials
-		public function setPcbsData($data_array){
-			$data['pcbs'] = $data_array;
+		public function setCommonJsonData($prefix, $data_array){
+			$data["${prefix}s"] = $data_array;
 			$data = json_encode($data, JSON_UNESCAPED_UNICODE);
-			$sql = "UPDATE `ucp_data` SET `data_text` = '$data' WHERE `data_name` = 'pcbs_data'";
+			$sql = "UPDATE `ucp_data` SET `data_text` = '$data' WHERE `data_name` = '${prefix}s_data'";
 			$this->ucs_Database->query($sql);
 		}
 
@@ -740,7 +758,7 @@
 			';
 		}
 
-		public function getMechanicsList($page, $count, $like = "", $getCount = false){
+		public function getCommonList($prefix, $page, $count, $like = "", $getCount = false){
 			
 			$start = ($page * $count) - $count;
 			$end = $count;
@@ -748,16 +766,16 @@
 			$sql = "";
 
 			if($like == ""){
-				$sql = "SELECT * FROM `ucp_mechanics` ORDER BY `ucp_mechanics`.`mechanic_codename` DESC LIMIT $start,$end";
+				$sql = "SELECT * FROM `ucp_${prefix}s` ORDER BY `ucp_${prefix}s`.`${prefix}_codename` DESC LIMIT $start,$end";
 			}else{
-				$sql = "SELECT * FROM `ucp_mechanics` WHERE `mechanic_name` LIKE '%" . $like . "%' OR `mechanic_description` LIKE '%" . $like . "%' OR `mechanic_codename` LIKE '%" . $like . "%' ORDER BY `ucp_mechanics`.`mechanic_codename` DESC LIMIT $start,$end";
+				$sql = "SELECT * FROM `ucp_${prefix}s` WHERE `${prefix}_name` LIKE '%" . $like . "%' OR `${prefix}_description` LIKE '%" . $like . "%' OR `${prefix}_codename` LIKE '%" . $like . "%' ORDER BY `ucp_${prefix}s`.`${prefix}_codename` DESC LIMIT $start,$end";
 			}
 
 			$list = $this->ucs_Database->getAllData($sql);
 			
 			if($list != 0){
 				foreach ($list as $key => &$value) {
-					$value['mechanic_data'] = json_decode($value['mechanic_data'], true);
+					$value["${prefix}_data"] = json_decode($value["${prefix}_data"], true);
 				}
 			}
 
@@ -765,9 +783,9 @@
 				return $list;
 			}else{
 				if($like == ""){
-					$sql = "SELECT COUNT(*) FROM `ucp_mechanics` ORDER BY `ucp_mechanics`.`mechanic_codename` DESC";
+					$sql = "SELECT COUNT(*) FROM `ucp_${prefix}s` ORDER BY `ucp_${prefix}s`.`${prefix}_codename` DESC";
 				}else{
-					$sql = "SELECT COUNT(*) FROM `ucp_mechanics` WHERE `mechanic_name` LIKE '%" . $like . "%' OR `mechanic_description` LIKE '%" . $like . "%' OR `mechanic_codename` LIKE '%" . $like . "%' ORDER BY `ucp_mechanics`.`mechanic_codename` DESC";
+					$sql = "SELECT COUNT(*) FROM `ucp_${prefix}s` WHERE `${prefix}_name` LIKE '%" . $like . "%' OR `${prefix}_description` LIKE '%" . $like . "%' OR `${prefix}_codename` LIKE '%" . $like . "%' ORDER BY `ucp_${prefix}s`.`${prefix}_codename` DESC";
 				}
 				return array(
 					"count" => $this->ucs_Database->getQueryRecordsCount($sql), 
@@ -776,96 +794,11 @@
 			}
 		}
 
-		public function getCablesList($page, $count, $like = "", $getCount = false){
-			
-			$start = ($page * $count) - $count;
-			$end = $count;
 
-			$sql = "";
-
-			if($like == ""){
-				$sql = "SELECT * FROM `ucp_cables` ORDER BY `ucp_cables`.`cable_codename` DESC LIMIT $start,$end";
-			}else{
-				$sql = "SELECT * FROM `ucp_cables` WHERE `cable_name` LIKE '%" . $like . "%' OR `cable_description` LIKE '%" . $like . "%' OR `cable_codename` LIKE '%" . $like . "%' ORDER BY `ucp_cables`.`cable_codename` DESC LIMIT $start,$end";
-			}
-
-			$list = $this->ucs_Database->getAllData($sql);
-			
-			if($list != 0){
-				foreach ($list as $key => &$value) {
-					$value['cable_data'] = json_decode($value['cable_data'], true);
-				}
-			}
-
-			if($getCount == false){
-				return $list;
-			}else{
-				if($like == ""){
-					$sql = "SELECT COUNT(*) FROM `ucp_cables` ORDER BY `ucp_cables`.`cable_codename` DESC";
-				}else{
-					$sql = "SELECT COUNT(*) FROM `ucp_cables` WHERE `cable_name` LIKE '%" . $like . "%' OR `cable_description` LIKE '%" . $like . "%' OR `cable_codename` LIKE '%" . $like . "%' ORDER BY `ucp_cables`.`cable_codename` DESC";
-				}
-				return array(
-					"count" => $this->ucs_Database->getQueryRecordsCount($sql), 
-					"list" => $list
-				);
-			}
-			
-		}
-
-		public function getPcbsList($page, $count, $like = "", $getCount = false){
-			
-			$start = ($page * $count) - $count;
-			$end = $count;
-
-			if($like == ""){
-				$sql = "SELECT * FROM `ucp_pcbs` ORDER BY `ucp_pcbs`.`pcb_codename` DESC LIMIT $start,$end";
-			}else{
-				$sql = "SELECT * FROM `ucp_pcbs`  WHERE `pcb_name` LIKE '%" . $like . "%' OR `pcb_description` LIKE '%" . $like . "%' OR `pcb_codename` LIKE '%" . $like . "%' ORDER BY `ucp_pcbs`.`pcb_codename` DESC LIMIT $start,$end";
-			}
-
-			$list = $this->ucs_Database->getAllData($sql);
-			
-			if($list != 0){
-				foreach ($list as $key => &$value) {
-					$value['pcb_data'] = json_decode($value['pcb_data'], true);
-				}
-			}
-
-			if($getCount == false){
-				return $list;
-			}else{
-				if($like == ""){
-					$sql = "SELECT COUNT(*) FROM `ucp_pcbs` ORDER BY `ucp_pcbs`.`pcb_codename` DESC";
-				}else{
-					$sql = "SELECT COUNT(*) FROM `ucp_pcbs`  WHERE `pcb_name` LIKE '%" . $like . "%' OR `pcb_description` LIKE '%" . $like . "%' OR `pcb_codename` LIKE '%" . $like . "%' ORDER BY `ucp_pcbs`.`pcb_codename` DESC";
-				}
-				return array(
-					"count" => $this->ucs_Database->getQueryRecordsCount($sql), 
-					"list" => $list
-				);
-			}
-		}
-
-		public function getMechanicItem($item_id){
-			$sql = "SELECT * FROM `ucp_mechanics` WHERE `mechanic_id` = $item_id";
+		public function getCommonItem($prefix, $item_id){
+			$sql = "SELECT * FROM `ucp_${prefix}s` WHERE `${prefix}_id` = $item_id";
 			$data = $this->ucs_Database->getData($sql);
-			$data['mechanic_data'] = json_decode($data['mechanic_data'], true);
-			return $data;
-		}
-
-
-		public function getCableItem($item_id){
-			$sql = "SELECT * FROM `ucp_cables` WHERE `cable_id` = $item_id";
-			$data = $this->ucs_Database->getData($sql);
-			$data['cable_data'] = json_decode($data['cable_data'], true);
-			return $data;
-		}
-
-		public function getPcbItem($item_id){
-			$sql = "SELECT * FROM `ucp_pcbs` WHERE `pcb_id` = $item_id";
-			$data = $this->ucs_Database->getData($sql);
-			$data['pcb_data'] = json_decode($data['pcb_data'], true);
+			$data["${prefix}_data"] = json_decode($data["${prefix}_data"], true);
 			return $data;
 		}
 

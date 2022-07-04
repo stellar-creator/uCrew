@@ -4,40 +4,30 @@
   // Init class
   $uc_Projects = new uCrewProjects();
   // Get data
-  $data = $uc_Projects->getCableItem($_GET['id']);
-  $user_name =  $uc_Projects->ucs_CommonDatabase->getUser($data['cable_author_id'])['user_name'];
-  $date = date_format(date_create($data['cable_create_timestamp']),"d.m.Y в H:i");
-  $directory_data = $uc_Projects->getProjectDirectoryData();
-  $statuses = $uc_Projects->getStatuses();
-
+  $common_data = $uc_Projects->getCommonData('cable', $_GET['id']);
 
   $cable_paths = $uc_Projects->ucs_DirectoriesPath['cables'];
-  $cable_paths['web'] = $cable_paths['web'] . $data['cable_data']['fullname'] . '/';
-  $cable_paths['smb'] = $cable_paths['smb'] . $data['cable_data']['fullname'] . '\\';
-  $cable_paths['local'] = $cable_paths['local'] . $data['cable_data']['fullname'] . '/';
+  $cable_paths['web'] = $cable_paths['web'] . $common_data['data']['cable_data']['fullname'] . '/';
+  $cable_paths['smb'] = $cable_paths['smb'] . $common_data['data']['cable_data']['fullname'] . '\\';
+  $cable_paths['local'] = $cable_paths['local'] . $common_data['data']['cable_data']['fullname'] . '/';
 
-  $cable_image = $cable_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $data['cable_data']['fullname'] . '.jpeg' ;
+  $cable_image = $cable_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $common_data['data']['cable_data']['fullname'] . '.jpeg' ;
   $cable_image = $this->uc_CompilatorData->checkImage($cable_image);
 
   $cable_files = $uc_Projects->directoryToArray($cable_paths['local']);
-
-  //print_r($cable_files);
 ?>
-
-<!--<script type='text/javascript' src='uc_resources/applications/x3dom/x3dom-full.js'> </script> 
-<link rel='stylesheet' type='text/css' href='uc_resources/applications/x3dom/x3dom.css'></link> -->
 
 <div class="container-fluid">
   <div class="row">
     <h4>Общая информация</h4>
     <hr>
        <div class="col-sm-6">
-        <p>Шифр изделия: <?php echo $data['cable_codename']; ?></p>
-        <p>Наиминование: <?php echo $data['cable_name']; ?></p>
-        <p>Описание: <?php echo $data['cable_description']; ?></p>
-        <p>Автор: <?php echo $user_name; ?></p>
-        <p>Дата добавления: <?php echo $date; ?></p>
-        <p>Статус: <?php echo $statuses[$data['cable_status']][0]; ?></p>
+        <p>Шифр изделия: <?php echo $common_data['data']['cable_codename']; ?></p>
+        <p>Наиминование: <?php echo $common_data['data']['cable_name']; ?></p>
+        <p>Описание: <?php echo $common_data['data']['cable_description']; ?></p>
+        <p>Автор: <?php echo $common_data['user_name']; ?></p>
+        <p>Дата добавления: <?php echo $common_data['date']; ?></p>
+        <p>Статус: <?php echo $common_data['statuses'][$common_data['data']['cable_status']][0]; ?></p>
       </div>
       <div class="col-sm-6 justify-content-end d-flex">
         <img src="<?php echo $cable_image; ?>" class="img-fluid img-thumbnail" style="width: 500px">
@@ -55,13 +45,13 @@
           Ссылка для браузеров: <a href="<?php echo $cable_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $cable_paths['web']; ?></a>
       </p>
       <!--<p class="text-break">
-          Скачать весь проект архивом: <a href="<?php echo $cable_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $data['cable_data']['fullname']; ?>.zip</a>
+          Скачать весь проект архивом: <a href="<?php echo $cable_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $common_data['data']['cable_data']['fullname']; ?>.zip</a>
       </p>-->
       <p>
         Поделиться: 
         <a href="tg://msg?text=<?php echo urlencode($cable_paths['web']); ?>" class="link-dark">Telegram</a>, 
         <a href='mailto:?subject=<?php echo $_SESSION['user_email']; ?>&body=Посмотреть изделие <?php
-         echo $data['cable_data']['fullname'] . ' '.urlencode( $cable_paths['web'] ); 
+         echo $common_data['data']['cable_data']['fullname'] . ' '.urlencode( $cable_paths['web'] ); 
        ?>' class="link-dark">Электронная почта</a>
       </p>
 
@@ -123,10 +113,4 @@
     ?>
     </div>
   </div>
-  </div>
-
-<script type="text/javascript">
-  $( document ).ready(function() {
-      document.getElementById('scaleTransformation').setAttribute('scale', '25 25 25');
-  }
-</script>
+</div>

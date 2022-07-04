@@ -14,7 +14,7 @@
 	// Init class
 	$uc_Projects = new uCrewProjects();
 	// Get mechanics list
-	$list = $uc_Projects->getMechanicsList($page, $count);
+	$list = $uc_Projects->getCommonList('mechanic', $page, $count);
 	// Get pager
 	$pager = $this->uc_CompilatorData->generatePager(
 		$page,

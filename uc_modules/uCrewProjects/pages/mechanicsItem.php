@@ -4,29 +4,24 @@
   // Init class
   $uc_Projects = new uCrewProjects();
   // Get data
-  $data = $uc_Projects->getMechanicItem($_GET['id']);
-  $user_name =  $uc_Projects->ucs_CommonDatabase->getUser($data['mechanic_author_id'])['user_name'];
-  $date = date_format(date_create($data['mechanic_create_timestamp']),"d.m.Y в H:i");
-  $directory_data = $uc_Projects->getProjectDirectoryData();
-  $statuses = $uc_Projects->getStatuses();
-
+  $common_data = $uc_Projects->getCommonData('mechanic', $_GET['id']);
 
   $mechanic_paths = $uc_Projects->ucs_DirectoriesPath['mechanics'];
-  $mechanic_paths['web'] = $mechanic_paths['web'] . $data['mechanic_data']['fullname'] . '/';
-  $mechanic_paths['smb'] = $mechanic_paths['smb'] . $data['mechanic_data']['fullname'] . '\\';
-  $mechanic_paths['local'] = $mechanic_paths['local'] . $data['mechanic_data']['fullname'] . '/';
+  $mechanic_paths['web'] = $mechanic_paths['web'] . $common_data['data']['mechanic_data']['fullname'] . '/';
+  $mechanic_paths['smb'] = $mechanic_paths['smb'] . $common_data['data']['mechanic_data']['fullname'] . '\\';
+  $mechanic_paths['local'] = $mechanic_paths['local'] . $common_data['data']['mechanic_data']['fullname'] . '/';
 
-  $mechanic_image = $mechanic_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $data['mechanic_data']['fullname'] . '.jpeg' ;
+  $mechanic_image = $mechanic_paths['web'] . $uc_Projects->ucs_DirectoriesNames['images'] . '/' . 'Изображение ' . $common_data['data']['mechanic_data']['fullname'] . '.jpeg' ;
   $mechanic_image = $this->uc_CompilatorData->checkImage($mechanic_image);
 
   $mechanic_files = $uc_Projects->directoryToArray($mechanic_paths['local']);
 
-  $mechanic_x3d = $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $data['mechanic_data']['fullname'] . '.x3d';
+  $mechanic_x3d = $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $common_data['data']['mechanic_data']['fullname'] . '.x3d';
 
   $mechanic_x3d_web = "";
 
   if(file_exists($mechanic_x3d)){
-    $mechanic_x3d_web = $mechanic_paths['web']. $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $data['mechanic_data']['fullname'] . '.x3d';
+    $mechanic_x3d_web = $mechanic_paths['web']. $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/Веб 3D модель ' . $common_data['data']['mechanic_data']['fullname'] . '.x3d';
     echo "
     <script type='text/javascript' src='uc_resources/applications/x3dom/x3dom-full.js'> </script> \n
     <link rel='stylesheet' type='text/css' href='uc_resources/applications/x3dom/x3dom.css'></link> \n";
@@ -34,12 +29,12 @@
     $uc_SystemPipe = new uCrewSystemPipe();
     // Convert step to x3d
     $uc_SystemPipe->stepConverter(
-      $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' .  '3D модель ' . $data['mechanic_data']['fullname'] . '.step',
-      $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $data['mechanic_data']['fullname'] . '.x3d'
+      $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' .  '3D модель ' . $common_data['data']['mechanic_data']['fullname'] . '.step',
+      $mechanic_paths['local'] . $uc_Projects->ucs_DirectoriesNames['3dmodels'] . '/' . 'Веб 3D модель ' . $common_data['data']['mechanic_data']['fullname'] . '.x3d'
     );
     echo '
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Внимание! <strong>'.$data['mechanic_data']['fullname'].'</strong> - создана 3D веб модель!
+        Внимание! <strong>'.$common_data['data']['mechanic_data']['fullname'].'</strong> - создана 3D веб модель!
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     ';
@@ -51,13 +46,13 @@
     <h4>Общая информация</h4>
     <hr>
        <div class="col-sm-6">
-        <p>Шифр изделия: <?php echo $data['mechanic_codename']; ?></p>
-        <p>Наиминование: <?php echo $data['mechanic_name']; ?></p>
-        <p>Описание: <?php echo $data['mechanic_description']; ?></p>
-        <p>Автор: <?php echo $user_name; ?></p>
-        <p>Дата добавления: <?php echo $date; ?></p>
-        <p>Материал: <?php echo $data['mechanic_data']['material']; ?></p>
-        <p>Статус: <?php echo $statuses[$data['mechanic_status']][0]; ?></p>
+        <p>Шифр изделия: <?php echo $common_data['data']['mechanic_codename']; ?></p>
+        <p>Наиминование: <?php echo $common_data['data']['mechanic_name']; ?></p>
+        <p>Описание: <?php echo $common_data['data']['mechanic_description']; ?></p>
+        <p>Автор: <?php echo $common_data['user_name']; ?></p>
+        <p>Дата добавления: <?php echo $common_data['date']; ?></p>
+        <p>Материал: <?php echo $common_data['data']['mechanic_data']['material']; ?></p>
+        <p>Статус: <?php echo $common_data['statuses'][$common_data['data']['mechanic_status']][0]; ?></p>
       </div>
 
       <div class="col-sm-6">
@@ -107,13 +102,13 @@
           Ссылка для браузеров: <a href="<?php echo $mechanic_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $mechanic_paths['web']; ?></a>
       </p>
       <!--<p class="text-break">
-          Скачать весь проект архивом: <a href="<?php echo $mechanic_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $data['mechanic_data']['fullname']; ?>.zip</a>
+          Скачать весь проект архивом: <a href="<?php echo $mechanic_paths['web']; ?>" target="_blank" rel="noopener noreferrer" class="link-dark"><?php echo $common_data['data']['mechanic_data']['fullname']; ?>.zip</a>
       </p>-->
       <p>
         Поделиться: 
         <a href="tg://msg?text=<?php echo urlencode($mechanic_paths['web']); ?>" class="link-dark">Telegram</a>, 
         <a href='mailto:?subject=<?php echo $_SESSION['user_email']; ?>&body=Посмотреть изделие <?php
-         echo $data['mechanic_data']['fullname'] . ' '.urlencode( $mechanic_paths['web'] ); 
+         echo $common_data['data']['mechanic_data']['fullname'] . ' '.urlencode( $mechanic_paths['web'] ); 
        ?>' class="link-dark">Электронная почта</a>
       </p>
 

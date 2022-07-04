@@ -6,94 +6,69 @@
 	// Message variable
 	$message = "";
 	// Check if isset data
-	if(isset($_POST['pcb_name'])){
+	if(isset($_POST['device_name'])){
 		// Add data
-		$uc_Projects->addPcb($_POST, $_FILES);
+		$uc_Projects->addDevice($_POST, $_FILES);
 		$message .= '
 			<div class="alert alert-success alert-dismissible fade show" role="alert">
-			  Печатная плата <strong>'.$_POST['pcb_fullname'].'</strong> успешно добавлена.
+			  Печатная плата <strong>'.$_POST['device_fullname'].'</strong> успешно добавлена.
 			  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>
 		';
 	}
 	// Get last codename
-	$codename = $uc_Projects->getLastCodeName('pcbs_codename', 'TBP');
+	$codename = $uc_Projects->getLastCodeName('devices_codename', 'TBP');
 	// Get directory data
 	$directory_data = $uc_Projects->getProjectDirectoryData();
-
-	// Get materials
-	$materials = $uc_Projects->getPcbMaterials();
-	// Generate list
-	$options = '';
-	foreach ($materials as $material) {
-		$options .= "<option value=\"$material\">$material</option>\n";
-	}
-
-	// Get materials
-	$colors = $uc_Projects->getPcbColors();
-	// Generate list
-	$options_colors = '';
-	foreach ($colors as $color) {
-		$options_colors .= "<option value=\"$color\">$color</option>\n";
-	}
-
-	// Get materials
-	$surfaces = $uc_Projects->getPcbSurfaces();
-	// Generate list
-	$options_surfaces = '';
-	foreach ($surfaces as $surface) {
-		$options_surfaces .= "<option value=\"$surface\">$surface</option>\n";
-	}
-
 	
-	// Get pcbs
-	$pcbs = $uc_Projects->getCommonJsonData('pcb');
-	// Get pcbs
-	$pcbs_json = $uc_Projects->getCommonJsonData('pcb', $raw = true);
+	// Get devices
+	$devices = $uc_Projects->getCommonJsonData('device');
+	// Get devices
+	$devices_json = $uc_Projects->getCommonJsonData('device', $raw = true);
 	// Generate list
-	$options_pcbs = '<option value=\"0\">Выберите печатную плату из базы данных...</option>\n';
-	foreach ($pcbs as $pcb => $data) {
-		$options_pcbs .= "<option value=\"$pcb\">$pcb - ".$data['name']."</option>\n";
+	$options_devices = '<option value=\"0\">Выберите печатную плату из базы данных...</option>\n';
+	foreach ($devices as $device => $data) {
+		$options_devices .= "<option value=\"$device\">$device - ".$data['name']."</option>\n";
 	}
 
 	echo $message;
 ?>
 
 <div class="row">
-	<form action="/?page=uCrewProjects/pcbsAdd" method="post" id="addpcbForm" enctype="multipart/form-data">
+	<form action="/?page=uCrewProjects/devicesAdd" method="post" id="addDeviceForm" enctype="multipart/form-data">
 		<h4>Общая информация</h4>
 		<hr>
-		<input type="hidden" name="pcb_fullname" id="pcb_fullname" value="">
-		<input type="hidden" name="pcb_isnew" id="pcb_isnew" value="1">
+		<input type="hidden" name="device_fullname" id="device_fullname" value="">
+		<input type="hidden" name="device_isnew" id="device_isnew" value="1">
 
 		<div class="mb-3">
 			<div class="form-check" id="checkboxes">
 			  <input class="form-check-input" type="checkbox" id="addRevision">
 			  <label class="form-check-label" for="addRevision">
-			    Добавить ревизию к плате
+			    Добавить ревизию к устройству
 			  </label>
 			</div>
 		</div>
-		<div id="append_pcb">
+		<div id="append_device">
 			<div class="mb-3">
-			  <label for="pcb_parrent" class="form-label">Выберите печатную плату</label>
-			  <select class="selectpicker show-tick form-control" id="pcb_parrent" name="pcb_parrent" data-live-search="true" data-size="15" required>
+			  <label for="device_parrent" class="form-label">Выберите печатную плату</label>
+			  <select class="selectpicker show-tick form-control" id="device_parrent" name="device_parrent" data-live-search="true" data-size="15" required>
 			  	<?php
-			  		echo $options_pcbs;
+			  		echo $options_devices;
 			  	?>
 			  </select>
 			</div>
 		</div>
 
 		<div class="mb-3">
-		  <label for="pcb_name" class="form-label">Наиминование печатной платы <i>(*обратите внимание, что следующие символы запрещены: \/():*?"|+.%!@&lt;&gt;)</i></label>
-		  <input class="form-control" type="text" id="pcb_name" name="pcb_name" required>
+		  <label for="device_name" class="form-label">Наиминование печатной платы <i>(*обратите внимание, что следующие символы запрещены: \/():*?"|+.%!@&lt;&gt;)</i></label>
+		  <input class="form-control" type="text" id="device_name" name="device_name" required>
 		  <p>
 		  	<figcaption class="blockquote-footer">
 		  		Директория на диске: 
 		  		<cite id="directory">
 		  			<?php 
-		  				echo '"' . $directory_data['mask'] . $uc_Projects->ucs_DirectoriesNames['develop_documentation'] . "\\" . $uc_Projects->ucs_DirectoriesNames['pcbs'] . "\\" . $codename . '"'; 
+		  				echo '"' . $directory_data['mask'] . $uc_Projects->ucs_DirectoriesNames['develop_documentation'] . "\\" . $uc_Projects->ucs_DirectoriesNames['devices'] . "\\" . $codename . '"'; 
 		  			?>
 		  		</cite>  
 		  	</figcaption>
@@ -101,8 +76,8 @@
 		</div>
 
 		<div class="mb-3">
-		  <label for="pcb_description" class="form-label">Краткое описание</label>
-		  <input class="form-control" type="text" id="pcb_description" name="pcb_description" required>
+		  <label for="device_description" class="form-label">Краткое описание</label>
+		  <input class="form-control" type="text" id="device_description" name="device_description" required>
  			<p>
 		  	<figcaption class="blockquote-footer">
 		  		Осталось символов: 
@@ -112,21 +87,21 @@
 		</div>
 
 
-		<div id="new_pcb">
+		<div id="new_device">
 			<div class="mb-3">
-			  <label for="pcb_codename" class="form-label">Шифр печатной платы <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
-			  <input class="form-control" type="text" id="pcb_codename" name="pcb_codename" readonly value="<?php echo $codename; ?>" required>
-			  <input type="hidden" id="pcb_codename_state" name="pcb_codename_state" value="auto">
+			  <label for="device_codename" class="form-label">Шифр печатной платы <i>(*присваивается <a href="#" onclick="changeCodeNameState()" id="codeNameState" class="link-dark">автоматически</a>)</i></label>
+			  <input class="form-control" type="text" id="device_codename" name="device_codename" readonly value="<?php echo $codename; ?>" required>
+			  <input type="hidden" id="device_codename_state" name="device_codename_state" value="auto">
 			</div>
 		</div>
 		<div class="mb-3">
-			<label for="pcb_revision" class="form-label">Ревизия печатной платы</label>
-			<input class="form-control" type="text" id="pcb_revision" name="pcb_revision" readonly value="1" required>
+			<label for="device_revision" class="form-label">Ревизия печатной платы</label>
+			<input class="form-control" type="text" id="device_revision" name="device_revision" readonly value="1" required>
 		</div>
 		
 				<div class="mb-3">
-		  <label for="pcb_status" class="form-label">Статус</label>
-		  <select class="form-control" id="pcb_status" name="pcb_status" required>
+		  <label for="device_status" class="form-label">Статус</label>
+		  <select class="form-control" id="device_status" name="device_status" required>
 <?php
   	$statuses = $uc_Projects->getStatuses();
 
@@ -145,8 +120,8 @@
 		<hr>
 
 		<div class="mb-3">
-		  <label for="pcb_material" class="form-label">Материал печатной платы</label>
-		  <select class="selectpicker show-tick form-control" id="pcb_material" name="pcb_material" data-live-search="true" data-size="15" required>
+		  <label for="device_material" class="form-label">Материал печатной платы</label>
+		  <select class="selectpicker show-tick form-control" id="device_material" name="device_material" data-live-search="true" data-size="15" required>
 		  	<?php
 		  		echo $options;
 		  	?>
@@ -154,8 +129,8 @@
 		</div>
 
 		<div class="mb-3">
-		  <label for="pcb_silk" class="form-label">Цвет шелкографии</label>
-		  <select class="selectpicker show-tick form-control" id="pcb_silk" name="pcb_silk" data-live-search="true" data-size="15" required>
+		  <label for="device_silk" class="form-label">Цвет шелкографии</label>
+		  <select class="selectpicker show-tick form-control" id="device_silk" name="device_silk" data-live-search="true" data-size="15" required>
 		  	<?php
 		  		echo $options_colors;
 		  	?>
@@ -163,8 +138,8 @@
 		</div>
 
 		<div class="mb-3">
-		  <label for="pcb_mask" class="form-label">Цвет паяльной маски</label>
-		  <select class="selectpicker show-tick form-control" id="pcb_mask" name="pcb_mask" data-live-search="true" data-size="15" required>
+		  <label for="device_mask" class="form-label">Цвет паяльной маски</label>
+		  <select class="selectpicker show-tick form-control" id="device_mask" name="device_mask" data-live-search="true" data-size="15" required>
 		  	<?php
 		  		echo $options_colors;
 		  	?>
@@ -172,8 +147,8 @@
 		</div>
 
 		<div class="mb-3">
-		  <label for="pcb_surface" class="form-label">Покрытие контактных площадок</label>
-		  <select class="selectpicker show-tick form-control" id="pcb_surface" name="pcb_surface" data-live-search="true" data-size="15" required>
+		  <label for="device_surface" class="form-label">Покрытие контактных площадок</label>
+		  <select class="selectpicker show-tick form-control" id="device_surface" name="device_surface" data-live-search="true" data-size="15" required>
 		  	<?php
 		  		echo $options_surfaces;
 		  	?>
@@ -184,8 +159,8 @@
 		<hr>
 
 		<div class="mb-3">
-		  <label for="pcb_archive" class="form-label">Исходный проект печатной платы KiCad 6 - Архив (*.zip)</label>
-		  <input class="form-control" type="file" id="pcb_archive" name="pcb_archive" accept=".zip" required>
+		  <label for="device_archive" class="form-label">Исходный проект печатной платы KiCad 6 - Архив (*.zip)</label>
+		  <input class="form-control" type="file" id="device_archive" name="device_archive" accept=".zip" required>
 			<p>
 		  		<figcaption class="blockquote-footer">
 		  			Данный файл <cite>является обязательным</cite>  
@@ -217,44 +192,44 @@
 		</div>
 
 		<div class="mb-3" id="photoSelect">
-		  <label for="pcb_photos" class="form-label">Фотографии <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="pcb_photos" name="pcb_photos[]"  accept=".jpeg,.jpg" multiple="multiple">
+		  <label for="device_photos" class="form-label">Фотографии <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="device_photos" name="device_photos[]"  accept=".jpeg,.jpg" multiple="multiple">
 		</div>
 		<div class="mb-3" id="marksSelect">
-		  <label for="pcb_marks" class="form-label">Маркировка, наклейки - любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="pcb_marks" name="pcb_marks[]" multiple="multiple">
+		  <label for="device_marks" class="form-label">Маркировка, наклейки - любой формат <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="device_marks" name="device_marks[]" multiple="multiple">
 		</div>
 
 		<div class="mb-3" id="annotationsSelect">
-		  <label for="pcb_annotations" class="form-label">Аннотации - Text (*.txt), Microsoft Word (*.docx), Portable Document Format (*.pdf) <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
-		  <input class="form-control" type="file" id="pcb_annotations" name="pcb_annotations[]" multiple="multiple"  accept=".txt,.docx,.pdf">
+		  <label for="device_annotations" class="form-label">Аннотации - Text (*.txt), Microsoft Word (*.docx), Portable Document Format (*.pdf) <i>(максимальное кол-во файлов: <?php print(ini_get('max_file_uploads')); ?>, каждый размером не более <?php print(ini_get('upload_max_filesize')); ?>)</i></label>
+		  <input class="form-control" type="file" id="device_annotations" name="device_annotations[]" multiple="multiple"  accept=".txt,.docx,.pdf">
 		</div>
 
 		<div class="d-grid gap-1 d-md-flex justify-content-md-end" style="padding-bottom: 10px">
-			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addpcbModal" onclick="changeModalPresubmit()">
+			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDeviceModal" onclick="changeModalPresubmit()">
   				Добавить изделие
 			</button>
 		</div>
-		<div class="modal fade" id="addpcbModal" tabindex="-1" aria-labelledby="addpcbModalLabel" aria-hidden="true">
+		<div class="modal fade" id="addDeviceModal" tabindex="-1" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 		    <div class="modal-content">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="addpcbModalLabel">Проверьте верность данных</h5>
+		        <h5 class="modal-title" id="addDeviceModalLabel">Проверьте верность данных</h5>
 		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		      </div>
 		      <div class="modal-body">
 				<ul class="list-unstyled">
-				  <li id="lpcb_codename"><i class="fa fa-check-circle" aria-hidden="true"></i> Шифр изделия: *</li>
-				  <li id="lpcb_name"><i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: *</li>
-				  <li id="lpcb_description"><i class="fa fa-check-circle" aria-hidden="true"></i> Краткое описание: *</li>
-				  <li id="lpcb_status"><i class="fa fa-check-circle" aria-hidden="true"></i> Статус: *</li>
-				  <li id="lpcb_directory">
+				  <li id="ldevice_codename"><i class="fa fa-check-circle" aria-hidden="true"></i> Шифр изделия: *</li>
+				  <li id="ldevice_name"><i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: *</li>
+				  <li id="ldevice_description"><i class="fa fa-check-circle" aria-hidden="true"></i> Краткое описание: *</li>
+				  <li id="ldevice_status"><i class="fa fa-check-circle" aria-hidden="true"></i> Статус: *</li>
+				  <li id="ldevice_directory">
 				  	<i class="fa fa-exclamation-circle" aria-hidden="true"></i> Расположение файлов:
 <?php
 					/*$fullpath = array(
 						$uc_Projects->ucs_DirectoriesNames['develop_documentation'] => array(
-							$uc_Projects->ucs_DirectoriesNames['pcbs'] => array( 'Шифр' =>
-								$uc_Projects->ucs_DirectoriesTemplates['pcbs']
+							$uc_Projects->ucs_DirectoriesNames['devices'] => array( 'Шифр' =>
+								$uc_Projects->ucs_DirectoriesTemplates['devices']
 							)
 						)
 					);
@@ -265,11 +240,11 @@
 					<li>
 					   Конструкторская документация
 					   <ul>
-					      <li id="pcbs_dir">
+					      <li id="devices_dir">
 					         Печатные платы
 					         <ul>
 					            <li id="codename">
-					               <div id="f_pcb_fullname">Шифр</div>
+					               <div id="f_device_fullname">Шифр</div>
 					               <ul>
 					               	  <li>
 					               	  	3D модель
@@ -323,7 +298,7 @@
 		      </div>
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-		        <input type="submit" name="addpcb" class="btn btn-success me-md-1" value="Добавить изделие">
+		        <input type="submit" name="addDevice" class="btn btn-success me-md-1" value="Добавить изделие">
 		      </div>
 		    </div>
 		  </div>
@@ -341,22 +316,22 @@
 	var annotations = [];
 	var marks = [];
 
-	var pcbs = <?php echo $pcbs_json; ?>;
+	var devices = <?php echo $devices_json; ?>;
 
 	// Change codename state
 	function changeCodeNameState(){
 		if(readonly == true){
 			readonly = false;
 			$("#codeNameState").html("пользователем");
-			$("#pcb_codename_state").val("manual");
+			$("#device_codename_state").val("manual");
 
 		}else{
 			readonly = true;
 			$("#codeNameState").html("автоматически");
-			$("#pcb_codename_state").val("auto");
+			$("#device_codename_state").val("auto");
 		}
 
-		$("#pcb_codename").attr("readonly", readonly);  
+		$("#device_codename").attr("readonly", readonly);  
 	}
 
 	$( document ).ready(function() {
@@ -365,46 +340,46 @@
 		$("#annotationsSelect").hide();
 		$("#photoSelect").hide();
 		$("#marksSelect").hide();
-		$("#append_pcb").hide();
+		$("#append_device").hide();
 
 		$("#f_photos").hide();
 		$("#f_marks").hide();
 		$("#f_annotations").hide();	
 
 		// Description change
-	    $('#pcb_description').on('input', function(){ 
-	    	var count = 250 - $('#pcb_description').val().length;
+	    $('#device_description').on('input', function(){ 
+	    	var count = 250 - $('#device_description').val().length;
 	    	$('#symbols').html(count);
 	    });
 	    
 	    // Replace bad symbols in name
-	    $('body').on('input', '#pcb_name', function(){
+	    $('body').on('input', '#device_name', function(){
 			this.value = this.value.replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
 		});
 
-	    // Set pcb name
-	    $('#pcb_name').on('input', function(){ 
-	    	var text = $('#pcb_name').val().replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
+	    // Set device name
+	    $('#device_name').on('input', function(){ 
+	    	var text = $('#device_name').val().replace(/[^0-9A-Za-zА-Яа-яЁё\-\. ]/g, '');
 	    	
-	    	$('#lpcb_name').html(
+	    	$('#ldevice_name').html(
 	    		'<i class="fa fa-check-circle" aria-hidden="true"></i> Наиминование изделия: <i>' + text + '</i>'
 	    	);
 
-	    	if($('#pcb_name').val().length > 0){
+	    	if($('#device_name').val().length > 0){
 	    		text = ' - ' + text;
 	    	}
 
-	    	$('#directory').html('"\\<?php echo $directory_data['mask'] ?>\\Конструкторская документация\\Печатные платы\\' + $('#pcb_codename').val() + text  + '"');
+	    	$('#directory').html('"\\<?php echo $directory_data['mask'] ?>\\Конструкторская документация\\Печатные платы\\' + $('#device_codename').val() + text  + '"');
 	    });
 
 		// On source draw change
-	     $('#pcb_archive').change(function(e){
+	     $('#device_archive').change(function(e){
             var fileName = e.target.files[0].name;
             archive = fileName;
         });
 
 		// On source photos
-	    $('#pcb_photos').change(function(e){
+	    $('#device_photos').change(function(e){
 	    	photos = [];
             for (var i = 0; i < e.target.files.length; i++){
 				photos.push(e.target.files[i].name);
@@ -412,7 +387,7 @@
         });
 
         // On source photos
-	    $('#pcb_annotations').change(function(e){
+	    $('#device_annotations').change(function(e){
 	    	annotations = [];
             for (var i = 0; i < e.target.files.length; i++){
 				annotations.push(e.target.files[i].name);
@@ -420,7 +395,7 @@
         });
 
         // On source photos
-	    $('#pcb_marks').change(function(e){
+	    $('#device_marks').change(function(e){
 	    	marks = [];
             for (var i = 0; i < e.target.files.length; i++){
 				marks.push(e.target.files[i].name);
@@ -441,19 +416,19 @@
 	    // On add revision
 	    $('#addRevision').change(function(e){
 			if ($(this).is(':checked')) {
-				$("#append_pcb").show("fast");
-				$("#new_pcb").hide("fast");
-				$("#pcb_name").attr("readonly", true);
-				$("#pcb_description").attr("readonly", true);
-				$("#pcb_revision").val("-");
-				$('#pcb_isnew').val('0');	
+				$("#append_device").show("fast");
+				$("#new_device").hide("fast");
+				$("#device_name").attr("readonly", true);
+				$("#device_description").attr("readonly", true);
+				$("#device_revision").val("-");
+				$('#device_isnew').val('0');	
   			}else{
-				$("#append_pcb").hide("fast");
-				$("#new_pcb").show("fast");
-				$("#pcb_name").attr("readonly", false);
-				$("#pcb_description").attr("readonly", false);
-				$("#pcb_revision").val("1");
-				$('#pcb_isnew').val('1');	
+				$("#append_device").hide("fast");
+				$("#new_device").show("fast");
+				$("#device_name").attr("readonly", false);
+				$("#device_description").attr("readonly", false);
+				$("#device_revision").val("1");
+				$('#device_isnew').val('1');	
   			}
         });
         
@@ -469,13 +444,13 @@
   			}
         });
 
-	    // On pcb revision changed
-	    $('#pcb_parrent').change(function(e){
-			$('#pcb_name').val(pcbs['pcbs'][this.value]['name']);
-			$('#pcb_description').val(pcbs['pcbs'][this.value]['description']);
-			var lastKey = Object.keys(pcbs['pcbs'][this.value]['revisions']).sort().reverse()[0];
-			$("#pcb_revision").val( (parseInt(lastKey) + 1) );
-			$('#pcb_codename').val(this.value);
+	    // On device revision changed
+	    $('#device_parrent').change(function(e){
+			$('#device_name').val(devices['devices'][this.value]['name']);
+			$('#device_description').val(devices['devices'][this.value]['description']);
+			var lastKey = Object.keys(devices['devices'][this.value]['revisions']).sort().reverse()[0];
+			$("#device_revision").val( (parseInt(lastKey) + 1) );
+			$('#device_codename').val(this.value);
         });
 
 
@@ -524,49 +499,49 @@
 		var warning = 'fa fa-exclamation-circle';
 		var error = 'fa fa-times-circle';
 
-		var filename = $('#pcb_codename').val();
+		var filename = $('#device_codename').val();
 
-		if($('#pcb_name').val().length > 0){
-			filename =  filename + ' - ' + $('#pcb_name').val();
+		if($('#device_name').val().length > 0){
+			filename =  filename + ' - ' + $('#device_name').val();
 		}
 
-		// Check pcbs name
-		var pcbs_state = error;
-		var pcbs_value = $('#pcb_name').val();
-		if( pcbs_value.length > 0 ){
-			pcbs_state = success;
+		// Check devices name
+		var devices_state = error;
+		var devices_value = $('#device_name').val();
+		if( devices_value.length > 0 ){
+			devices_state = success;
 		}
-		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Наиминование изделия: ' + pcbs_value + '</li>';
-		$('#lpcb_name').html(html)
+		var html = '<i class="' + devices_state + '" aria-hidden="true"></i> Наиминование изделия: ' + devices_value + '</li>';
+		$('#ldevice_name').html(html)
 
-		// Check pcbs codename
-		var pcbs_state = error;
-		var pcbs_value = $('#pcb_codename').val();
-		if( pcbs_value.length > 0 ){
-			pcbs_state = success;
+		// Check devices codename
+		var devices_state = error;
+		var devices_value = $('#device_codename').val();
+		if( devices_value.length > 0 ){
+			devices_state = success;
 		}
-		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Шифр изделия: ' + pcbs_value + '</li>';
-		$('#lpcb_codename').html(html)
+		var html = '<i class="' + devices_state + '" aria-hidden="true"></i> Шифр изделия: ' + devices_value + '</li>';
+		$('#ldevice_codename').html(html)
 
 
-		// Check pcbs description
-		var pcbs_state = error;
-		var pcbs_value = $('#pcb_description').val();
-		if( pcbs_value.length > 0 ){
-			pcbs_state = success;
+		// Check devices description
+		var devices_state = error;
+		var devices_value = $('#device_description').val();
+		if( devices_value.length > 0 ){
+			devices_state = success;
 		}
-		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Краткое описание: ' + pcbs_value + '</li>';
+		var html = '<i class="' + devices_state + '" aria-hidden="true"></i> Краткое описание: ' + devices_value + '</li>';
 
-		$('#lpcb_description').html(html)
+		$('#ldevice_description').html(html)
 
-		// Check pcbs status
-		var pcbs_state = error;
-		var pcbs_value = $('#pcb_status option:selected').text();
-		if( pcbs_value.length > 0 ){
-			pcbs_state = success;
+		// Check devices status
+		var devices_state = error;
+		var devices_value = $('#device_status option:selected').text();
+		if( devices_value.length > 0 ){
+			devices_state = success;
 		}
-		var html = '<i class="' + pcbs_state + '" aria-hidden="true"></i> Статус: ' + pcbs_value + '</li>';
-		$('#lpcb_status').html(html);
+		var html = '<i class="' + devices_state + '" aria-hidden="true"></i> Статус: ' + devices_value + '</li>';
+		$('#ldevice_status').html(html);
 
 		var html = '<i class="fa fa-file" aria-hidden="true"></i> Описание ' + filename + '.txt';
 		$('#f_description').html(html);
@@ -577,7 +552,7 @@
 		changeTreeFiles('#f_annotations', annotations, 'Аннотации');
 		changeTreeFiles('#f_marks', marks, 'Маркировка и наклейки');
 
-		$('#f_pcb_fullname').html(filename);
-		$('#pcb_fullname').val(filename);	
+		$('#f_device_fullname').html(filename);
+		$('#device_fullname').val(filename);	
 	}
 </script>
