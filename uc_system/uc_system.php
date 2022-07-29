@@ -43,18 +43,20 @@
 				if(isset($_GET['page'])){
 					if($_GET['page'] == 'uCrewAuthorization/registration'){
 						$this->ucCompilator->setPage("uCrewAuthorization/registration");
-					}else if($_GET['page'] == 'uCrewAuthorization/recovery'){
-						$this->ucCompilator->setPage("uCrewAuthorization/recovery");
+					}if($_GET['page'] == 'uCrewAuthorization/registration'){
+						$this->ucCompilator->setPage("uCrewAuthorization/registration");
+					}else if(strpos($_GET['page'], "api") !== false){
+						$this->ucCompilator->setPage($_GET["page"]);
 					}else if($_GET['page'] == 'uCrewAuthorization/newpassword'){
 						$this->ucCompilator->setPage("uCrewAuthorization/newpassword");
 					}else{
 						header("Location: /");
 						die();
-					}
+					} //http://94.51.83.132/?page=uCrewProjectsUploader/auth
 				}else{
 					$this->ucCompilator->setPage("uCrewAuthorization/authorization");
 				}
-							}else{
+			}else{
 				// Check if isset requst on page
 				if(isset($_GET["page"])){
 					// Set page if isset

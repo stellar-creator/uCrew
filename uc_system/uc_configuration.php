@@ -29,7 +29,8 @@
 		public $modules = array(
 			"uCrewSetup" => 1,
 			"uCrewAuthorization" => 1,
-			"uCrewProjects" => 1
+			"uCrewProjects" => 1,
+			"uCrewProjectsUploader" => 1
 		);
 	}
 ?>

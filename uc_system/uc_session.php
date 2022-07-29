@@ -8,7 +8,9 @@
 			// Construct uCrewDatabase (parent class)
 			parent::__construct();
 			// Run session
-			session_start();
+			if(!isset($_SESSION)){ 
+				session_start();
+			}
 		}
 
 		public function checkAuthorization(){
